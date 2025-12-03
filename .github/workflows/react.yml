@@ -2,9 +2,10 @@ name: Deploy React Frontend
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - "a2p-frontend/**"
+      - "src/**"
+      - "package.json"
 
 jobs:
   deploy:
