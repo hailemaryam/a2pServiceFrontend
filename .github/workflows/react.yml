@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - "frontend/**"
+      - "a2p-frontend/**"
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Build React app
         run: |
-          cd frontend
+          cd a2p-frontend
           npm install
           npm run build
 
@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "frontend/dist/*"
+          source: "a2p-frontend/dist/*"
           target: "/var/www/my-react-app"
 
       - name: Reload Nginx
