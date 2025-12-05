@@ -22,38 +22,39 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Admin", path: "/", pro: false }],
+    name: "Admin",
+    path: "/admin",
   },
 
   {
     name: "Billings",
     icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+    subItems: [
+      { name: "Billings", path: "/billings", pro: false },
+      { name: "Billings Form", path: "/billings-form", pro: false },
+    ],
   },
 
   {
     name: "SMS",
     icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+    subItems: [
+      { name: "Send SMS", path: "/send-sms", pro: false },
+      { name: "SMS Log", path: "/sms-log", pro: false },
+      { name: "Received SMS", path: "/received-sms", pro: false },
+    ],
   },
 
   {
     icon: <PieChartIcon />,
     name: "Contact",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
+    path: "/contact",
   },
 
   {
     icon: <PieChartIcon />,
     name: "API",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
+    path: "/api",
   },
 ];
 

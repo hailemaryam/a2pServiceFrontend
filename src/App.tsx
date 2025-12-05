@@ -12,6 +12,14 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import Admin from "./pages/Admin/Admin";
+import Billings from "./pages/Billings/Billings";
+import BillingsForm from "./pages/Billings/BillingsForm";
+import SendSMS from "./pages/SMS/SendSMS";
+import SMSLog from "./pages/SMS/SMSLog";
+import ReceivedSMS from "./pages/SMS/ReceivedSMS";
+import Contact from "./pages/Contact/Contact";
+import API from "./pages/API/API";
 
 export default function App() {
   return (
@@ -23,6 +31,24 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
             <Route path="/blank" element={<Blank />} />
+
+            {/* Admin */}
+            <Route path="/admin" element={<Admin />} />
+
+            {/* Billings */}
+            <Route path="/billings" element={<Billings />} />
+            <Route path="/billings-form" element={<BillingsForm />} />
+
+            {/* SMS */}
+            <Route path="/send-sms" element={<SendSMS />} />
+            <Route path="/sms-log" element={<SMSLog />} />
+            <Route path="/received-sms" element={<ReceivedSMS />} />
+
+            {/* Contact */}
+            <Route path="/contact" element={<Contact />} />
+
+            {/* API */}
+            <Route path="/api" element={<API />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
