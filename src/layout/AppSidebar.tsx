@@ -21,9 +21,11 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
+    name: "Dashboard",
     icon: <GridIcon />,
-    name: "Admin",
-    path: "/admin",
+    subItems: [
+      { name: "Admin", path: "/admin", pro: false },
+    ],
   },
 
   {
@@ -132,7 +134,7 @@ const AppSidebar: React.FC = () => {
               </span>
 
               {(isExpanded || isHovered || isMobileOpen) && (
-                <span className="menu-item-text">{nav.name}</span>
+                <span className="menu-item-text text-lg">{nav.name}</span>
               )}
 
               {(isExpanded || isHovered || isMobileOpen) && (
@@ -189,7 +191,7 @@ const AppSidebar: React.FC = () => {
                   <li key={subItem.name}>
                     <Link
                       to={subItem.path}
-                      className={`menu-dropdown-item ${
+                      className={`menu-dropdown-item text-base ${
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
                           : "menu-dropdown-item-inactive"
@@ -212,10 +214,10 @@ const AppSidebar: React.FC = () => {
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
-            ? "w-[290px]"
+            ? "w-[350px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+            ? "w-[350px]"
+            : "w-[120px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -229,18 +231,11 @@ const AppSidebar: React.FC = () => {
         }`}
       >
         <Link to="/">
-          {(isExpanded || isHovered || isMobileOpen) ? (
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
-              fast SMS
-            </span>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
-          )}
+          <img
+            src="/banner.png"
+            alt="Logo"
+            className={isExpanded || isHovered || isMobileOpen ? "w-40 h-auto object-contain" : "w-12 h-12 object-contain"}
+          />
         </Link>
       </div>
 
@@ -248,7 +243,7 @@ const AppSidebar: React.FC = () => {
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <h2
-            className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+            className={`mb-4 text-sm uppercase flex leading-[20px] text-gray-400 ${
               !isExpanded && !isHovered
                 ? "lg:justify-center"
                 : "justify-start"
