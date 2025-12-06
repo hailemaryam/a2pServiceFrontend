@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import { CloseIcon } from "../../icons";
 
 // Type definition for the SMS package data
 interface Package {
@@ -62,12 +63,30 @@ const packages: Package[] = [
 export default function Billings() {
   // State for the slider value, initializing near the minimum
   const [smsCount, setSmsCount] = useState<number>(1000);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [billingName, setBillingName] = useState("");
+  const [subscription, setSubscription] = useState("");
   const minSms = 1000;
   const maxSms = 100000;
 
   // Function to handle slider change
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSmsCount(Number(event.target.value));
+  };
+
+  // Handle package card click
+  const handlePackageClick = (pkg: Package) => {
+    setSelectedPackage(pkg);
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPackage(null);
+    setBillingName("");
+    setSubscription("");
   };
 
   // Component for rendering a single package card
@@ -85,7 +104,8 @@ export default function Billings() {
 
     return (
       <div
-        className={`p-6 rounded-xl transition duration-300 ease-in-out flex flex-col bg-white dark:bg-white/[0.03] ${cardClass}`}
+        className={`p-6 rounded-xl transition duration-300 ease-in-out flex flex-col bg-white dark:bg-white/[0.03] cursor-pointer hover:shadow-theme-md ${cardClass}`}
+        onClick={() => handlePackageClick(pkg)}
       >
         <div className="flex justify-between items-start">
           <h3 className="text-2xl font-semibold text-gray-700 dark:text-white">
@@ -222,6 +242,112 @@ export default function Billings() {
           </div>
         </div>
       </div>
+
+      {/* Billing Modal */}
+      {isModalOpen && selectedPackage && (
+        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <CloseIcon className="h-6 w-6" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-6 border-b border-gray-200 pb-4 dark:border-gray-700">
+              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
+                subscription for "{selectedPackage.name} Billing #no 109"
+              </h3>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-6">
+              {/* Billing Name */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Billing Name:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Billing Name"
+                  value={billingName}
+                  onChange={(e) => setBillingName(e.target.value)}
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+
+              {/* Subscription */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Subscription:
+                </label>
+                <select
+                  value={subscription}
+                  onChange={(e) => setSubscription(e.target.value)}
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+                >
+                  <option value="">Select Sender ID</option>
+                  <option value="TamSMS">TamSMS</option>
+                  <option value="ServiceAlert">ServiceAlert</option>
+                </select>
+              </div>
+
+              {/* Billing Amount */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Billing Amount:
+                </label>
+                <p className="mb-2 font-bold text-gray-900 dark:text-white">
+                  ETB {selectedPackage.price.toFixed(2)}
+                </p>
+                <input
+                  type="text"
+                  value={`ETB ${selectedPackage.price.toFixed(2)}`}
+                  readOnly
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-white/90"
+                />
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Select Payment Method:
+                </label>
+                <div className="flex items-center gap-3 rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                  <input
+                    type="radio"
+                    name="payment_method_modal"
+                    defaultChecked
+                    className="h-4 w-4 text-brand-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    FENANPAY Fenan Pay
+                  </span>
+                </div>
+              </div>
+
+              {/* Cash Payment Option */}
+              <div>
+                <h4 className="mb-2 text-base font-semibold text-gray-900 dark:text-white">
+                  Or Pay With Cash:
+                </h4>
+                <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                  Note: After payment please contact{" "}
+                  <a
+                    href="tel:+251979434331"
+                    className="font-semibold text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                  >
+                    +251979434331
+                  </a>{" "}
+                  with your code.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

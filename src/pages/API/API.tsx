@@ -7,6 +7,7 @@ import {
   EyeIcon,
   CopyIcon,
   FileIcon,
+  CloseIcon,
 } from "../../icons";
 
 // --- Data Structure for the Table ---
@@ -34,6 +35,9 @@ const apiTokens: ApiToken[] = [
 
 export default function API() {
   const [tokens, setTokens] = useState<ApiToken[]>(apiTokens);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [senderId, setSenderId] = useState("");
+  const [permissions, setPermissions] = useState("");
 
   const handleCopyToken = (token: string) => {
     navigator.clipboard.writeText(token);
@@ -42,6 +46,22 @@ export default function API() {
 
   const handleDeleteToken = (id: number) => {
     setTokens(tokens.filter((token) => token.id !== id));
+  };
+
+  const handleCreateApi = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false);
+    setSenderId("");
+    setPermissions("");
+  };
+
+  const handleSaveApi = () => {
+    // Add logic to save API token
+    console.log("Saving API:", { senderId, permissions });
+    closeCreateModal();
   };
 
   return (
@@ -105,7 +125,10 @@ export default function API() {
             </div>
 
             {/* Create API Button */}
-            <button className="flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700">
+            <button
+              onClick={handleCreateApi}
+              className="flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700"
+            >
               <PlusIcon className="h-5 w-5" />
               Create API
             </button>
@@ -178,6 +201,72 @@ export default function API() {
           </div>
         </div>
       </div>
+
+      {/* Create API Modal */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
+            {/* Close Button */}
+            <button
+              onClick={closeCreateModal}
+              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <CloseIcon className="h-6 w-6" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-6 border-b border-gray-200 pb-4 dark:border-gray-700">
+              <h3 className="pr-8 text-xl font-semibold text-gray-900 dark:text-white">
+                API Information
+              </h3>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-6">
+              {/* Sender ID */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Sender ID
+                </label>
+                <select
+                  value={senderId}
+                  onChange={(e) => setSenderId(e.target.value)}
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+                >
+                  <option value="">Choose sender ID</option>
+                  <option value="TamSMS">TamSMS</option>
+                  <option value="ServiceAlert">ServiceAlert</option>
+                </select>
+              </div>
+
+              {/* Permissions */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Permissions
+                </label>
+                <select
+                  value={permissions}
+                  onChange={(e) => setPermissions(e.target.value)}
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+                >
+                  <option value="">Choose permission(s)</option>
+                  <option value="Read">Read</option>
+                  <option value="Write">Write</option>
+                  <option value="Read/Write">Read/Write</option>
+                </select>
+              </div>
+
+              {/* Save Button */}
+              <button
+                onClick={handleSaveApi}
+                className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,7 +4,6 @@ import PageMeta from "../../components/common/PageMeta";
 import {
   DownloadIcon,
   PlusIcon,
-  FileIcon,
 } from "../../icons";
 
 export default function Contact() {

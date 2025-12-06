@@ -13,7 +13,7 @@ export default function DefaultInputs() {
     { value: "template", label: "Template" },
     { value: "development", label: "Development" },
   ];
-  const handleSelectChange = (value: string) => {
+  const handleSelectChange = (_value: string) => {
     // Handle select change
   };
 
@@ -62,7 +62,7 @@ export default function DefaultInputs() {
             id="date-picker"
             label="Date Picker Input"
             placeholder="Select a date"
-            onChange={(dates, currentDateString) => {
+            onChange={(_dates, _currentDateString) => {
               // Handle date selection
             }}
           />
@@ -75,7 +75,7 @@ export default function DefaultInputs() {
               type="time"
               id="tm"
               name="tm"
-              onChange={(e) => {
+              onChange={(_e) => {
                 // Handle time change
               }}
             />
