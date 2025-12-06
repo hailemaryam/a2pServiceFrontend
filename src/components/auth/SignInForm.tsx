@@ -4,23 +4,97 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-import Button from "../ui/button/Button";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Store email in localStorage
-    if (email) {
-      localStorage.setItem("userEmail", email);
+  // Email validation
+  const validateEmail = (value: string): boolean => {
+    if (!value) {
+      setEmailError("Email is required");
+      return false;
     }
-    // Navigate to dashboard
-    navigate("/");
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(value)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  // Password validation
+  const validatePassword = (value: string): boolean => {
+    if (!value) {
+      setPasswordError("Password is required");
+      return false;
+    }
+    if (value.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setSubmitError("");
+    // Validate on change if there's an error or if field is not empty
+    if (emailError || value.length > 0) {
+      validateEmail(value);
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    setSubmitError("");
+    // Validate on change if there's an error or if field is not empty
+    if (passwordError || value.length > 0) {
+      validatePassword(value);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitError("");
+
+    // Validate all fields
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Simulate API call - replace with actual API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Store email in localStorage
+      localStorage.setItem("userEmail", email);
+      if (isChecked) {
+        localStorage.setItem("userToken", "token_placeholder");
+      }
+
+      // Navigate to dashboard
+      navigate("/");
+    } catch (error) {
+      setSubmitError("Invalid email or password. Please try again.");
+      setIsLoading(false);
+    }
   };
   return (
     <div className="flex flex-col flex-1">
@@ -98,15 +172,25 @@ export default function SignInForm() {
             </div>
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
+                {submitError && (
+                  <div className="rounded-lg border border-error-500 bg-error-50 p-3 text-sm text-error-700 dark:border-error-500 dark:bg-error-500/10 dark:text-error-400">
+                    {submitError}
+                  </div>
+                )}
                 <div>
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
+                    type="email"
+                    name="email"
+                    id="email"
                     placeholder="info@gmail.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    onChange={handleEmailChange}
+                    error={!!emailError}
+                    hint={emailError}
+                    disabled={isLoading}
                   />
                 </div>
                 <div>
@@ -116,26 +200,36 @@ export default function SignInForm() {
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
                       placeholder="Enter your password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
+                      onChange={handlePasswordChange}
+                      error={!!passwordError}
+                      hint={passwordError}
+                      disabled={isLoading}
                     />
-                    <span
+                    <button
+                      type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      tabIndex={-1}
                     >
                       {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                        <EyeIcon className="fill-current size-5" />
                       ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                        <EyeCloseIcon className="fill-current size-5" />
                       )}
-                    </span>
+                    </button>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={setIsChecked}
+                      disabled={isLoading}
+                    />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                       Keep me logged in
                     </span>
@@ -148,9 +242,13 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button type="submit" className="w-full" size="sm">
-                    Sign in
-                  </Button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
+                  >
+                    {isLoading ? "Signing in..." : "Sign in"}
+                  </button>
                 </div>
               </div>
             </form>
