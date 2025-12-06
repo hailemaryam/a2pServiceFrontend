@@ -1,11 +1,9 @@
-import { useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { MailIcon, ChatIcon, PlugInIcon, PieChartIcon, FileIcon } from "../../icons";
 
-// --- Type Definitions for Data Structures ---
 interface StatisticsData {
   date: string;
   value: number;
@@ -22,11 +20,6 @@ const statisticsData: StatisticsData[] = [
   { date: "7", value: 870, previousValue: 790 },
 ];
 
-// --- Reusable Components ---
-
-/**
- * Dashboard KPI Cards Component
- */
 const DashboardKpiCards: React.FC = () => (
   <div className="mb-8 flex flex-wrap gap-5">
     {/* Card 1: Total SMS Requests */}
@@ -94,9 +87,6 @@ const DashboardKpiCards: React.FC = () => (
   </div>
 );
 
-/**
- * Recent SMS Table Component
- */
 const RecentSMSTable: React.FC = () => (
   <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
     <h3 className="mb-5 text-lg font-semibold text-gray-900 dark:text-white">
@@ -141,11 +131,9 @@ const RecentSMSTable: React.FC = () => (
 );
 
 /**
- * Renders the bottom Statistics Line Chart.
+ * Renders the SMS Requests Overview Line Chart.
  */
 const StatisticsChart: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"overview" | "sales" | "revenue">("overview");
-
   const options: ApexOptions = {
     colors: ["#3670e8", "#9CB9FF"],
     chart: {
@@ -243,47 +231,12 @@ const StatisticsChart: React.FC = () => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="mb-6">
-        <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           SMS Requests Overview
         </h3>
-        {/* <span className="text-sm text-gray-500 dark:text-gray-400">
-          Target you've set for each month
-        </span> */}
       </div>
 
-      <div className="mb-6 flex items-center justify-between">
-        {/* <div className="flex gap-2">
-          <button
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              activeTab === "overview"
-                ? "bg-brand-500 text-white shadow-theme-xs"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            }`}
-            onClick={() => setActiveTab("overview")}
-          >
-            Overview
-          </button>
-          <button
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              activeTab === "sales"
-                ? "bg-brand-500 text-white shadow-theme-xs"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            }`}
-            onClick={() => setActiveTab("sales")}
-          >
-            Sales
-          </button>
-          <button
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              activeTab === "revenue"
-                ? "bg-brand-500 text-white shadow-theme-xs"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            }`}
-            onClick={() => setActiveTab("revenue")}
-          >
-            Revenue
-          </button>
-        </div> */}
+      <div className="mb-6 flex items-center justify-end">
         <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
           <svg
             className="h-4 w-4"
@@ -307,7 +260,6 @@ const StatisticsChart: React.FC = () => {
   );
 };
 
-// --- Main Dashboard Component ---
 export default function Admin() {
   return (
     <div>
