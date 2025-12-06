@@ -31,12 +31,12 @@ const dummyGroups: Group[] = [
 export default function Contact() {
   const [activeTab, setActiveTab] = useState<"contacts" | "groups">("contacts");
   const [groupSearch, setGroupSearch] = useState("");
-  
+
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  
+
   // Form states
   const [groupName, setGroupName] = useState("");
   const [groupColor, setGroupColor] = useState("#000000");
@@ -67,7 +67,12 @@ export default function Contact() {
       alert("Contact Name and Phone Number are required.");
       return;
     }
-    console.log("Creating contact:", { contactName, phoneNumber, gender, birthDate });
+    console.log("Creating contact:", {
+      contactName,
+      phoneNumber,
+      gender,
+      birthDate,
+    });
     // Reset form
     setContactName("");
     setPhoneNumber("");
@@ -82,7 +87,10 @@ export default function Contact() {
       alert("Please select a file to upload.");
       return;
     }
-    console.log("Uploading contacts:", { file: uploadedFile.name, group: selectedGroup });
+    console.log("Uploading contacts:", {
+      file: uploadedFile.name,
+      group: selectedGroup,
+    });
     // Reset form
     setUploadedFile(null);
     setSelectedGroup("");
@@ -229,7 +237,14 @@ export default function Contact() {
                           strokeLinejoin="round"
                           className="text-gray-400 dark:text-gray-500"
                         >
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          ></rect>
                           <line x1="9" y1="9" x2="15" y2="9"></line>
                           <line x1="9" y1="13" x2="15" y2="13"></line>
                           <line x1="9" y1="17" x2="15" y2="17"></line>
@@ -434,7 +449,9 @@ export default function Contact() {
                     onChange={(e) => setGroupColor(e.target.value)}
                     className="h-11 w-20 cursor-pointer rounded-lg border border-gray-300 bg-transparent dark:border-gray-700"
                   />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{groupColor}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {groupColor}
+                  </span>
                 </div>
               </div>
               <button
