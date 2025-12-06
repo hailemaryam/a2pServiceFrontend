@@ -8,6 +8,9 @@ interface SmsState {
   phoneNumber: string;
   message: string;
   contactSearch: string;
+  selectedGroup?: string;
+  bulkTag?: string;
+  uploadedFile?: File | null;
 }
 
 // Constants for SMS limits (GSM encoding)
@@ -21,6 +24,9 @@ export default function SendSMS() {
     phoneNumber: "",
     message: "",
     contactSearch: "",
+    selectedGroup: "",
+    bulkTag: "06-12-2025",
+    uploadedFile: null,
   });
 
   // Calculate SMS metrics (based on GSM encoding)
@@ -51,6 +57,11 @@ export default function SendSMS() {
   ) => {
     const { name, value } = e.target;
     setSmsData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSmsData((prev) => ({ ...prev, uploadedFile: file }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -215,13 +226,213 @@ export default function SendSMS() {
             <form onSubmit={handleSubmit}>
               {activeTab === "Single" && <SingleSmsForm />}
               {activeTab === "Bulk" && (
-                <div className="text-center py-10 text-gray-500 dark:text-gray-400">
-                  Bulk SMS form coming soon...
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Left Column - Form Inputs */}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                      Bulk SMS Form
+                    </h3>
+                    <div className="space-y-6">
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Select Group:
+                        </span>
+                        <select
+                          name="selectedGroup"
+                          value={smsData.selectedGroup}
+                          onChange={handleChange}
+                          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        >
+                          <option value="">Select Group</option>
+                          <option value="tamcon-dev">tamcon-dev</option>
+                        </select>
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Bulk Tag:
+                        </span>
+                        <input
+                          type="text"
+                          name="bulkTag"
+                          value={smsData.bulkTag}
+                          readOnly
+                          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-white/90"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Sender ID:
+                        </span>
+                        <select
+                          name="senderId"
+                          value={smsData.senderId}
+                          onChange={handleChange}
+                          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        >
+                          <option value="">Select Sender ID</option>
+                          <option value="TamSMS">TamSMS</option>
+                          <option value="ServiceAlert">ServiceAlert</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  {/* Right Column - SMS Content */}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                      SMS Content
+                    </h3>
+                    <div className="space-y-6">
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Message
+                        </span>
+                        <textarea
+                          name="message"
+                          value={smsData.message}
+                          onChange={handleChange}
+                          placeholder="Type your message here..."
+                          rows={6}
+                          className="mt-1 block w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 resize-y"
+                        />
+                      </label>
+                      {/* SMS Details Block */}
+                      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <p>
+                          Encoding: <span className="font-semibold">GSM</span>
+                        </p>
+                        <p>
+                          SMS Parts: <span className="font-semibold">{smsParts}</span>
+                        </p>
+                        <p>
+                          Chars Used: <span className="font-semibold">{charsUsed}</span> /{" "}
+                          {smsParts > 1 ? GSM_CONCAT_CHAR_LIMIT * smsParts : GSM_CHAR_LIMIT}
+                        </p>
+                        <p>
+                          Price: <span className="font-semibold">{price} ETB</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Send Button */}
+                  <div className="md:col-span-2">
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
+                      disabled={!smsData.selectedGroup || !smsData.message}
+                    >
+                      Send SMS
+                    </button>
+                  </div>
                 </div>
               )}
               {activeTab === "File" && (
-                <div className="text-center py-10 text-gray-500 dark:text-gray-400">
-                  File SMS form coming soon...
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Left Column - Form Inputs */}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                      Bulk SMS Form / Upload File
+                    </h3>
+                    <div className="space-y-6">
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Upload File
+                        </span>
+                        <div className="flex border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+                          <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer bg-gray-100 dark:bg-gray-800 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          >
+                            Choose File
+                          </label>
+                          <input
+                            type="file"
+                            id="file-upload"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                          <span className="flex-1 px-4 py-3 text-sm text-gray-500 dark:text-gray-400 bg-transparent">
+                            {smsData.uploadedFile
+                              ? smsData.uploadedFile.name
+                              : "No file chosen"}
+                          </span>
+                        </div>
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Bulk Tag:
+                        </span>
+                        <input
+                          type="text"
+                          name="bulkTag"
+                          value={smsData.bulkTag}
+                          readOnly
+                          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-white/90"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Sender ID:
+                        </span>
+                        <select
+                          name="senderId"
+                          value={smsData.senderId}
+                          onChange={handleChange}
+                          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        >
+                          <option value="">Select Sender ID</option>
+                          <option value="TamSMS">TamSMS</option>
+                          <option value="ServiceAlert">ServiceAlert</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  {/* Right Column - SMS Content */}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                      SMS Content
+                    </h3>
+                    <div className="space-y-6">
+                      <label className="block">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                          Message
+                        </span>
+                        <textarea
+                          name="message"
+                          value={smsData.message}
+                          onChange={handleChange}
+                          placeholder="Type your message here..."
+                          rows={6}
+                          className="mt-1 block w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 resize-y"
+                        />
+                      </label>
+                      {/* SMS Details Block */}
+                      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <p>
+                          Encoding: <span className="font-semibold">GSM</span>
+                        </p>
+                        <p>
+                          SMS Parts: <span className="font-semibold">{smsParts}</span>
+                        </p>
+                        <p>
+                          Chars Used: <span className="font-semibold">{charsUsed}</span> /{" "}
+                          {smsParts > 1 ? GSM_CONCAT_CHAR_LIMIT * smsParts : GSM_CHAR_LIMIT}
+                        </p>
+                        <p>
+                          Price: <span className="font-semibold">{price} ETB</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Send Button */}
+                  <div className="md:col-span-2">
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
+                      disabled={!smsData.uploadedFile || !smsData.message}
+                    >
+                      Send SMS
+                    </button>
+                  </div>
                 </div>
               )}
             </form>

@@ -67,6 +67,7 @@ export default function Billings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billingName, setBillingName] = useState("");
   const [subscription, setSubscription] = useState("");
+  const [clickedPackageName, setClickedPackageName] = useState<string | null>(null);
   const minSms = 1000;
   const maxSms = 100000;
 
@@ -78,6 +79,7 @@ export default function Billings() {
   // Handle package card click
   const handlePackageClick = (pkg: Package) => {
     setSelectedPackage(pkg);
+    setClickedPackageName(pkg.name);
     setIsModalOpen(true);
   };
 
@@ -87,13 +89,19 @@ export default function Billings() {
     setSelectedPackage(null);
     setBillingName("");
     setSubscription("");
+    setClickedPackageName(null);
   };
 
   // Component for rendering a single package card
   const PackageCard: React.FC<{ pkg: Package }> = ({ pkg }) => {
-    // Determine the border and button styles based on whether it's the current package
+    // Determine the border and button styles
+    // Current package always shows blue border, never orange
+    // Only non-current clicked packages show orange border
+    const isClicked = clickedPackageName === pkg.name && !pkg.isCurrent;
     const cardClass = pkg.isCurrent
       ? "border-4 border-brand-500 shadow-theme-lg dark:border-brand-500"
+      : isClicked
+      ? "border-4 border-orange-500 shadow-theme-lg dark:border-orange-500"
       : "border border-gray-200 dark:border-gray-800";
     const buttonClass = pkg.isCurrent
       ? "bg-brand-500 hover:bg-brand-600 text-white"
@@ -197,7 +205,7 @@ export default function Billings() {
                 step={100}
                 value={smsCount}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 style={{
                   background: `linear-gradient(to right, #465fff 0%, #465fff ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB 100%)`,
                 }}
@@ -246,7 +254,7 @@ export default function Billings() {
       {/* Billing Modal */}
       {isModalOpen && selectedPackage && (
         <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
             {/* Close Button */}
             <button
               onClick={closeModal}
@@ -256,14 +264,14 @@ export default function Billings() {
             </button>
 
             {/* Modal Header */}
-            <div className="mb-6 border-b border-gray-200 pb-4 dark:border-gray-700">
+            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
               <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
                 subscription for "{selectedPackage.name} Billing #no 109"
               </h3>
             </div>
 
             {/* Modal Content */}
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Billing Name */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">

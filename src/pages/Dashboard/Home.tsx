@@ -60,8 +60,8 @@ export default function Home() {
   return (
     <div>
       <PageMeta
-        title="Fast SMS Dashboard | Manage Messaging, Billing & Contacts"
-        description="Welcome to the Fast SMS Dashboard."
+        title="Fast SMS "
+        description="Welcome to  Fast SMS."
       />
       <PageBreadcrumb pageTitle="Dashboard" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">

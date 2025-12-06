@@ -3,61 +3,14 @@ import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { UserCircleIcon, BoxIcon, MoreDotIcon } from "../../icons";
+import { MailIcon, ChatIcon, PlugInIcon, PieChartIcon, FileIcon } from "../../icons";
 
 // --- Type Definitions for Data Structures ---
-interface MetricData {
-  title: string;
-  value: string;
-  change: number; // Percentage change
-  isPositive: boolean;
-  icon: React.ReactNode;
-}
-
-interface SalesData {
-  month: string;
-  sales: number;
-  target?: number;
-}
-
 interface StatisticsData {
   date: string;
   value: number;
   previousValue?: number;
 }
-
-// --- Mock Data ---
-const keyMetrics: MetricData[] = [
-  {
-    title: "Customers",
-    value: "3,782",
-    change: 11.01,
-    isPositive: true,
-    icon: <UserCircleIcon className="h-6 w-6" />,
-  },
-  {
-    title: "Orders",
-    value: "5,359",
-    change: 9.05,
-    isPositive: false,
-    icon: <BoxIcon className="h-6 w-6" />,
-  },
-];
-
-const monthlySalesData: SalesData[] = [
-  { month: "Jan", sales: 450 },
-  { month: "Feb", sales: 750 },
-  { month: "Mar", sales: 300 },
-  { month: "Apr", sales: 550 },
-  { month: "May", sales: 500 },
-  { month: "Jun", sales: 400 },
-  { month: "Jul", sales: 600 },
-  { month: "Aug", sales: 450 },
-  { month: "Sep", sales: 500 },
-  { month: "Oct", sales: 350 },
-  { month: "Nov", sales: 480 },
-  { month: "Dec", sales: 520 },
-];
 
 const statisticsData: StatisticsData[] = [
   { date: "1", value: 700, previousValue: 650 },
@@ -72,216 +25,120 @@ const statisticsData: StatisticsData[] = [
 // --- Reusable Components ---
 
 /**
- * Renders a single Key Metric card (Customers or Orders).
+ * Dashboard KPI Cards Component
  */
-const KeyMetricCard: React.FC<{ metric: MetricData }> = ({ metric }) => (
-  <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-brand-50 dark:bg-brand-500/10">
-      <div className="text-brand-500 dark:text-brand-400">{metric.icon}</div>
+const DashboardKpiCards: React.FC = () => (
+  <div className="mb-8 flex flex-wrap gap-5">
+    {/* Card 1: Total SMS Requests */}
+    <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="mb-4 flex items-center justify-between">
+        <ChatIcon className="h-9 w-9 text-orange-500" />
+        <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          <option>Last 30...</option>
+        </select>
+      </div>
+      <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">NaN</h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Total SMS Requests{" "}
+        <span className="font-semibold text-success-500 dark:text-success-400">0% ↑</span>
+      </p>
     </div>
-    <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">{metric.title}</p>
-    <p className="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
-      {metric.value}
-    </p>
-    <span
-      className={`text-sm font-medium ${
-        metric.isPositive
-          ? "text-success-500 dark:text-success-400"
-          : "text-error-500 dark:text-error-400"
-      }`}
-    >
-      {metric.isPositive ? "↑" : "↓"} {Math.abs(metric.change).toFixed(2)}%
-    </span>
+
+    {/* Card 2: Total API Requests */}
+    <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="mb-4 flex items-center justify-between">
+        <PlugInIcon className="h-9 w-9 text-orange-500" />
+        <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          <option>Last 30...</option>
+        </select>
+      </div>
+      <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">0</h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">Total API Requests 0</p>
+    </div>
+
+    {/* Card 3: Bulk SMS Request */}
+    <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <MailIcon className="h-9 w-9 text-orange-500" />
+        <div className="flex flex-col gap-1">
+          <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            <option>pending</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-24 rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:placeholder:text-gray-500"
+          />
+        </div>
+      </div>
+      <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">0</h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">Bulk SMS Request</p>
+    </div>
+
+    {/* Card 4: SMS Status */}
+    <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <PieChartIcon className="h-9 w-9 text-orange-500" />
+        <div className="flex flex-col gap-1">
+          <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            <option>Last 30...</option>
+          </select>
+          <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            <option>pending</option>
+          </select>
+        </div>
+      </div>
+      <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">0</h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">SMS Status 0</p>
+    </div>
   </div>
 );
 
 /**
- * Renders the Monthly Target Progress Ring.
+ * Recent SMS Table Component
  */
-const MonthlyTarget: React.FC = () => {
-  const completionPercentage = 75.55;
-  const circumference = 2 * Math.PI * 45; // radius = 45
-  const offset = circumference - (completionPercentage / 100) * circumference;
-
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
-            Monthly Target
-          </h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            Target you've set for each month
-          </span>
-        </div>
-        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-          <MoreDotIcon className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="mb-6 flex items-center justify-center">
-        <div className="relative">
-          <svg className="h-32 w-32 -rotate-90 transform">
-            <circle
-              cx="64"
-              cy="64"
-              r="45"
-              stroke="currentColor"
-              strokeWidth="8"
-              fill="none"
-              className="text-gray-200 dark:text-gray-700"
-            />
-            <circle
-              cx="64"
-              cy="64"
-              r="45"
-              stroke="currentColor"
-              strokeWidth="8"
-              fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-              className="text-brand-500 dark:text-brand-400"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-              {completionPercentage}%
-            </p>
-            <span className="text-xs text-success-500 dark:text-success-400">+10%</span>
-          </div>
-        </div>
-      </div>
-
-      <p className="mb-6 text-sm text-gray-600 dark:text-gray-400">
-        You earn $3287 today, its higher than last month. Keep up your good work!
-      </p>
-
-      <div className="grid grid-cols-3 gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-        <div>
-          <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Target</p>
-          <p className="text-sm font-semibold text-error-500 dark:text-error-400">
-            $20K ↓
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-          <p className="text-sm font-semibold text-success-500 dark:text-success-400">
-            $16K ↑
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Today</p>
-          <p className="text-sm font-semibold text-success-500 dark:text-success-400">
-            $1.5K ↑
-          </p>
-        </div>
-      </div>
+const RecentSMSTable: React.FC = () => (
+  <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+    <h3 className="mb-5 text-lg font-semibold text-gray-900 dark:text-white">
+      Recent SMS (past 7 days)
+    </h3>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-800/50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              ID
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              CONTACT
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              MESSAGE
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              DATE
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
+          <tr>
+            <td colSpan={4} className="px-6 py-16 text-center">
+              <div className="flex flex-col items-center justify-center">
+                <FileIcon className="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+                <p className="mb-1 font-medium text-gray-900 dark:text-white">
+                  No recent SMS found
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  You have not sent any SMS in the past 7 days.
+                </p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  );
-};
-
-/**
- * Renders the Monthly Sales Bar Chart.
- */
-const MonthlySalesChart: React.FC = () => {
-  const options: ApexOptions = {
-    colors: ["#3670e8", "#e0e0e0"],
-    chart: {
-      fontFamily: "Outfit, sans-serif",
-      type: "bar",
-      height: 250,
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "39%",
-        borderRadius: 4,
-        borderRadiusApplication: "end",
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 4,
-      colors: ["transparent"],
-    },
-    xaxis: {
-      categories: monthlySalesData.map((d) => d.month),
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        style: {
-          colors: "#6B7280",
-        },
-      },
-    },
-    yaxis: {
-      max: 800,
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        style: {
-          colors: "#6B7280",
-        },
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: "#E5E7EB",
-      strokeDashArray: 3,
-    },
-    fill: {
-      opacity: [1, 0.5],
-    },
-    tooltip: {
-      y: {
-        formatter: (val: number) => `$${val}`,
-      },
-    },
-    legend: {
-      show: false,
-    },
-  };
-
-  const series = [
-    {
-      name: "Sales",
-      data: monthlySalesData.map((d) => d.sales),
-    },
-    {
-      name: "Target",
-      data: monthlySalesData.map(() => 600), // Placeholder target values
-    },
-  ];
-
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Monthly Sales
-        </h3>
-        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-          <MoreDotIcon className="h-5 w-5" />
-        </button>
-      </div>
-      <Chart options={options} series={series} type="bar" height={250} />
-    </div>
-  );
-};
+  </div>
+);
 
 /**
  * Renders the bottom Statistics Line Chart.
@@ -387,15 +244,15 @@ const StatisticsChart: React.FC = () => {
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="mb-6">
         <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
-          Statistics
+          SMS Requests Overview
         </h3>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        {/* <span className="text-sm text-gray-500 dark:text-gray-400">
           Target you've set for each month
-        </span>
+        </span> */}
       </div>
 
       <div className="mb-6 flex items-center justify-between">
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
               activeTab === "overview"
@@ -426,7 +283,7 @@ const StatisticsChart: React.FC = () => {
           >
             Revenue
           </button>
-        </div>
+        </div> */}
         <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
           <svg
             className="h-4 w-4"
@@ -457,22 +314,13 @@ export default function Admin() {
       <PageMeta title="Admin | Fast SMS" description="Admin page for Fast SMS" />
       <PageBreadcrumb pageTitle="Admin" />
       <div className="space-y-6">
-        {/* Top Row: Metrics and Target */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="grid grid-cols-2 gap-4 lg:col-span-2">
-            {keyMetrics.map((metric) => (
-              <KeyMetricCard key={metric.title} metric={metric} />
-            ))}
-          </div>
-          <div className="lg:col-span-1">
-            <MonthlyTarget />
-          </div>
-        </div>
+        {/* Dashboard KPI Cards */}
+        <DashboardKpiCards />
 
-        {/* Middle Row: Monthly Sales */}
-        <MonthlySalesChart />
+        {/* Recent SMS Table */}
+        <RecentSMSTable />
 
-        {/* Bottom Row: Statistics */}
+        {/* Statistics Line Chart */}
         <StatisticsChart />
       </div>
     </div>
