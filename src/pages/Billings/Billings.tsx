@@ -178,9 +178,9 @@ export default function Billings() {
 
           {/* --- Title Section --- */}
           <div className="mb-10">
-            <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">
+            {/* <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">
               SMS LOG
-            </h1>
+            </h1> */}
             <h2 className="text-3xl font-bold text-gray-700 dark:text-gray-300">
               TamSMS Shortcode
             </h2>

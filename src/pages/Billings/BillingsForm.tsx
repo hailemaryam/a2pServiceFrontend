@@ -253,9 +253,9 @@ export default function BillingsForm() {
       <PageBreadcrumb pageTitle="SMS Pricing Plans" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mb-8">
-          <h2 className="mb-2 text-2xl font-bold text-gray-800 dark:text-white">
+          {/* <h2 className="mb-2 text-2xl font-bold text-gray-800 dark:text-white">
             SMS Pricing Plans
-          </h2>
+          </h2> */}
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Configure pricing plans with dynamic details
           </p>

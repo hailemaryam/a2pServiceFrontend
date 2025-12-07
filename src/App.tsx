@@ -19,6 +19,7 @@ import SendSMS from "./pages/SMS/SendSMS";
 import SMSLog from "./pages/SMS/SMSLog";
 import ReceivedSMS from "./pages/SMS/ReceivedSMS";
 import Contact from "./pages/Contact/Contact";
+import ContactGroup from "./pages/ContactGroup/ContactGroup";
 import API from "./pages/API/API";
 
 export default function App() {
@@ -46,6 +47,9 @@ export default function App() {
 
             {/* Contact */}
             <Route path="/contact" element={<Contact />} />
+
+            {/* Contact Group */}
+            <Route path="/contact-group" element={<ContactGroup />} />
 
             {/* API */}
             <Route path="/api" element={<API />} />

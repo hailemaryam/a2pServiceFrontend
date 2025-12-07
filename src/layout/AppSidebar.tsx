@@ -9,6 +9,7 @@ import {
   ChevronDownIcon,
   HorizontaLDots,
   PlugInIcon,
+  GroupIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
@@ -52,6 +53,12 @@ const navItems: NavItem[] = [
     icon: <PieChartIcon />,
     name: "Contact",
     path: "/contact",
+  },
+
+  {
+    icon: <GroupIcon />,
+    name: "Contact Group",
+    path: "/contact-group",
   },
 
   {
@@ -152,36 +159,38 @@ const AppSidebar: React.FC = () => {
             </button>
           ) : (
             nav.path && (
-              <Link
-                to={nav.path}
-                className={`menu-item group ${
-                  isActive(nav.path)
-                    ? "menu-item-active"
-                    : "menu-item-inactive"
-                } ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "lg:justify-start"
-                }`}
-              >
-                <span
-                  className={`menu-item-icon-size flex items-center justify-center ${
+              (
+                <Link
+                  to={nav.path}
+                  className={`menu-item group ${
                     isActive(nav.path)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
+                      ? "menu-item-active"
+                      : "menu-item-inactive"
                   } ${
                     !isExpanded && !isHovered
-                      ? "[&_svg]:!size-7"
-                      : "[&_svg]:!size-6"
+                      ? "lg:justify-center"
+                      : "lg:justify-start"
                   }`}
                 >
-                  {nav.icon}
-                </span>
+                  <span
+                    className={`menu-item-icon-size flex items-center justify-center ${
+                      isActive(nav.path)
+                        ? "menu-item-icon-active"
+                        : "menu-item-icon-inactive"
+                    } ${
+                      !isExpanded && !isHovered
+                        ? "[&_svg]:!size-7"
+                        : "[&_svg]:!size-6"
+                    }`}
+                  >
+                    {nav.icon}
+                  </span>
 
-                {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className="menu-item-text">{nav.name}</span>
-                )}
-              </Link>
+                  {(isExpanded || isHovered || isMobileOpen) && (
+                    <span className="menu-item-text">{nav.name}</span>
+                  )}
+                </Link>
+              )
             )
           )}
 
