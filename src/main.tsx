@@ -10,11 +10,13 @@ import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { keycloak, initOptions } from './auth/keycloak';
 
 createRoot(document.getElementById("root")!).render(
-  <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions} onEvent={(event: any) => {
+  <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions} 
+  onEvent={(event: any) => {
     if (event === 'onReady' && !keycloak.authenticated) {
       keycloak.login();
     }
-  }}>
+  }}
+  >
     <StrictMode>
       <ThemeProvider>
           <AppWrapper>

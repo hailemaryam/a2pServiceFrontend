@@ -3,6 +3,7 @@ import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { MailIcon, ChatIcon, PlugInIcon, PieChartIcon, FileIcon } from "../../icons";
+import { useKeycloak } from "@react-keycloak/web";
 
 interface StatisticsData {
   date: string;
@@ -261,8 +262,13 @@ const StatisticsChart: React.FC = () => {
 };
 
 export default function Admin() {
+  const {keycloak, initialized} = useKeycloak();
+  const username = keycloak.tokenParsed?.preferred_username;
+  const roles    = keycloak.tokenParsed?.realm_access?.roles || [];
   return (
     <div>
+      <h1>username: {username}</h1>
+      <h1>roles: {roles.join(", ")}</h1>
       <PageMeta title="Admin | Fast SMS" description="Admin page for Fast SMS" />
       <PageBreadcrumb pageTitle="Admin" />
       <div className="space-y-6">
