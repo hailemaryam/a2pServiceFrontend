@@ -144,12 +144,12 @@ export default function ReceivedSMS() {
         <div className="font-sans max-w-6xl mx-auto">
           {/* --- Header/Navigation --- */}
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+            {/* <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
               Received SMS LOG
-            </h1>
+            </h1> */}
             <div className="text-sm text-brand-500 dark:text-brand-400">
-              <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
-              <span className="font-medium ml-1">Received SMS LOG</span>
+              {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
+              <span className="font-medium ml-1">Received SMS LOG</span> */}
             </div>
           </div>
 

@@ -165,10 +165,10 @@ export default function SMSLog() {
         <div className="font-sans">
           {/* --- Header/Navigation --- */}
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">SMS LOG</h1>
+            {/* <h1 className="text-3xl font-bold text-gray-800 dark:text-white">SMS LOG</h1> */}
             <div className="text-sm text-brand-500 dark:text-brand-400">
-              <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
-              <span className="font-medium ml-1">SMS LOG</span>
+              {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
+              <span className="font-medium ml-1">SMS LOG</span> */}
             </div>
           </div>
 

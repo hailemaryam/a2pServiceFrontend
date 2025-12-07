@@ -113,13 +113,13 @@ export default function Contact() {
         <div className="mx-auto max-w-5xl">
           {/* Top Header Section */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {/* <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Contact Template
-            </h2>
-            <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+            </h2> */}
+            {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
               <DownloadIcon className="h-4 w-4" />
               Download Template
-            </button>
+            </button> */}
           </div>
 
           {/* Main Content Card */}

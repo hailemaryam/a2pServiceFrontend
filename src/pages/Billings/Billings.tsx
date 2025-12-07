@@ -172,8 +172,8 @@ export default function Billings() {
         <div className="font-sans">
           {/* --- Header/Navigation --- */}
           <div className="flex justify-end text-sm text-brand-500 mb-8">
-            <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
-            <span className="font-medium ml-1">SMS LOG</span>
+            {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
+            <span className="font-medium ml-1">SMS LOG</span> */}
           </div>
 
           {/* --- Title Section --- */}

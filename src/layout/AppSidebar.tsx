@@ -8,6 +8,7 @@ import {
   PieChartIcon,
   ChevronDownIcon,
   HorizontaLDots,
+  PlugInIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
@@ -54,7 +55,7 @@ const navItems: NavItem[] = [
   },
 
   {
-    icon: <PieChartIcon />,
+    icon: <PlugInIcon />,
     name: "API",
     path: "/api",
   },
@@ -124,10 +125,14 @@ const AppSidebar: React.FC = () => {
               }`}
             >
               <span
-                className={`menu-item-icon-size ${
+                className={`menu-item-icon-size flex items-center justify-center ${
                   openSubmenu === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
+                } ${
+                  !isExpanded && !isHovered
+                    ? "[&_svg]:!size-7"
+                    : "[&_svg]:!size-6"
                 }`}
               >
                 {nav.icon}
@@ -153,13 +158,21 @@ const AppSidebar: React.FC = () => {
                   isActive(nav.path)
                     ? "menu-item-active"
                     : "menu-item-inactive"
+                } ${
+                  !isExpanded && !isHovered
+                    ? "lg:justify-center"
+                    : "lg:justify-start"
                 }`}
               >
                 <span
-                  className={`menu-item-icon-size ${
+                  className={`menu-item-icon-size flex items-center justify-center ${
                     isActive(nav.path)
                       ? "menu-item-icon-active"
                       : "menu-item-icon-inactive"
+                  } ${
+                    !isExpanded && !isHovered
+                      ? "[&_svg]:!size-7"
+                      : "[&_svg]:!size-6"
                   }`}
                 >
                   {nav.icon}
@@ -211,13 +224,13 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
-            ? "w-[350px]"
+            ? "w-[350px] px-5"
             : isHovered
-            ? "w-[350px]"
-            : "w-[120px]"
+            ? "w-[350px] px-5"
+            : "w-[90px] px-3"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -231,11 +244,19 @@ const AppSidebar: React.FC = () => {
         }`}
       >
         <Link to="/">
-          <img
-            src="/banner.png"
-            alt="Logo"
-            className={isExpanded || isHovered || isMobileOpen ? "w-40 h-auto object-contain" : "w-12 h-12 object-contain"}
-          />
+          {isExpanded || isHovered || isMobileOpen ? (
+            <img
+              src="/banner.png"
+              alt="Logo"
+              className="w-52 h-auto object-contain"
+            />
+          ) : (
+            <img
+              src="/favicon.png"
+              alt="Logo"
+              className="w-14 h-14 object-contain"
+            />
+          )}
         </Link>
       </div>
 
