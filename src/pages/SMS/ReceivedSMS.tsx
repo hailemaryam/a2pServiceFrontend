@@ -287,7 +287,13 @@ export default function ReceivedSMS() {
               </div>
 
               {/* Refresh Button */}
-              <button className="flex items-center justify-center h-11 px-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-lg shadow-theme-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-150 whitespace-nowrap">
+              <button
+                onClick={() => {
+                  // Refresh logic here
+                  console.log("Refreshing received SMS...");
+                }}
+                className="flex items-center justify-center h-11 px-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-lg shadow-theme-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-150 whitespace-nowrap"
+              >
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -299,7 +305,7 @@ export default function ReceivedSMS() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 0012 4.079V1m0 0l3 3m-3-3l-3 3m1.412 11.086c-.57.994-1.398 1.839-2.398 2.502s-2.071 1.09-3.267 1.09-2.385-.36-3.267-1.09c-.999-.663-1.828-1.508-2.398-2.502M12 21.079V23m0 0l-3-3m3 3l3-3"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   ></path>
                 </svg>
                 Refresh

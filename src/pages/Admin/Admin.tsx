@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
@@ -178,6 +179,14 @@ const RecentSMSTable: React.FC = () => (
  * Renders the SMS Requests Overview Line Chart.
  */
 const StatisticsChart: React.FC = () => {
+  const [selected, setSelected] = useState<string>("optionOne");
+
+  const getButtonClass = (option: string) => {
+    return selected === option
+      ? "bg-white text-gray-900 shadow-theme-xs dark:bg-gray-800 dark:text-white"
+      : "text-gray-600 dark:text-gray-400";
+  };
+
   const options: ApexOptions = {
     colors: ["#3670e8", "#9CB9FF"],
     chart: {
@@ -280,24 +289,34 @@ const StatisticsChart: React.FC = () => {
         </h3>
       </div>
 
-      <div className="mb-6 flex items-center justify-end">
-        <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          05 Feb - 06 March
-        </button>
-      </div>
+     <div className="flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900">
+      <button
+        onClick={() => setSelected("optionOne")}
+        className={`px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900   dark:hover:text-white ${getButtonClass(
+          "optionOne"
+        )}`}
+      >
+        Monthly
+      </button>
+
+      <button
+        onClick={() => setSelected("optionTwo")}
+        className={`px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900   dark:hover:text-white ${getButtonClass(
+          "optionTwo"
+        )}`}
+      >
+        Quarterly
+      </button>
+
+      <button
+        onClick={() => setSelected("optionThree")}
+        className={`px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900   dark:hover:text-white ${getButtonClass(
+          "optionThree"
+        )}`}
+      >
+        Annually
+      </button>
+    </div>
 
       <Chart options={options} series={series} type="area" height={300} />
     </div>
