@@ -329,7 +329,7 @@ const StatisticsChart: React.FC = () => {
 };
 
 export default function Admin() {
-  const {keycloak, initialized} = useKeycloak();
+  const {keycloak} = useKeycloak();
   const username = keycloak.tokenParsed?.preferred_username;
   const roles    = keycloak.tokenParsed?.realm_access?.roles || [];
   return (
