@@ -168,7 +168,7 @@ export default function SMSLog() {
   const renderPagination = () => {
     const pagesToShow = [1, 2, 3, 4, 5];
     return (
-      <div className="flex justify-center items-center mt-6 space-x-1">
+      <div className="flex flex-wrap justify-center items-center mt-4 sm:mt-6 gap-1 sm:space-x-1">
         <button
           className="p-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={currentPage === 1}
@@ -188,7 +188,7 @@ export default function SMSLog() {
           <button
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
+            className={`px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-md transition-colors ${
               currentPage === page
                 ? "bg-brand-500 text-white dark:bg-brand-500"
                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -219,13 +219,13 @@ export default function SMSLog() {
     <div>
       <PageMeta title="SMS LOG | Fast SMS" description="SMS sending history and logs" />
       <PageBreadcrumb pageTitle="SMS LOG" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
           {/* --- Filter and Search Bar --- */}
-          <div className="bg-white dark:bg-white/[0.03] p-6 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          <div className="bg-white dark:bg-white/[0.03] p-4 sm:p-6 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800 mb-4 sm:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end">
               {/* Phone Number / Contact Name Search */}
-              <div className="md:col-span-2">
+              <div className="sm:col-span-2 lg:col-span-2">
                 <div className="relative">
                   <input
                     type="text"
@@ -250,7 +250,7 @@ export default function SMSLog() {
               </div>
               
               {/* Tag Name Search */}
-              <div className="md:col-span-1">
+              <div className="sm:col-span-1 lg:col-span-1">
                 <div className="relative">
                   <input
                     type="text"
@@ -275,7 +275,7 @@ export default function SMSLog() {
               </div>
               
               {/* Status Dropdown */}
-              <div className="md:col-span-1">
+              <div className="sm:col-span-1 lg:col-span-1">
                 <select
                   className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
                   defaultValue="All Status"
@@ -289,7 +289,7 @@ export default function SMSLog() {
               </div>
 
               {/* 🗓️ Date Picker Implementation */}
-              <div className="md:col-span-1">
+              <div className="sm:col-span-1 lg:col-span-1">
                 <div className="relative" ref={calendarRef}>
                   <input
                     type="text"
@@ -441,7 +441,7 @@ export default function SMSLog() {
               </div>
 
               {/* 🔄 Refresh Button */}
-              <div className="md:col-span-1">
+              <div className="sm:col-span-2 lg:col-span-1">
                 <button
                   onClick={() => {
                     // Refresh logic here

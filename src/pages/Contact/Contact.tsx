@@ -68,7 +68,7 @@ export default function Contact() {
         description="Manage your contacts"
       />
       <PageBreadcrumb pageTitle="Contact" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-5xl">
           {/* Top Header Section */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
@@ -82,7 +82,7 @@ export default function Contact() {
           </div>
 
           {/* Main Content Card */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
             {/* Content and Download Contacts Button */}
             <div className="mb-6 flex items-start justify-between">
               <div className="flex-1">

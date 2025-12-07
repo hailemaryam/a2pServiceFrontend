@@ -68,7 +68,7 @@ export default function ContactGroup() {
         description="Manage your contact groups"
       />
       <PageBreadcrumb pageTitle="Contact Group" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-5xl">
           {/* Top Header Section */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
@@ -78,7 +78,7 @@ export default function ContactGroup() {
           </div>
 
           {/* Main Content Card */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
             {/* Search Bar for Groups */}
             <div className="relative mb-4">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

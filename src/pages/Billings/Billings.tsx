@@ -122,18 +122,18 @@ export default function Billings() {
         onClick={() => handlePackageClick(pkg)}
       >
         <div className="flex justify-between items-start">
-          <h3 className="text-2xl font-semibold text-gray-700 dark:text-white">
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-700 dark:text-white">
             {pkg.name}
           </h3>
           {pkg.isCurrent && (
-            <span className="bg-brand-500 text-white text-sm font-bold py-1 px-3 rounded-full">
+            <span className="bg-brand-500 text-white text-xs sm:text-sm font-bold py-1 px-2 sm:px-3 rounded-full">
               Current
             </span>
           )}
         </div>
-        <p className="text-gray-500 dark:text-gray-400 mb-4">{pkg.range}</p>
-        <div className="my-4">
-          <p className="text-4xl font-bold text-brand-500 dark:text-brand-400 whitespace-pre-wrap">
+        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">{pkg.range}</p>
+        <div className="my-3 sm:my-4">
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-500 dark:text-brand-400 whitespace-pre-wrap">
             {priceText}
           </p>
         </div>
@@ -177,23 +177,23 @@ export default function Billings() {
     <div>
       <PageMeta title="SMS LOG | Fast SMS" description="SMS pricing and packages" />
       <PageBreadcrumb pageTitle="SMS LOG" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
-          <div className="mb-10">
-            <h2 className="text-3xl font-bold text-gray-700 dark:text-gray-300">
+          <div className="mb-6 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-300">
               TamSMS Shortcode
             </h2>
-            <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mt-2">
               Choose your SMS package
             </p>
           </div>
 
-          <div className="mb-12 p-6 bg-white dark:bg-white/[0.03] rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
-            <label className="text-lg font-medium text-gray-700 dark:text-white block mb-4">
+          <div className="mb-8 sm:mb-12 p-4 sm:p-6 bg-white dark:bg-white/[0.03] rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
+            <label className="text-base sm:text-lg font-medium text-gray-700 dark:text-white block mb-3 sm:mb-4">
               Number of SMS:
             </label>
-            <div className="flex items-center space-x-4">
-              <span className="text-brand-500 dark:text-brand-400 font-semibold whitespace-nowrap">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:space-x-4">
+              <span className="text-brand-500 dark:text-brand-400 font-semibold whitespace-nowrap text-sm sm:text-base">
                 {smsCount.toLocaleString()} SMS
               </span>
               <input
@@ -239,16 +239,16 @@ export default function Billings() {
                 max={maxSms}
                 value={smsCount}
                 onChange={handleSliderChange}
-                className="w-32 p-2 border border-gray-300 dark:border-gray-700 rounded-lg text-right font-mono bg-white dark:bg-gray-900 text-gray-800 dark:text-white"
+                className="w-full sm:w-32 p-2 border border-gray-300 dark:border-gray-700 rounded-lg text-right font-mono bg-white dark:bg-gray-900 text-gray-800 dark:text-white text-sm sm:text-base"
               />
             </div>
-            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <div className="flex justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
               <span>{minSms.toLocaleString()}</span>
               <span>{maxSms.toLocaleString()}</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-10">
             {packages.map((pkg, index) => (
               <PackageCard key={pkg.name} pkg={pkg} index={index} />
             ))}
@@ -273,8 +273,8 @@ export default function Billings() {
       </div>
 
       {isModalOpen && selectedPackage && (
-        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
+        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-3 sm:p-4">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900 max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -282,13 +282,13 @@ export default function Billings() {
               <CloseIcon className="h-6 w-6" />
             </button>
 
-            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
-              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="mb-4 sm:mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
+              <h3 className="pr-6 sm:pr-8 text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                 subscription for "{selectedPackage.name} Billing #no 109"
               </h3>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Billing Name:

@@ -71,10 +71,10 @@ export default function API() {
         description="Manage your API tokens and settings"
       />
       <PageBreadcrumb pageTitle="API" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-6xl">
           {/* 1. API Instructions */}
-          <div className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-800/50">
+          <div className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-800/50">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-gray-800 dark:text-white">
                 For API usage please use:
@@ -99,9 +99,9 @@ export default function API() {
           </div>
 
           {/* 2. Search and Action Section */}
-          <div className="mb-8 flex items-center justify-between gap-4">
+          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
             {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 sm:max-w-md">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg
                   className="h-5 w-5 text-gray-400"
@@ -135,77 +135,79 @@ export default function API() {
           </div>
 
           {/* 3. API Token Table */}
-          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800/50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Token
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Sender ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
-                {tokens.map((token) => (
-                  <tr
-                    key={token.id}
-                    className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
-                  >
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
-                          {token.token}
-                        </span>
+          <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+            <div className="inline-block min-w-full align-middle">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                  <tr>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Token
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Sender ID
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Date
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
+                  {tokens.map((token) => (
+                    <tr
+                      key={token.id}
+                      className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                    >
+                      <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                            {token.token}
+                          </span>
+                          <button
+                            className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            title="View Token"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleCopyToken(token.token)}
+                            className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            title="Copy Token"
+                          >
+                            <CopyIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {token.senderId}
+                      </td>
+                      <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {token.date}
+                      </td>
+                      <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
                         <button
-                          className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                          title="View Token"
+                          onClick={() => handleDeleteToken(token.id)}
+                          className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
+                          title="Delete Token"
                         >
-                          <EyeIcon className="h-4 w-4" />
+                          <TrashBinIcon className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleCopyToken(token.token)}
-                          className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                          title="Copy Token"
-                        >
-                          <CopyIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      {token.senderId}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      {token.date}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <button
-                        onClick={() => handleDeleteToken(token.id)}
-                        className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
-                        title="Delete Token"
-                      >
-                        <TrashBinIcon className="h-4 w-4" />
-                      </button>
-                    </td>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Create API Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
+        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-3 sm:p-4">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900 max-h-[90vh] overflow-y-auto">
             {/* Close Button */}
             <button
               onClick={closeCreateModal}

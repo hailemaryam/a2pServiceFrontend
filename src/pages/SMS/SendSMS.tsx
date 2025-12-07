@@ -72,10 +72,10 @@ export default function SendSMS() {
 
   // The fields displayed for 'Single SMS'
   const SingleSmsForm: React.FC = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
       {/* Left Column - Form Inputs */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
           Single SMS form
         </h3>
         <div className="space-y-6">
@@ -111,7 +111,7 @@ export default function SendSMS() {
       </div>
       {/* Right Column - Search Contacts */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
           Search Contacts
         </h3>
         <label className="block">
@@ -190,10 +190,10 @@ export default function SendSMS() {
     <div>
       <PageMeta title="Send SMS | Fast SMS" description="Send SMS messages" />
       <PageBreadcrumb pageTitle="Send SMS" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
           {/* --- Header/Navigation --- */}
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4 sm:mb-8">
             {/* <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Send SMS</h1> */}
             <div className="text-sm text-brand-500 dark:text-brand-400">
               {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
@@ -202,15 +202,15 @@ export default function SendSMS() {
           </div>
 
           {/* --- Content Card --- */}
-          <div className="bg-white dark:bg-white/[0.03] p-8 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
+          <div className="bg-white dark:bg-white/[0.03] p-4 sm:p-6 lg:p-8 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
             {/* --- Tab Navigation --- */}
-            <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <div className="border-b border-gray-200 dark:border-gray-700 mb-4 sm:mb-8">
+              <nav className="-mb-px flex space-x-2 sm:space-x-4 lg:space-x-8 overflow-x-auto" aria-label="Tabs">
                 {(["Single", "Bulk", "File"] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-lg transition-colors duration-200 ${
+                    className={`whitespace-nowrap py-2 sm:py-3 px-1 border-b-2 font-medium text-sm sm:text-base lg:text-lg transition-colors duration-200 ${
                       activeTab === tab
                         ? "border-error-500 text-error-600 dark:text-error-400"
                         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
@@ -226,10 +226,10 @@ export default function SendSMS() {
             <form onSubmit={handleSubmit}>
               {activeTab === "Single" && <SingleSmsForm />}
               {activeTab === "Bulk" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                   {/* Left Column - Form Inputs */}
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
                       Bulk SMS Form
                     </h3>
                     <div className="space-y-6">
@@ -326,10 +326,10 @@ export default function SendSMS() {
                 </div>
               )}
               {activeTab === "File" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                   {/* Left Column - Form Inputs */}
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-700 dark:text-white mb-4">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
                       Bulk SMS Form / Upload File
                     </h3>
                     <div className="space-y-6">
