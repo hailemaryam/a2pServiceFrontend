@@ -72,9 +72,9 @@ export default function ContactGroup() {
         <div className="mx-auto max-w-5xl">
           {/* Top Header Section */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {/* <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Contact Group
-            </h2>
+            </h2> */}
           </div>
 
           {/* Main Content Card */}

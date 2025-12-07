@@ -11,6 +11,11 @@ interface ReceivedSmsRecord {
   date: string;
 }
 
+interface ReplyData {
+  contact: string;
+  message: string;
+}
+
 // Dummy Data
 const dummyReceivedLogs: ReceivedSmsRecord[] = [
   {
@@ -71,10 +76,123 @@ const dummyReceivedLogs: ReceivedSmsRecord[] = [
   },
 ];
 
+// --- Reply Modal Component ---
+interface ReplyModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  data: ReplyData | null;
+}
+
+const ReplyModal: React.FC<ReplyModalProps> = ({ isOpen, onClose, data }) => {
+  if (!isOpen || !data) return null;
+
+  // Function to remove spaces and the '+' from the contact number for display (as shown in image)
+  const formatContactNumber = (contact: string) => contact.replace(/\s/g, '').replace('+', '');
+
+  return (
+    // Overlay style matching other modals (create group, etc.)
+    <div
+      className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
+      aria-modal="true"
+      role="dialog"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          aria-label="Close"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+
+        {/* Modal Header */}
+        <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
+          <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
+            Reply to Message
+          </h3>
+        </div>
+
+        {/* Modal Body */}
+        <div className="space-y-5">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            Replying to: <span className="font-semibold text-gray-900 dark:text-white">{formatContactNumber(data.contact)}</span>
+          </p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            Original message: <span className="font-semibold text-gray-900 dark:text-white">"{data.message}"</span>
+          </p>
+
+          {/* Select Sender ID */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Sender ID:
+            </label>
+            <select className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+              <option value="">Select Sender ID</option>
+              {/* Dummy Sender IDs */}
+              <option value="ID1">MySenderID_1</option>
+              <option value="ID2">MySenderID_2</option>
+            </select>
+          </div>
+
+          {/* Reply Textarea */}
+          <div>
+            <label htmlFor="reply-message" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Your reply
+            </label>
+            <textarea
+              id="reply-message"
+              rows={4}
+              placeholder="Type your reply here..."
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            ></textarea>
+          </div>
+          
+          {/* Send Reply Button */}
+          <button
+            onClick={() => {
+              // Add logic to send the reply here
+              console.log("Sending reply to:", data.contact);
+              onClose();
+            }}
+            className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+          >
+            Send Reply
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Component ---
 export default function ReceivedSMS() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [replyData, setReplyData] = useState<ReplyData | null>(null);
   const totalPages = 5;
+
+  const handleReplyClick = (contact: string, message: string) => {
+    setReplyData({ contact, message });
+    setIsModalOpen(true);
+  };
 
   const getStatusBadge = () => (
     <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-success-100 text-success-800 rounded-full dark:bg-success-500/10 dark:text-success-400">
@@ -142,17 +260,6 @@ export default function ReceivedSMS() {
       <PageBreadcrumb pageTitle="Received SMS LOG" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans max-w-6xl mx-auto">
-          {/* --- Header/Navigation --- */}
-          <div className="flex justify-between items-center mb-8">
-            {/* <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-              Received SMS LOG
-            </h1> */}
-            <div className="text-sm text-brand-500 dark:text-brand-400">
-              {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
-              <span className="font-medium ml-1">Received SMS LOG</span> */}
-            </div>
-          </div>
-
           {/* --- Filter and Search Bar --- */}
           <div className="bg-white dark:bg-white/[0.03] p-6 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800 mb-8">
             <div className="flex justify-between items-end gap-4">
@@ -235,11 +342,12 @@ export default function ReceivedSMS() {
                   >
                     Date
                   </th>
+                  {/* CHANGED HEADER: Remarks to Reply */}
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
-                    Remarks
+                    Reply
                   </th>
                 </tr>
               </thead>
@@ -262,7 +370,18 @@ export default function ReceivedSMS() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {log.date}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"></td>
+                    {/* ADDED REPLY BUTTON (using dark blue color for consistency with the image) */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => handleReplyClick(log.contact, log.message)}
+                        className="px-3 py-1 text-xs font-semibold rounded-lg text-white transition"
+                        style={{ backgroundColor: "#E57A38" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#d4692a")}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E57A38")}
+                      >
+                        Reply
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -273,6 +392,13 @@ export default function ReceivedSMS() {
           </div>
         </div>
       </div>
+
+      {/* --- Reply Modal --- */}
+      <ReplyModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={replyData}
+      />
     </div>
   );
 }

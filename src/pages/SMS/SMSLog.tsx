@@ -7,7 +7,7 @@ interface SmsRecord {
   id: string;
   message: string;
   contact: string;
-  status: "PENDING" | "SENT" | "FAILED";
+  status: "PENDING" | "SENT" | "FAILED" | "Deliverd";
   tagName: string;
   date: string;
 }
@@ -74,6 +74,8 @@ const dummyLogs: SmsRecord[] = [
 
 export default function SMSLog() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
   const totalPages = 5;
 
   // Function to determine badge style based on status
@@ -95,6 +97,12 @@ export default function SMSLog() {
         return (
           <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-error-100 text-error-800 rounded-full dark:bg-error-500/10 dark:text-error-400">
             FAILED
+          </span>
+        );
+      case "Deliverd":
+        return (
+          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-success-100 text-success-800 rounded-full dark:bg-success-500/10 dark:text-success-400">
+            Delivered
           </span>
         );
       default:
@@ -233,6 +241,7 @@ export default function SMSLog() {
                   <option value="PENDING">Pending</option>
                   <option value="SENT">Sent</option>
                   <option value="FAILED">Failed</option>
+                  <option value="Deliverd">Delivered</option>
                 </select>
               </div>
               {/* Date Picker */}
@@ -241,22 +250,42 @@ export default function SMSLog() {
                   <input
                     type="text"
                     placeholder="mm/dd/yyyy"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
                     className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 pr-10 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   />
-                  <svg
-                    className="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <button
+                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h.01M12 11h.01M16 11h.01M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    ></path>
-                  </svg>
+                    <svg
+                      className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-9 8h.01M12 11h.01M16 11h.01M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                  </button>
+                  {isCalendarOpen && (
+                    <div className="absolute right-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-theme-lg p-4">
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => {
+                          setSelectedDate(e.target.value);
+                          setIsCalendarOpen(false);
+                        }}
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm text-gray-800 dark:text-white focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -312,12 +341,12 @@ export default function SMSLog() {
                   >
                     status
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
-                    Tag Name
-                  </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[120px]"
+                    >
+                      Tag Name
+                    </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
@@ -342,8 +371,10 @@ export default function SMSLog() {
                       {log.contact}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(log.status)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {log.tagName}
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <span className="block truncate max-w-[150px]" title={log.tagName}>
+                        {log.tagName}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {log.date}

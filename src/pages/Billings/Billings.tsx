@@ -92,16 +92,28 @@ export default function Billings() {
     setClickedPackageName(null);
   };
 
+  // Determine which package should have the orange shadow/border based on SMS count
+  const getActivePackageForSmsCount = (count: number): string | null => {
+    if (count <= 10000) {
+      return "ጀማሪ"; // First package
+    } else if (count <= 50000) {
+      return "አነስተኛ"; // Second package
+    } else {
+      return "ትልቅ"; // Third package
+    }
+  };
+
   // Component for rendering a single package card
   const PackageCard: React.FC<{ pkg: Package }> = ({ pkg }) => {
     // Determine the border and button styles
-    // Current package always shows blue border, never orange
-    // Only non-current clicked packages show orange border
-    const isClicked = clickedPackageName === pkg.name && !pkg.isCurrent;
+    // Current package always shows blue border
+    // Active package based on SMS count shows orange shadow (no border)
+    const activePackageName = getActivePackageForSmsCount(smsCount);
+    const isActiveForSmsCount = activePackageName === pkg.name && !pkg.isCurrent;
     const cardClass = pkg.isCurrent
       ? "border-4 border-brand-500 shadow-theme-lg dark:border-brand-500"
-      : isClicked
-      ? "border-4 border-orange-500 shadow-theme-lg dark:border-orange-500"
+      : isActiveForSmsCount
+      ? "border border-gray-200 dark:border-gray-800 shadow-[0_4px_20px_rgba(229,122,56,0.3)]"
       : "border border-gray-200 dark:border-gray-800";
     const buttonClass = pkg.isCurrent
       ? "bg-brand-500 hover:bg-brand-600 text-white"
@@ -205,9 +217,9 @@ export default function Billings() {
                 step={100}
                 value={smsCount}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none  focus:ring-offset-2"
                 style={{
-                  background: `linear-gradient(to right, #465fff 0%, #465fff ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB 100%)`,
+                  background: `linear-gradient(to right, #E57A38 0%, #E57A38 ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB 100%)`,
                 }}
               />
               <input

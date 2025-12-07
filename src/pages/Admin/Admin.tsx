@@ -20,14 +20,38 @@ const statisticsData: StatisticsData[] = [
   { date: "7", value: 870, previousValue: 790 },
 ];
 
+// Define the new time-period options
+const timePeriodOptions = [
+  "Today",
+  "Last 7 Days",
+  "Last 30 Days",
+  "Total",
+];
+
+// Define the new SMS status options
+const smsStatusOptions = [
+  "pending",
+  "expired",
+  "sent",
+  "submitted",
+  "buffered",
+  "rejected",
+  "failed",
+];
+
 const DashboardKpiCards: React.FC = () => (
   <div className="mb-8 flex flex-wrap gap-5">
     {/* Card 1: Total SMS Requests */}
     <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="mb-4 flex items-center justify-between">
         <ChatIcon className="h-9 w-9 text-orange-500" />
+        {/* UPDATED TIME PERIOD DROPDOWN */}
         <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-          <option>Last 30...</option>
+          {timePeriodOptions.map((period) => (
+            <option key={period} value={period}>
+              {period}
+            </option>
+          ))}
         </select>
       </div>
       <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">NaN</h2>
@@ -41,8 +65,13 @@ const DashboardKpiCards: React.FC = () => (
     <div className="min-w-[220px] flex-1 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="mb-4 flex items-center justify-between">
         <PlugInIcon className="h-9 w-9 text-orange-500" />
+        {/* UPDATED TIME PERIOD DROPDOWN */}
         <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-          <option>Last 30...</option>
+          {timePeriodOptions.map((period) => (
+            <option key={period} value={period}>
+              {period}
+            </option>
+          ))}
         </select>
       </div>
       <h2 className="mb-1 text-2xl font-semibold text-gray-900 dark:text-white">0</h2>
@@ -54,8 +83,13 @@ const DashboardKpiCards: React.FC = () => (
       <div className="mb-4 flex items-center justify-between gap-2">
         <MailIcon className="h-9 w-9 text-orange-500" />
         <div className="flex flex-col gap-1">
+          {/* Status Dropdown (from previous request) */}
           <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-            <option>pending</option>
+            {smsStatusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
           <input
             type="text"
@@ -73,11 +107,21 @@ const DashboardKpiCards: React.FC = () => (
       <div className="mb-4 flex items-center justify-between gap-2">
         <PieChartIcon className="h-9 w-9 text-orange-500" />
         <div className="flex flex-col gap-1">
+          {/* UPDATED TIME PERIOD DROPDOWN */}
           <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-            <option>Last 30...</option>
+            {timePeriodOptions.map((period) => (
+              <option key={period} value={period}>
+                {period}
+              </option>
+            ))}
           </select>
+          {/* Status Dropdown (from previous request) */}
           <select className="rounded-lg border border-gray-300 bg-transparent px-2 py-1 text-xs text-gray-700 shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-            <option>pending</option>
+            {smsStatusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
         </div>
       </div>
