@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>silent-check-sso</title>
+  </head>
+  <body>
+    <script>
+      // This page is opened by Keycloak for silent SSO check. It intentionally does nothing.
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage('silent-check-sso', window.location.origin);
+      }
+    </script>
+  </body>
+</html>
