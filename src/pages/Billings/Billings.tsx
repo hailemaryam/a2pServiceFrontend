@@ -61,63 +61,57 @@ const packages: Package[] = [
 ];
 
 export default function Billings() {
-  // State for the slider value, initializing near the minimum
   const [smsCount, setSmsCount] = useState<number>(1000);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billingName, setBillingName] = useState("");
   const [subscription, setSubscription] = useState("");
-  const [clickedPackageName, setClickedPackageName] = useState<string | null>(null);
   const minSms = 1000;
   const maxSms = 100000;
 
-  // Function to handle slider change
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSmsCount(Number(event.target.value));
   };
 
-  // Handle package card click
   const handlePackageClick = (pkg: Package) => {
     setSelectedPackage(pkg);
-    setClickedPackageName(pkg.name);
     setIsModalOpen(true);
   };
 
-  // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPackage(null);
     setBillingName("");
     setSubscription("");
-    setClickedPackageName(null);
   };
 
-  // Determine which package should have the orange shadow/border based on SMS count
   const getActivePackageForSmsCount = (count: number): string | null => {
     if (count <= 10000) {
-      return "ጀማሪ"; // First package
+      return "ጀማሪ";
     } else if (count <= 50000) {
-      return "አነስተኛ"; // Second package
+      return "አነስተኛ";
     } else {
-      return "ትልቅ"; // Third package
+      return "ትልቅ";
     }
   };
 
-  // Component for rendering a single package card
-  const PackageCard: React.FC<{ pkg: Package }> = ({ pkg }) => {
-    // Determine the border and button styles
-    // Current package always shows blue border
-    // Active package based on SMS count shows orange shadow (no border)
+  const PackageCard: React.FC<{ pkg: Package; index: number }> = ({ pkg, index }) => {
     const activePackageName = getActivePackageForSmsCount(smsCount);
-    const isActiveForSmsCount = activePackageName === pkg.name && !pkg.isCurrent;
-    const cardClass = pkg.isCurrent
+    const isActiveForSmsCount = activePackageName === pkg.name;
+
+    // First card never gets the orange border
+    const showOrangeBorder = index !== 0 && isActiveForSmsCount;
+
+    const cardClass = pkg.isCurrent && !showOrangeBorder
       ? "border-4 border-brand-500 shadow-theme-lg dark:border-brand-500"
-      : isActiveForSmsCount
-      ? "border border-gray-200 dark:border-gray-800 shadow-[0_4px_20px_rgba(229,122,56,0.3)]"
+      : showOrangeBorder
+      ? "border-4 border-[#E57A38] shadow-[0_4px_20px_rgba(229,122,56,0.3)] dark:border-[#E57A38]"
       : "border border-gray-200 dark:border-gray-800";
+
     const buttonClass = pkg.isCurrent
       ? "bg-brand-500 hover:bg-brand-600 text-white"
       : "bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300";
+
     const priceText = pkg.perSms
       ? `ETB ${pkg.price.toFixed(2)}\n${pkg.perSms.toFixed(2)} ETB per SMS`
       : `ETB ${pkg.price}`;
@@ -145,23 +139,26 @@ export default function Billings() {
         </div>
         <ul className="space-y-3 mt-4 flex-grow">
           {pkg.features.map((feature, index) => (
-            <li key={index} className="flex items-center text-gray-600 dark:text-gray-300">
-            <svg
-              className="w-5 h-5 text-success-500 mr-2 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+            <li
+              key={index}
+              className="flex items-center text-gray-600 dark:text-gray-300"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 13l4 4L19 7"
-              ></path>
-            </svg>
-            {feature}
-          </li>
+              <svg
+                className="w-5 h-5 text-success-500 mr-2 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              {feature}
+            </li>
           ))}
         </ul>
 
@@ -182,17 +179,7 @@ export default function Billings() {
       <PageBreadcrumb pageTitle="SMS LOG" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
-          {/* --- Header/Navigation --- */}
-          <div className="flex justify-end text-sm text-brand-500 mb-8">
-            {/* <span className="text-gray-500 dark:text-gray-400">Dashboard / </span>
-            <span className="font-medium ml-1">SMS LOG</span> */}
-          </div>
-
-          {/* --- Title Section --- */}
           <div className="mb-10">
-            {/* <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">
-              SMS LOG
-            </h1> */}
             <h2 className="text-3xl font-bold text-gray-700 dark:text-gray-300">
               TamSMS Shortcode
             </h2>
@@ -201,7 +188,6 @@ export default function Billings() {
             </p>
           </div>
 
-          {/* --- SMS Count Slider --- */}
           <div className="mb-12 p-6 bg-white dark:bg-white/[0.03] rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
             <label className="text-lg font-medium text-gray-700 dark:text-white block mb-4">
               Number of SMS:
@@ -217,11 +203,36 @@ export default function Billings() {
                 step={100}
                 value={smsCount}
                 onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none  focus:ring-offset-2"
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-offset-2 slider-thumb-orange"
                 style={{
-                  background: `linear-gradient(to right, #E57A38 0%, #E57A38 ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB ${((smsCount - minSms) / (maxSms - minSms)) * 100}%, #E5E7EB 100%)`,
+                  background: `linear-gradient(to right, #E57A38 0%, #E57A38 ${
+                    ((smsCount - minSms) / (maxSms - minSms)) * 100
+                  }%, #E5E7EB ${
+                    ((smsCount - minSms) / (maxSms - minSms)) * 100
+                  }%, #E5E7EB 100%)`,
                 }}
               />
+              <style>{`
+                .slider-thumb-orange::-webkit-slider-thumb {
+                  appearance: none;
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  background: #E57A38;
+                  cursor: pointer;
+                  border: 2px solid #fff;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+                .slider-thumb-orange::-moz-range-thumb {
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  background: #E57A38;
+                  cursor: pointer;
+                  border: 2px solid #fff;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+              `}</style>
               <input
                 type="number"
                 min={minSms}
@@ -237,14 +248,12 @@ export default function Billings() {
             </div>
           </div>
 
-          {/* --- Pricing Cards --- */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-            {packages.map((pkg) => (
-              <PackageCard key={pkg.name} pkg={pkg} />
+            {packages.map((pkg, index) => (
+              <PackageCard key={pkg.name} pkg={pkg} index={index} />
             ))}
           </div>
 
-          {/* --- Footer Notes --- */}
           <div className="space-y-3 mt-10">
             <blockquote className="p-4 bg-error-50 dark:bg-error-500/10 border-l-4 border-error-500 text-error-700 dark:text-error-400 rounded-md">
               * If you are a new user please call to{" "}
@@ -263,11 +272,9 @@ export default function Billings() {
         </div>
       </div>
 
-      {/* Billing Modal */}
       {isModalOpen && selectedPackage && (
         <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
           <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
-            {/* Close Button */}
             <button
               onClick={closeModal}
               className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -275,16 +282,13 @@ export default function Billings() {
               <CloseIcon className="h-6 w-6" />
             </button>
 
-            {/* Modal Header */}
             <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
               <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
                 subscription for "{selectedPackage.name} Billing #no 109"
               </h3>
             </div>
 
-            {/* Modal Content */}
             <div className="space-y-5">
-              {/* Billing Name */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Billing Name:
@@ -298,7 +302,6 @@ export default function Billings() {
                 />
               </div>
 
-              {/* Subscription */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Subscription:
@@ -314,7 +317,6 @@ export default function Billings() {
                 </select>
               </div>
 
-              {/* Billing Amount */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Billing Amount:
@@ -330,7 +332,6 @@ export default function Billings() {
                 />
               </div>
 
-              {/* Payment Method */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Select Payment Method:
@@ -348,7 +349,6 @@ export default function Billings() {
                 </div>
               </div>
 
-              {/* Cash Payment Option */}
               <div>
                 <h4 className="mb-2 text-base font-semibold text-gray-900 dark:text-white">
                   Or Pay With Cash:
