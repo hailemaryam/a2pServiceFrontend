@@ -8,6 +8,8 @@ import { AppWrapper } from "./components/common/PageMeta.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { keycloak, initOptions } from './auth/keycloak';
+import { Provider } from 'react-redux';
+import store from './store';
 
 createRoot(document.getElementById("root")!).render(
   <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions} 
@@ -18,11 +20,13 @@ createRoot(document.getElementById("root")!).render(
   }}
   >
     <StrictMode>
-      <ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider>
           <AppWrapper>
             <App />
           </AppWrapper>
-      </ThemeProvider>
+        </ThemeProvider>
+      </Provider>
     </StrictMode>
   </ReactKeycloakProvider>
 );

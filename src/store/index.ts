@@ -1,0 +1,19 @@
+import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
+import contactsReducer from './contactsSlice';
+import contactGroupsReducer from './contactGroupsSlice';
+
+export const store = configureStore({
+  reducer: {
+    contacts: contactsReducer,
+    contactGroups: contactGroupsReducer,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+export default store;

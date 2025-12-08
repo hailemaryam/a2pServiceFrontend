@@ -334,12 +334,12 @@ export default function Admin() {
   const roles    = keycloak.tokenParsed?.realm_access?.roles || [];
   return (
     <div>
-      <h1>username: {username}</h1>
+      {/* <h1>username: {username}</h1>
       <h1>roles: {roles.join(", ")}</h1>
       <h1>token parsed: {JSON.stringify(keycloak.tokenParsed)}</h1>
       <br />
       <br />
-      <h1>token: {keycloak.token}</h1>
+      <h1>token: {keycloak.token}</h1> */}
       <PageMeta title="Admin | Fast SMS" description="Admin page for Fast SMS" />
       <PageBreadcrumb pageTitle="Admin" />
       <div className="space-y-6">
