@@ -1,21 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { UserCircleIcon } from "../../icons";
+import { useKeycloak } from "@react-keycloak/web/lib/useKeycloak";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState<string>("user@example.com");
+  const {keycloak} = useKeycloak();
+  const userEmail = keycloak.tokenParsed?.email;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Get user email from localStorage or use default
-    const storedEmail = localStorage.getItem("userEmail");
-    if (storedEmail) {
-      setUserEmail(storedEmail);
-    }
-  }, []);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -27,8 +21,7 @@ export default function UserDropdown() {
 
   const handleSignOut = () => {
     // Clear user data from localStorage
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userToken");
+    keycloak.logout();
     // Close dropdown
     closeDropdown();
     // Navigate to sign in page
