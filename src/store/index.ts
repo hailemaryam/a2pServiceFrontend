@@ -1,7 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
-import contactsReducer from './contactsSlice';
-import contactGroupsReducer from './contactGroupsSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
+import contactsReducer from "./contactsSlice";
+import contactGroupsReducer from "./contactGroupsSlice";
 
 export const store = configureStore({
   reducer: {
