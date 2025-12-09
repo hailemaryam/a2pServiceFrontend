@@ -1,14 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
-import contactsReducer from "../redux/contacts/contactsSlice";
-import authReducer from "../redux/auth/authSlice";
-// import contactGroupsReducer from "./contactGroupsSlice";
+import authReducer from "./auth/authSlice";
+import contactsReducer from "./contacts/contactsSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     contacts: contactsReducer,
-    // contactGroups: contactGroupsReducer,
   },
 });
 
@@ -18,4 +16,3 @@ export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export default store;

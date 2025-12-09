@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local env for development (may contain host/port only; no secrets)
+.env.development

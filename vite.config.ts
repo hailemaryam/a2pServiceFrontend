@@ -15,4 +15,14 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    // Proxy dev requests to local backend to avoid needing CORS on backend
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
