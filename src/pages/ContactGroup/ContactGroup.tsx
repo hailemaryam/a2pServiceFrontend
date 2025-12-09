@@ -33,6 +33,8 @@ export default function ContactGroup() {
 
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
 
   // Check if we should open the group modal from URL
   useEffect(() => {
@@ -46,6 +48,10 @@ export default function ContactGroup() {
   // Form states
   const [groupName, setGroupName] = useState("");
   const [groupColor, setGroupColor] = useState("#000000");
+  
+  // Edit form states
+  const [editGroupName, setEditGroupName] = useState("");
+  const [editGroupColor, setEditGroupColor] = useState("#000000");
 
   // Handlers
   const handleGroupSubmit = (e: FormEvent) => {
@@ -59,6 +65,38 @@ export default function ContactGroup() {
     setGroupName("");
     setGroupColor("#000000");
     setIsGroupModalOpen(false);
+  };
+
+  const handleEditClick = (group: Group) => {
+    setEditingGroup(group);
+    setEditGroupName(group.name);
+    setEditGroupColor("#000000"); // You might want to store color in the Group interface
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!editGroupName.trim()) {
+      alert("Group Name is required.");
+      return;
+    }
+    console.log("Updating group:", { 
+      id: editingGroup?.id, 
+      name: editGroupName, 
+      color: editGroupColor 
+    });
+    // Reset form
+    setEditGroupName("");
+    setEditGroupColor("#000000");
+    setEditingGroup(null);
+    setIsEditModalOpen(false);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingGroup(null);
+    setEditGroupName("");
+    setEditGroupColor("#000000");
   };
 
   return (
@@ -175,6 +213,7 @@ export default function ContactGroup() {
                             <DownloadIcon className="h-4 w-4" />
                           </button>
                           <button
+                            onClick={() => handleEditClick(group)}
                             className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                             title="Edit Group"
                           >
@@ -266,6 +305,89 @@ export default function ContactGroup() {
               >
                 Submit
               </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Group Modal */}
+      {isEditModalOpen && editingGroup && (
+        <div
+          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
+          onClick={closeEditModal}
+        >
+          <div
+            className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeEditModal}
+              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              aria-label="Close"
+            >
+              <CloseIcon className="h-6 w-6" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
+              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
+                Edit Group Information
+              </h3>
+            </div>
+            <form onSubmit={handleEditSubmit} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="editGroupName"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Group Name
+                </label>
+                <input
+                  id="editGroupName"
+                  type="text"
+                  value={editGroupName}
+                  onChange={(e) => setEditGroupName(e.target.value)}
+                  placeholder="Group Name"
+                  required
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="editGroupColor"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Color
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    id="editGroupColor"
+                    type="color"
+                    value={editGroupColor}
+                    onChange={(e) => setEditGroupColor(e.target.value)}
+                    className="h-11 w-20 cursor-pointer rounded-lg border border-gray-300 bg-transparent dark:border-gray-700"
+                  />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {editGroupColor}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center gap-4">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="rounded-lg bg-gray-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
