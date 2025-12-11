@@ -1,0 +1,33 @@
+name: Deploy Keycloak Theme
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "keycloak-theme/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Upload keycloak-theme folder to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "keycloak-theme/fastsms/*"
+          target: "/opt/keycloak/themes/fastsms"
+
+      - name: Restart Keycloak
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl reload keycloak
