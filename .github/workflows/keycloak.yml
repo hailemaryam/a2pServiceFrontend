@@ -22,6 +22,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo rm -rf /opt/keycloak/themes/fastsms/*
+            sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /opt/keycloak/themes/fastsms
 
       - name: Upload keycloak-theme folder to VPS
         uses: appleboy/scp-action@v0.1.4
@@ -31,6 +32,15 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "keycloak-theme/fastsms/*"
           target: "/opt/keycloak/themes/fastsms"
+
+      - name: Set ownership of uploaded theme folder to keycloak user
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo chown -R keycloak:keycloak /opt/keycloak/themes/fastsms
 
       - name: Restart Keycloak
         uses: appleboy/ssh-action@v0.1.4
