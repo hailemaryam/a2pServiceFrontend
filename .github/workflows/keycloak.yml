@@ -14,6 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Remove existing keycloak-theme folder on VPS
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo rm -rf /opt/keycloak/themes/fastsms
+
       - name: Upload keycloak-theme folder to VPS
         uses: appleboy/scp-action@v0.1.4
         with:
