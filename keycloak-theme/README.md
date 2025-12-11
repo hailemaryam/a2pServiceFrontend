@@ -1,5 +1,6 @@
 Creating Themes
 ===============
+""test action """
 
 Themes are used to configure the look and feel of login pages and the account management console.
 
