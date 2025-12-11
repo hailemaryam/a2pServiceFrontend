@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo rm -rf /opt/keycloak/themes/fastsms
+            sudo rm -rf /opt/keycloak/themes/fastsms/*
 
       - name: Upload keycloak-theme folder to VPS
         uses: appleboy/scp-action@v0.1.4
