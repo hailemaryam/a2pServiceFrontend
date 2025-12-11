@@ -1,6 +1,6 @@
 Creating Themes
 ===============
-
+test pipeline
 Themes are used to configure the look and feel of login pages and the account management console.
 
 Custom themes packaged in a JAR file should be deployed to the `${kc.home.dir}/providers` directory. After that, run
