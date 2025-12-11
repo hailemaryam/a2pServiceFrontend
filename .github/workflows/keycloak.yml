@@ -30,4 +30,5 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo systemctl reload keycloak
+            sudo systemctl stop keycloak
+            sudo systemctl start keycloak
