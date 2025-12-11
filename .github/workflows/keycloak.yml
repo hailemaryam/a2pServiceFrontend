@@ -31,7 +31,17 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "keycloak-theme/fastsms/*"
-          target: "/opt/keycloak/themes/fastsms"
+          target: "/home/${{ secrets.VPS_USER }}/fastsms-temp/"
+
+      - name: Move uploaded theme folder to Keycloak themes directory
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo mv /home/${{ secrets.VPS_USER }}/fastsms-temp/keycloak-theme/fastsms/* /opt/keycloak/themes/fastsms/
+            sudo rm -rf /home/${{ secrets.VPS_USER }}/fastsms-temp
 
       - name: Set ownership of uploaded theme folder to keycloak user
         uses: appleboy/ssh-action@v0.1.4
