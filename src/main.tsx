@@ -23,9 +23,9 @@ createRoot(document.getElementById("root")!).render(
       if (event === "onAuthLogout" || event === "onAuthError") {
         store.dispatch(clearAuth());
       }
-      if (event === "onReady" && !keycloak.authenticated) {
-        keycloak.login();
-      }
+      // if (event === "onReady" && !keycloak.authenticated) {
+      //   keycloak.login();
+      // }
     }}
   >
     <StrictMode>

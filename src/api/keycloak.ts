@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 export const keycloak = new Keycloak({
-  url: "https://keycloak.fastsms.dev",
+  url: "https://auth.fastsms.dev",
   realm: "a2p-realm",
   clientId: "a2p-ui-client",
 });
@@ -20,6 +20,7 @@ export const ensureKeycloakToken = async () => {
   await keycloak.updateToken(30);
   return keycloak.token;
 };
+
 
 
 
