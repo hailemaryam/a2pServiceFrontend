@@ -22,7 +22,7 @@ export default function Landing() {
       const isTenantRole = roles.includes("tenant_admin") || roles.includes("tenant_user");
       
       if (isSysAdmin) {
-        navigate("/system-admin", { replace: true });
+        navigate("/admin", { replace: true });
       } else if (isTenantRole) {
         navigate("/", { replace: true });
       }
@@ -84,4 +84,3 @@ export default function Landing() {
     </>
   );
 }
-

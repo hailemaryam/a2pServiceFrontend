@@ -6,7 +6,7 @@ const baseUrl = (import.meta.env as any).VITE_API_BASE_URL || "";
 // Custom base query with Keycloak authentication
 const baseQuery = fetchBaseQuery({
   baseUrl,
-  prepareHeaders: async (headers, { extra, endpoint, type, forced }) => {
+  prepareHeaders: async (headers) => {
     try {
       const token = await ensureKeycloakToken();
       if (token) {

@@ -38,7 +38,7 @@ const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ childr
 /**
  * Root route component that handles "/"
  * - Unauthenticated users -> redirect to /landing
- * - sys_admin -> redirect to /system-admin
+ * - sys_admin -> redirect to /admin
  * - tenant users -> show tenant dashboard (Admin component) with layout
  * Also handles tenant registration for tenant users after Keycloak login
  */
@@ -87,7 +87,7 @@ export default function RootRoute() {
 
   // If sys_admin, redirect to system admin dashboard
   if (isSysAdmin) {
-    return <Navigate to="/system-admin" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   // If tenant user, show tenant dashboard with layout

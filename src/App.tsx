@@ -46,18 +46,20 @@ export default function App() {
           {/* System Admin Routes - Only accessible to sys_admin */}
           {/* TEMP: System Admin Routes (NO AUTH – frontend only) */}
           <Route element={<SystemAdminLayout />}>
-            <Route path="/system-admin" element={<SystemAdminDashboard />} />
-            <Route path="/system-admin/tenants" element={<TenantsPage />} />
-            <Route path="/system-admin/sender-approvals" element={<SenderApprovalsPage />} />
-            <Route path="/system-admin/sms-job-approvals" element={<SmsJobApprovalsPage />} />
-            <Route path="/system-admin/sms-packages" element={<SmsPackagesPage />} />
+            <Route path="/admin" element={<SystemAdminDashboard />} />
+            <Route path="/admin/tenants" element={<TenantsPage />} />
+            <Route path="/admin/senders" element={<SenderApprovalsPage />} />
+            <Route path="/admin/sms-jobs" element={<SmsJobApprovalsPage />} />
+            <Route path="/admin/sms-packages" element={<SmsPackagesPage />} />
           </Route>
-
 
           {/* Tenant Routes - Only accessible to tenant_admin and tenant_user */}
           <Route
             element={
-              <ProtectedRoute allowedRoles={["tenant_admin", "tenant_user"]} redirectTo="/landing">
+              <ProtectedRoute
+                allowedRoles={["tenant_admin", "tenant_user"]}
+                redirectTo="/landing"
+              >
                 <AppLayout />
               </ProtectedRoute>
             }

@@ -25,27 +25,27 @@ const navItems: NavItem[] = [
   {
     name: "Dashboard",
     icon: <GridIcon />,
-    path: "/system-admin",
+    path: "/admin",
   },
   {
     name: "Tenants",
     icon: <GroupIcon />,
-    path: "/system-admin/tenants",
+    path: "/admin/tenants",
   },
   {
     name: "Sender Approvals",
     icon: <CheckCircleIcon />,
-    path: "/system-admin/sender-approvals",
+    path: "/admin/senders",
   },
   {
     name: "SMS Job Approvals",
     icon: <TaskIcon />,
-    path: "/system-admin/sms-job-approvals",
+    path: "/admin/sms-jobs",
   },
   {
     name: "SMS Packages",
     icon: <BoxIcon />,
-    path: "/system-admin/sms-packages",
+    path: "/admin/sms-packages",
   },
 ];
 
@@ -218,7 +218,7 @@ const SystemAdminSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/system-admin">
+        <Link to="/admin">
           {isExpanded || isHovered || isMobileOpen ? (
             <img
               src="/banner.png"

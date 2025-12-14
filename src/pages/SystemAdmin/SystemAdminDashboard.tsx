@@ -145,7 +145,7 @@ export default function SystemAdminDashboard() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
             {/* Tenants Management */}
             <Link
-              to="/system-admin/tenants"
+              to="/admin/tenants"
               className="rounded-lg border border-gray-200 bg-gray-50 p-6 transition hover:border-brand-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800"
             >
               <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -158,7 +158,7 @@ export default function SystemAdminDashboard() {
 
             {/* Sender Approvals */}
             <Link
-              to="/system-admin/sender-approvals"
+              to="/admin/senders"
               className="rounded-lg border border-gray-200 bg-gray-50 p-6 transition hover:border-brand-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800"
             >
               <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -171,7 +171,7 @@ export default function SystemAdminDashboard() {
 
             {/* SMS Job Approvals */}
             <Link
-              to="/system-admin/sms-job-approvals"
+              to="/admin/sms-jobs"
               className="rounded-lg border border-gray-200 bg-gray-50 p-6 transition hover:border-brand-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800"
             >
               <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -184,7 +184,7 @@ export default function SystemAdminDashboard() {
 
             {/* SMS Packages */}
             <Link
-              to="/system-admin/sms-packages"
+              to="/admin/sms-packages"
               className="rounded-lg border border-gray-200 bg-gray-50 p-6 transition hover:border-brand-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800"
             >
               <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">

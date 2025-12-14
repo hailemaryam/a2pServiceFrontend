@@ -45,7 +45,7 @@ export default function ProtectedRoute({
       const isTenantRole = roles.includes("tenant_admin") || roles.includes("tenant_user");
       
       if (isSysAdmin) {
-        return <Navigate to="/system-admin" replace />;
+        return <Navigate to="/admin" replace />;
       } else if (isTenantRole) {
         return <Navigate to="/" replace />;
       } else {

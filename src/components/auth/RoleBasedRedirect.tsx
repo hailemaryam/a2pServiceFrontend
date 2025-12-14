@@ -9,7 +9,7 @@ import { registerTenant } from "../../api/tenantApi";
  * Also handles tenant registration for tenant users
  */
 export default function RoleBasedRedirect() {
-  const { isAuthenticated, roles, isSysAdmin, isTenantRole } = useAuth();
+  const { isAuthenticated, isSysAdmin, isTenantRole } = useAuth();
   const { keycloak } = useKeycloak();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function RoleBasedRedirect() {
   // Show loading state while checking registration
   // The registration happens in useEffect, so we can proceed with navigation
   if (isSysAdmin) {
-    return <Navigate to="/system-admin" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   if (isTenantRole) {
