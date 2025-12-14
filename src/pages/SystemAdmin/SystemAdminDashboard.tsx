@@ -26,9 +26,7 @@ export default function SystemAdminDashboard() {
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
           <div className="mb-6">
-            <h1 className="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
-              System Administration Dashboard
-            </h1>
+           
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Welcome, {username || "System Admin"}
             </p>

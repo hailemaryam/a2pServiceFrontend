@@ -14,8 +14,8 @@ export const fetchContacts = createAsyncThunk<
   const result = await store.dispatch(
     contactsApi.endpoints.fetchContacts.initiate({ page, size })
   );
-  if ("data" in result && result.data != null) {
-    return result.data as PaginatedContacts;
+  if ("data" in result) {
+    return result.data;
   }
   throw new Error("Failed to fetch contacts");
 });
@@ -26,8 +26,8 @@ export const getContactById = createAsyncThunk<ContactResponse, string>(
     const result = await store.dispatch(
       contactsApi.endpoints.getContactById.initiate(id)
     );
-    if ("data" in result && result.data != null) {
-      return result.data as ContactResponse;
+    if ("data" in result) {
+      return result.data;
     }
     throw new Error("Failed to get contact");
   }
@@ -39,7 +39,7 @@ export const createContact = createAsyncThunk<ContactResponse, ContactPayload>(
     const result = await store.dispatch(
       contactsApi.endpoints.createContact.initiate(payload)
     );
-    if ("data" in result && result.data != null) {
+    if ("data" in result) {
       return result.data;
     }
     throw new Error("Failed to create contact");
@@ -49,18 +49,15 @@ export const createContact = createAsyncThunk<ContactResponse, ContactPayload>(
 export const updateContact = createAsyncThunk<
   ContactResponse,
   { id: string; data: ContactPayload }
->(
-  "contacts/updateContact",
-  async ({ id, data }) => {
+>("contacts/updateContact", async ({ id, data }) => {
     const result = await store.dispatch(
       contactsApi.endpoints.updateContact.initiate({ id, payload: data })
     );
-    if ("data" in result && result.data != null) {
-      return result.data;
-    }
-    throw new Error("Failed to update contact");
+  if ("data" in result) {
+    return result.data;
   }
-);
+  throw new Error("Failed to update contact");
+});
 
 export const searchContactByPhone = createAsyncThunk<ContactResponse | null, string>(
   "contacts/searchContactByPhone",
@@ -68,8 +65,8 @@ export const searchContactByPhone = createAsyncThunk<ContactResponse | null, str
     const result = await store.dispatch(
       contactsApi.endpoints.searchContactByPhone.initiate(phone)
     );
-    if ("data" in result && result.data != null) {
-      return result.data as ContactResponse;
+    if ("data" in result) {
+      return result.data;
     }
     return null;
   }
@@ -81,7 +78,7 @@ export const uploadContactsBinary = createAsyncThunk<any, { file: File; groupId?
     const result = await store.dispatch(
       contactsApi.endpoints.uploadContactsBinary.initiate({ file, groupId })
     );
-    if ("data" in result && result.data != null) {
+    if ("data" in result) {
       return result.data;
     }
     throw new Error("Failed to upload contacts");
@@ -91,18 +88,15 @@ export const uploadContactsBinary = createAsyncThunk<any, { file: File; groupId?
 export const uploadContactsMultipart = createAsyncThunk<
   any,
   { file: File; groupId?: string }
->(
-  "contacts/uploadContactsMultipart",
-  async ({ file, groupId }) => {
+>("contacts/uploadContactsMultipart", async ({ file, groupId }) => {
     const result = await store.dispatch(
       contactsApi.endpoints.uploadContactsMultipart.initiate({ file, groupId })
     );
-    if ("data" in result && result.data != null) {
-      return result.data;
-    }
-    throw new Error("Failed to upload contacts");
+  if ("data" in result) {
+    return result.data;
   }
-);
+  throw new Error("Failed to upload contacts");
+});
 
 
 

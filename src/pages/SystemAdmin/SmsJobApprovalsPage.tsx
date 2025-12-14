@@ -82,9 +82,7 @@ export default function SmsJobApprovalsPage() {
         <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h1 className="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
-                SMS Job Approvals
-              </h1>
+          
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Review and approve SMS job requests before they are sent
               </p>
@@ -103,7 +101,7 @@ export default function SmsJobApprovalsPage() {
                   </TableCell>
                   <TableCell
                     isHeader
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                    className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
                   >
                     Message Preview
                   </TableCell>
@@ -127,7 +125,7 @@ export default function SmsJobApprovalsPage() {
                   </TableCell>
                   <TableCell
                     isHeader
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                    className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
                   >
                     Requested At
                   </TableCell>
@@ -148,7 +146,7 @@ export default function SmsJobApprovalsPage() {
                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                       {job.tenantName}
                     </TableCell>
-                    <TableCell className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
+                    <TableCell className="hidden md:table-cell px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
                       <div className="truncate" title={job.message}>
                         {job.message}
                       </div>
@@ -162,7 +160,7 @@ export default function SmsJobApprovalsPage() {
                     <TableCell className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(job.status)}
                     </TableCell>
-                    <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                    <TableCell className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                       {job.requestedAt}
                     </TableCell>
                     <TableCell className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
