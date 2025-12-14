@@ -22,10 +22,10 @@ createRoot(document.getElementById("root")!).render(
       }
       if (event === "onAuthLogout" || event === "onAuthError") {
         store.dispatch(clearAuth());
+        // Clear tenant registration flag on logout
+        sessionStorage.clear();
       }
-      // if (event === "onReady" && !keycloak.authenticated) {
-      //   keycloak.login();
-      // }
+      // Removed auto-login redirect - let the app handle routing based on auth state
     }}
   >
     <StrictMode>

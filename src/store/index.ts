@@ -1,15 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
-import contactsReducer from "../redux/contacts/contactsSlice";
 import authReducer from "../redux/auth/authSlice";
+import { baseApi } from "../api/baseApi";
 // import contactGroupsReducer from "./contactGroupsSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    contacts: contactsReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
     // contactGroups: contactGroupsReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

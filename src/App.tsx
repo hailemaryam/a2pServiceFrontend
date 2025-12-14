@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
+import Landing from "./pages/Landing/Landing";
+import RootRoute from "./components/auth/RootRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
@@ -10,9 +13,15 @@ import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
+import SystemAdminLayout from "./layout/SystemAdminLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 // Home component not used directly in routes; import removed to avoid unused declaration
 import Admin from "./pages/Admin/Admin";
+import SystemAdminDashboard from "./pages/SystemAdmin/SystemAdminDashboard";
+import TenantsPage from "./pages/SystemAdmin/TenantsPage";
+import SenderApprovalsPage from "./pages/SystemAdmin/SenderApprovalsPage";
+import SmsJobApprovalsPage from "./pages/SystemAdmin/SmsJobApprovalsPage";
+import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
 import SendSMS from "./pages/SMS/SendSMS";
@@ -28,9 +37,31 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Admin />} />
+          {/* Landing page for unauthenticated users */}
+          <Route path="/landing" element={<Landing />} />
+
+          {/* Root path - handles role-based routing */}
+          <Route index path="/" element={<RootRoute />} />
+
+          {/* System Admin Routes - Only accessible to sys_admin */}
+          {/* TEMP: System Admin Routes (NO AUTH – frontend only) */}
+          <Route element={<SystemAdminLayout />}>
+            <Route path="/system-admin" element={<SystemAdminDashboard />} />
+            <Route path="/system-admin/tenants" element={<TenantsPage />} />
+            <Route path="/system-admin/sender-approvals" element={<SenderApprovalsPage />} />
+            <Route path="/system-admin/sms-job-approvals" element={<SmsJobApprovalsPage />} />
+            <Route path="/system-admin/sms-packages" element={<SmsPackagesPage />} />
+          </Route>
+
+
+          {/* Tenant Routes - Only accessible to tenant_admin and tenant_user */}
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["tenant_admin", "tenant_user"]} redirectTo="/landing">
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="/blank" element={<Blank />} />
 
             {/* Admin */}
@@ -65,7 +96,7 @@ export default function App() {
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
 
-          {/* Auth Layout */}
+          {/* Auth Layout - Keep for backward compatibility */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 

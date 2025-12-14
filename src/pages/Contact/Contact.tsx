@@ -1,32 +1,44 @@
-import React, { FormEvent, useEffect, useMemo, useState } from "react";
+import React, { FormEvent, useMemo, useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { DownloadIcon, PlusIcon, CloseIcon } from "../../icons";
 import {
-  createContact,
-  fetchContacts,
-  updateContact,
-  uploadContactsBinary,
-  uploadContactsMultipart,
-} from "../../redux/contacts/contactsThunks";
-import {
-  selectContacts,
-  selectContactsError,
-  selectContactsLoading,
-  selectContactsState,
-} from "../../redux/contacts/contactsSelectors";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { ContactResponse } from "../../api/contactsApi";
+  useFetchContactsQuery,
+  useCreateContactMutation,
+  useUpdateContactMutation,
+  useUploadContactsBinaryMutation,
+  useUploadContactsMultipartMutation,
+  ContactResponse,
+} from "../../api/contactsApi";
 
 type UploadMode = "binary" | "multipart";
 
 export default function Contact() {
-  const dispatch = useAppDispatch();
+  const [page, setPage] = useState(0);
+  const [size] = useState(20);
 
-  const contacts = useAppSelector(selectContacts);
-  const { total, page, size } = useAppSelector(selectContactsState);
-  const loading = useAppSelector(selectContactsLoading);
-  const error = useAppSelector(selectContactsError);
+  // RTK Query hooks
+  const {
+    data: contactsData,
+    isLoading: loading,
+    error: queryError,
+    refetch,
+  } = useFetchContactsQuery({ page, size });
+
+  const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
+  const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
+  const [uploadContactsBinary, { isLoading: isUploadingBinary }] =
+    useUploadContactsBinaryMutation();
+  const [uploadContactsMultipart, { isLoading: isUploadingMultipart }] =
+    useUploadContactsMultipartMutation();
+
+  const contacts = contactsData?.items ?? [];
+  const total = contactsData?.total ?? 0;
+  const error = queryError
+    ? "data" in queryError
+      ? (queryError.data as any)?.message || "Failed to fetch contacts"
+      : "Failed to fetch contacts"
+    : null;
 
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -46,10 +58,6 @@ export default function Contact() {
     if (!size) return 1;
     return Math.max(1, Math.ceil(total / size));
   }, [size, total]);
-
-  useEffect(() => {
-    dispatch(fetchContacts({ page, size }));
-  }, [dispatch, page, size]);
 
   const resetContactForm = () => {
     setContactName("");
@@ -74,14 +82,16 @@ export default function Contact() {
 
     try {
       if (editingId) {
-        await dispatch(updateContact({ id: editingId, data: payload })).unwrap();
+        await updateContact({ id: editingId, payload }).unwrap();
       } else {
-        await dispatch(createContact(payload)).unwrap();
+        await createContact(payload).unwrap();
       }
       resetContactForm();
       setIsContactModalOpen(false);
     } catch (err: any) {
-      setLocalError(err?.message || "Unable to save contact");
+      setLocalError(
+        err?.data?.message || err?.message || "Unable to save contact"
+      );
     }
   };
 
@@ -95,20 +105,22 @@ export default function Contact() {
 
     try {
       if (uploadMode === "binary") {
-        await dispatch(
-          uploadContactsBinary({ file: uploadedFile, groupId: selectedGroup || undefined })
-        ).unwrap();
+        await uploadContactsBinary({
+          file: uploadedFile,
+          groupId: selectedGroup || undefined,
+        }).unwrap();
       } else {
-        await dispatch(
-          uploadContactsMultipart({ file: uploadedFile, groupId: selectedGroup || undefined })
-        ).unwrap();
+        await uploadContactsMultipart({
+          file: uploadedFile,
+          groupId: selectedGroup || undefined,
+        }).unwrap();
       }
       setUploadedFile(null);
       setSelectedGroup("");
       setIsUploadModalOpen(false);
-      dispatch(fetchContacts({ page, size }));
+      refetch();
     } catch (err: any) {
-      setLocalError(err?.message || "Upload failed");
+      setLocalError(err?.data?.message || err?.message || "Upload failed");
     }
   };
 
@@ -118,7 +130,7 @@ export default function Contact() {
   };
 
   const handleRefresh = () => {
-    dispatch(fetchContacts({ page, size }));
+    refetch();
   };
 
   const handleOpenCreateModal = () => {
@@ -136,12 +148,12 @@ export default function Contact() {
 
   const handlePageChange = (nextPage: number) => {
     if (nextPage < 0 || nextPage > totalPages - 1) return;
-    dispatch(fetchContacts({ page: nextPage, size }));
+    setPage(nextPage);
   };
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(fetchContacts({ page: 0, size }));
+    setPage(0);
     // API search-by-phone exists, but paginated fetch keeps UI consistent; keep search as client-side filter for now.
   };
 
@@ -164,7 +176,7 @@ export default function Contact() {
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
             <button
               className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-              onClick={() => dispatch(fetchContacts({ page, size }))}
+              onClick={() => refetch()}
             >
               <DownloadIcon className="h-4 w-4" />
               Download Template
@@ -437,9 +449,14 @@ export default function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+                disabled={isCreating || isUpdating}
+                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
               >
-                {editingId ? "Update" : "Submit"}
+                {isCreating || isUpdating
+                  ? "Saving..."
+                  : editingId
+                  ? "Update"
+                  : "Submit"}
               </button>
             </form>
           </div>
@@ -539,9 +556,12 @@ export default function Contact() {
               <div className="flex justify-center gap-4">
                 <button
                   type="submit"
-                  className="rounded-lg bg-[#36304a] px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-[#2a2538]"
+                  disabled={isUploadingBinary || isUploadingMultipart}
+                  className="rounded-lg bg-[#36304a] px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-[#2a2538] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Save
+                  {isUploadingBinary || isUploadingMultipart
+                    ? "Uploading..."
+                    : "Save"}
                 </button>
                 <button
                   type="button"

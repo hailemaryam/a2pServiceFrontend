@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import { baseApi } from "./baseApi";
 
 export type ContactPayload = {
   id?: string | null;
@@ -34,93 +34,141 @@ const sanitizeContactPayload = (payload: ContactPayload): ContactPayload => {
   return base;
 };
 
-export const contactsApi = {
-  fetchContacts: async ({
-    page = 0,
-    size = 20,
-  }: {
-    page?: number;
-    size?: number;
-  }): Promise<PaginatedContacts> => {
-    const { data } = await axiosInstance.get("/api/contacts", {
-      params: { page, size },
-    });
-    return {
-      items: data?.items ?? data?.content ?? [],
-      total: data?.total ?? data?.totalElements ?? 0,
-      page: data?.page ?? data?.pageNumber ?? page,
-      size: data?.size ?? data?.pageSize ?? size,
-    };
-  },
+// Contacts API using RTK Query
+export const contactsApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    // Fetch paginated contacts
+    fetchContacts: builder.query<
+      PaginatedContacts,
+      { page?: number; size?: number }
+    >({
+      query: ({ page = 0, size = 20 }) => ({
+        url: "/api/contacts",
+        params: { page, size },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        return {
+          items: response?.items ?? response?.content ?? [],
+          total: response?.total ?? response?.totalElements ?? 0,
+          page: response?.page ?? response?.pageNumber ?? arg.page ?? 0,
+          size: response?.size ?? response?.pageSize ?? arg.size ?? 20,
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: "Contact" as const, id })),
+              { type: "Contact", id: "LIST" },
+            ]
+          : [{ type: "Contact", id: "LIST" }],
+    }),
 
-  getContactById: async (id: string): Promise<ContactResponse> => {
-    const { data } = await axiosInstance.get(`/api/contacts/${id}`);
-    return data;
-  },
+    // Get contact by ID
+    getContactById: builder.query<ContactResponse, string>({
+      query: (id) => `/api/contacts/${id}`,
+      providesTags: (_result, _error, id) => [{ type: "Contact", id }],
+    }),
 
-  createContact: async (payload: ContactPayload): Promise<ContactResponse> => {
-    const body = sanitizeContactPayload(payload);
-    const { data } = await axiosInstance.post("/api/contacts", body, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return data;
-  },
+    // Create contact
+    createContact: builder.mutation<ContactResponse, ContactPayload>({
+      query: (payload) => {
+        const body = sanitizeContactPayload(payload);
+        return {
+          url: "/api/contacts",
+          method: "POST",
+          body,
+          headers: { "Content-Type": "application/json" },
+        };
+      },
+      invalidatesTags: [{ type: "Contact", id: "LIST" }],
+    }),
 
-  updateContact: async ({
-    id,
-    payload,
-  }: {
-    id: string;
-    payload: ContactPayload;
-  }): Promise<ContactResponse> => {
-    const body = sanitizeContactPayload(payload);
-    const { data } = await axiosInstance.put(`/api/contacts/${id}`, body, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return data;
-  },
+    // Update contact
+    updateContact: builder.mutation<
+      ContactResponse,
+      { id: string; payload: ContactPayload }
+    >({
+      query: ({ id, payload }) => {
+        const body = sanitizeContactPayload(payload);
+        return {
+          url: `/api/contacts/${id}`,
+          method: "PUT",
+          body,
+          headers: { "Content-Type": "application/json" },
+        };
+      },
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Contact", id },
+        { type: "Contact", id: "LIST" },
+      ],
+    }),
 
-  searchContactByPhone: async (phone: string): Promise<ContactResponse | null> => {
-    const { data } = await axiosInstance.get("/api/contacts/search/by-phone", {
-      params: { phone },
-    });
-    return data ?? null;
-  },
+    // Search contact by phone
+    searchContactByPhone: builder.query<ContactResponse | null, string>({
+      query: (phone) => ({
+        url: "/api/contacts/search/by-phone",
+        params: { phone },
+      }),
+      transformResponse: (response: any) => response ?? null,
+    }),
 
-  uploadContactsBinary: async (
-    file: File,
-    groupId?: string
-  ): Promise<any> => {
-    const buffer = await file.arrayBuffer();
-    const { data } = await axiosInstance.post("/api/contacts/upload", buffer, {
-      headers: { "Content-Type": "application/octet-stream" },
-      params: groupId ? { groupId } : undefined,
-    });
-    return data;
-  },
+    // Upload contacts (binary)
+    uploadContactsBinary: builder.mutation<
+      any,
+      { file: File; groupId?: string }
+    >({
+      queryFn: async ({ file, groupId }, _queryApi, _extraOptions, baseQuery) => {
+        try {
+          const buffer = await file.arrayBuffer();
+          const result = await baseQuery({
+            url: "/api/contacts/upload",
+            method: "POST",
+            body: buffer,
+            headers: { "Content-Type": "application/octet-stream" },
+            params: groupId ? { groupId } : undefined,
+          });
+          return result;
+        } catch (error) {
+          return { error: { status: "CUSTOM_ERROR", error: String(error) } };
+        }
+      },
+      invalidatesTags: [{ type: "Contact", id: "LIST" }],
+    }),
 
-  uploadContactsMultipart: async (
-    file: File,
-    groupId?: string
-  ): Promise<any> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    if (groupId) {
-      formData.append("groupId", groupId);
-    }
-    const { data } = await axiosInstance.post(
-      "/api/contacts/upload-file",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-    return data;
-  },
-};
+    // Upload contacts (multipart)
+    uploadContactsMultipart: builder.mutation<
+      any,
+      { file: File; groupId?: string }
+    >({
+      query: ({ file, groupId }) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        if (groupId) {
+          formData.append("groupId", groupId);
+        }
+        return {
+          url: "/api/contacts/upload-file",
+          method: "POST",
+          body: formData,
+          // Don't set Content-Type header for FormData, browser will set it with boundary
+        };
+      },
+      invalidatesTags: [{ type: "Contact", id: "LIST" }],
+    }),
+  }),
+});
+
+// Export hooks for usage in functional components
+export const {
+  useFetchContactsQuery,
+  useGetContactByIdQuery,
+  useCreateContactMutation,
+  useUpdateContactMutation,
+  useSearchContactByPhoneQuery,
+  useUploadContactsBinaryMutation,
+  useUploadContactsMultipartMutation,
+  useLazyFetchContactsQuery,
+  useLazySearchContactByPhoneQuery,
+} = contactsApi;
 
 export { sanitizeContactPayload };
-
-
-
-
