@@ -36,3 +36,4 @@ const SystemAdminLayout: React.FC = () => {
 };
 
 export default SystemAdminLayout;
+

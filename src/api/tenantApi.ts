@@ -42,3 +42,4 @@ export const registerTenant = async (): Promise<{ success: boolean; data?: any; 
   }
 };
 
+
