@@ -33,7 +33,7 @@ export default function Landing() {
    */
   const handleLogin = () => {
     keycloak.login({
-      redirectUri: `${window.location.origin}/landing`,
+      redirectUri: `${window.location.origin}#/landing`,
     });
   };
 
@@ -42,7 +42,7 @@ export default function Landing() {
    */
   const handleRegister = () => {
     keycloak.register({
-      redirectUri: `${window.location.origin}/landing`,
+      redirectUri: `${window.location.origin}#/landing`,
     });
   };
 
