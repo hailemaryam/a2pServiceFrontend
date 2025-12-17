@@ -1,48 +1,84 @@
 import { baseApi } from "./baseApi";
 
-// Types for Admin operations (SysAdmin approval flows)
+// Types for Admin operations
+
+// --- Tenants ---
 export type TenantResponse = {
   id: string;
-  name?: string;
-  email?: string;
-  status: string;
-  createdAt: string;
-  [key: string]: any;
-};
-
-export type SenderApprovalPayload = {
-  senderId: string;
-  status: "APPROVED" | "REJECTED";
-  rejectionReason?: string;
-};
-
-export type SmsJobApprovalPayload = {
-  jobId: string;
-  status: "APPROVED" | "REJECTED";
-  rejectionReason?: string;
-};
-
-export type SmsPackageResponse = {
-  id: string;
   name: string;
-  price: number;
-  smsCount: number;
+  email?: string;
+  phone?: string;
+  status: "ACTIVE" | "INACTIVE";
+  smsCredit: number; // int64
+  smsApprovalThreshold: number; // int32
+  createdAt: string; // Instant
+  updatedAt?: string; // Instant
+};
+
+export type UpdateTenantStatusPayload = {
+  status: "ACTIVE" | "INACTIVE";
+};
+
+export type UpdateTenantThresholdPayload = {
+  approvalThreshold: number;
+};
+
+// --- Senders ---
+export type SenderResponse = {
+  id: string;
+  name: string; // "senderId" in old code, "name" in spec
+  tenantId: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING_VERIFICATION" | "REJECTED";
+  createdAt: string;
+  updatedAt?: string;
+  message?: string; // from spec ?? maybe rejection reason? spec says "message"
+};
+
+export type RejectSenderPayload = {
+  reason: string;
+};
+
+// --- SMS Jobs ---
+export type SmsJobResponse = {
+  id: string;
+  jobType: "SINGLE" | "GROUP" | "BULK";
+  status: "PENDING_APPROVAL" | "SCHEDULED" | "SENDING" | "COMPLETED" | "FAILED";
+  approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
+  totalRecipients: number;
+  totalSmsCount: number;
+  scheduledAt?: string;
+  createdAt: string;
+  message: string;
+  tenantName?: string; // Note: Spec doesn't explicitly list tenantName in SmsJobResponse, but UI might need it. 
+                       // If backend doesn't send it, we won't show it.
+};
+
+export type RejectSmsJobPayload = {
+  reason: string;
+};
+
+// --- SMS Packages (Tiers) ---
+export type SmsPackageTier = {
+  id: string;
+  minSmsCount: number;
+  maxSmsCount?: number;
+  pricePerSms: number;
   description?: string;
   isActive: boolean;
-  [key: string]: any;
 };
 
 export type CreateSmsPackagePayload = {
-  name: string;
-  price: number;
-  smsCount: number;
+  minSmsCount: number;
+  maxSmsCount?: number;
+  pricePerSms: number;
   description?: string;
+  isActive: boolean;
 };
 
 // Admin API using RTK Query (for sys_admin only)
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Tenants Management
+    // --- Tenants Management ---
     getTenants: builder.query<
       { items: TenantResponse[]; total: number; page: number; size: number },
       { page?: number; size?: number }
@@ -73,120 +109,138 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Tenant", id }],
     }),
 
-    // Sender Approvals
-    getPendingSenders: builder.query<any[], void>({
-      query: () => "/api/admin/senders/pending",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? [];
-      },
-      providesTags: [{ type: "Sender", id: "PENDING" }],
-    }),
-
-    approveSender: builder.mutation<any, SenderApprovalPayload>({
-      query: ({ senderId, status, rejectionReason }) => ({
-        url: `/api/admin/senders/${senderId}/approve`,
-        method: "POST",
-        body: { status, rejectionReason },
-      }),
-      invalidatesTags: [
-        { type: "Sender", id: "PENDING" },
-        { type: "Sender", id: "LIST" },
-      ],
-    }),
-
-    // SMS Job Approvals
-    getPendingSmsJobs: builder.query<any[], void>({
-      query: () => "/api/admin/sms-jobs/pending",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? [];
-      },
-      providesTags: [{ type: "SmsJob", id: "PENDING" }],
-    }),
-
-    approveSmsJob: builder.mutation<any, SmsJobApprovalPayload>({
-      query: ({ jobId, status, rejectionReason }) => ({
-        url: `/api/admin/sms-jobs/${jobId}/approve`,
-        method: "POST",
-        body: { status, rejectionReason },
-      }),
-      invalidatesTags: [
-        { type: "SmsJob", id: "PENDING" },
-        { type: "Sms", id: "LIST" },
-      ],
-    }),
-
-    // SMS Packages Management
-    getSmsPackages: builder.query<SmsPackageResponse[], void>({
-      query: () => "/api/admin/sms-packages",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? [];
-      },
-      providesTags: [{ type: "SmsPackage", id: "LIST" }],
-    }),
-
-    getSmsPackageById: builder.query<SmsPackageResponse, string>({
-      query: (id) => `/api/admin/sms-packages/${id}`,
-      providesTags: (_result, _error, id) => [{ type: "SmsPackage", id }],
-    }),
-
-    createSmsPackage: builder.mutation<SmsPackageResponse, CreateSmsPackagePayload>({
-      query: (payload) => ({
-        url: "/api/admin/sms-packages",
-        method: "POST",
-        body: payload,
-      }),
-      invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
-    }),
-
-    updateSmsPackage: builder.mutation<SmsPackageResponse, { id: string; payload: Partial<CreateSmsPackagePayload> }>({
-      query: ({ id, payload }) => ({
-        url: `/api/admin/sms-packages/${id}`,
+    updateTenantStatus: builder.mutation<TenantResponse, { id: string; status: "ACTIVE" | "INACTIVE" }>({
+      query: ({ id, status }) => ({
+        url: `/api/admin/tenants/${id}/status`,
         method: "PUT",
-        body: payload,
+        body: { status },
       }),
       invalidatesTags: (_result, _error, { id }) => [
-        { type: "SmsPackage", id },
-        { type: "SmsPackage", id: "LIST" },
+        { type: "Tenant", id },
+        { type: "Tenant", id: "LIST" },
       ],
     }),
 
-    deleteSmsPackage: builder.mutation<void, string>({
+    updateTenantThreshold: builder.mutation<TenantResponse, { id: string; threshold: number }>({
+      query: ({ id, threshold }) => ({
+        url: `/api/admin/tenants/${id}/threshold`,
+        method: "PUT",
+        body: { approvalThreshold: threshold },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Tenant", id },
+        { type: "Tenant", id: "LIST" },
+      ],
+    }),
+
+    // --- Sender Approvals ---
+    // Spec: /api/admin/senders/pending for the list of pending
+    getPendingSenders: builder.query<SenderResponse[], void>({
+      query: () => "/api/admin/senders/pending",
+      transformResponse: (response: any) => {
+        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Sender" as const, id })),
+              { type: "Sender", id: "LIST_PENDING" },
+            ]
+          : [{ type: "Sender", id: "LIST_PENDING" }],
+    }),
+
+    approveSender: builder.mutation<SenderResponse, string>({
       query: (id) => ({
-        url: `/api/admin/sms-packages/${id}`,
-        method: "DELETE",
+        url: `/api/admin/senders/${id}/approve`,
+        method: "POST", 
       }),
       invalidatesTags: (_result, _error, id) => [
-        { type: "SmsPackage", id },
-        { type: "SmsPackage", id: "LIST" },
+        { type: "Sender", id },
+        { type: "Sender", id: "LIST_PENDING" },
       ],
     }),
 
-    // NOTE: Tenant access to packages may be via /api/packages (verify with backend)
-    getTenantPackages: builder.query<SmsPackageResponse[], void>({
-      query: () => "/api/packages",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? [];
-      },
-      providesTags: [{ type: "SmsPackage", id: "TENANT_LIST" }],
+    rejectSender: builder.mutation<SenderResponse, { id: string; reason: string }>({
+      query: ({ id, reason }) => ({
+        url: `/api/admin/senders/${id}/reject`,
+        method: "POST",
+        body: { reason },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Sender", id },
+        { type: "Sender", id: "LIST_PENDING" },
+      ],
     }),
+
+    // --- SMS Job Approvals ---
+    // Spec: /api/admin/sms-jobs/pending
+    getPendingSmsJobs: builder.query<SmsJobResponse[], void>({
+      query: () => "/api/admin/sms-jobs/pending",
+      transformResponse: (response: any) => {
+        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "SmsJob" as const, id })),
+              { type: "SmsJob", id: "LIST_PENDING" },
+            ]
+          : [{ type: "SmsJob", id: "LIST_PENDING" }],
+    }),
+
+    approveSmsJob: builder.mutation<SmsJobResponse, string>({
+      query: (jobId) => ({
+        url: `/api/admin/sms-jobs/${jobId}/approve`,
+        method: "POST",
+      }),
+      invalidatesTags: (_result, _error, jobId) => [
+        { type: "SmsJob", id: jobId },
+        { type: "SmsJob", id: "LIST_PENDING" },
+      ],
+    }),
+
+    rejectSmsJob: builder.mutation<SmsJobResponse, { jobId: string; reason: string }>({
+      query: ({ jobId, reason }) => ({
+        url: `/api/admin/sms-jobs/${jobId}/reject`,
+        method: "POST",
+        body: { reason },
+      }),
+      invalidatesTags: (_result, _error, { jobId }) => [
+        { type: "SmsJob", id: jobId },
+        { type: "SmsJob", id: "LIST_PENDING" },
+      ],
+    }),
+
+    // --- SMS Packages (Tiers) ---
+    getSmsPackages: builder.query<SmsPackageTier[], void>({
+      query: () => "/api/admin/sms-packages",
+      transformResponse: (response: any) => {
+        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "SmsPackage" as const, id })),
+              { type: "SmsPackage", id: "LIST" },
+            ]
+          : [{ type: "SmsPackage", id: "LIST" }],
+    }),
+    
+    // Spec has Create/Update but UI was read-only. We leave mutations out unless needed.
   }),
 });
 
-// Export hooks for usage in functional components
+// Export hooks
 export const {
   useGetTenantsQuery,
   useGetTenantByIdQuery,
+  useUpdateTenantStatusMutation,
+  useUpdateTenantThresholdMutation,
   useGetPendingSendersQuery,
   useApproveSenderMutation,
+  useRejectSenderMutation,
   useGetPendingSmsJobsQuery,
   useApproveSmsJobMutation,
+  useRejectSmsJobMutation,
   useGetSmsPackagesQuery,
-  useGetSmsPackageByIdQuery,
-  useCreateSmsPackageMutation,
-  useUpdateSmsPackageMutation,
-  useDeleteSmsPackageMutation,
-  useGetTenantPackagesQuery,
-  useLazyGetTenantsQuery,
-  useLazyGetSmsPackagesQuery,
 } = adminApi;
-

@@ -1,0 +1,2 @@
+src/pages/SystemAdmin/SenderApprovalsPage.tsx(164,71): error TS2367: This comparison appears to be unintentional because the types '"ACTIVE" | "INACTIVE" | "REJECTED"' and '"PENDING_APPROVAL"' have no overlap.
+src/pages/SystemAdmin/SmsJobApprovalsPage.tsx(5,38): error TS6133: 'EyeIcon' is declared but its value is never read.

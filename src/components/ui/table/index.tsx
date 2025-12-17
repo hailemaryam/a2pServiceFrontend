@@ -32,7 +32,7 @@ export const TableRow: React.FC<TableRowProps> = ({
   className = "",
 }) => <tr className={className}>{children}</tr>;
 
-interface TableCellProps extends CommonProps {
+interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   isHeader?: boolean;
 }
 
@@ -40,11 +40,12 @@ export const TableCell: React.FC<TableCellProps> = ({
   children,
   isHeader = false,
   className = "",
+  ...props
 }) => {
   if (isHeader) {
-    return <th className={className}>{children}</th>;
+    return <th className={className} {...props}>{children}</th>;
   }
-  return <td className={className}>{children}</td>;
+  return <td className={className} {...props}>{children}</td>;
 };
 
 export default Table;
