@@ -1,7 +1,4 @@
 import { HashRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import NotFound from "./pages/OtherPage/NotFound";
 import Landing from "./pages/Landing/Landing";
 import RootRoute from "./components/auth/RootRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -31,6 +28,7 @@ import ReceivedSMS from "./pages/SMS/ReceivedSMS";
 import Contact from "./pages/Contact/Contact";
 import ContactGroup from "./pages/ContactGroup/ContactGroup";
 import API from "./pages/API/API";
+import Profile from "./pages/Profile/Profile";
 
 export default function App() {
   return (
@@ -92,6 +90,9 @@ export default function App() {
 
             {/* API */}
             <Route path="/api" element={<API />} />
+
+            {/* Profile */}
+            <Route path="/profile" element={<Profile />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

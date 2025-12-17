@@ -3,107 +3,94 @@ import { useNavigate } from "react-router";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { UserCircleIcon } from "../../icons";
-import { useKeycloak } from "@react-keycloak/web/lib/useKeycloak";
+import { useKeycloak } from "@react-keycloak/web";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const {keycloak} = useKeycloak();
-  const userEmail = keycloak.tokenParsed?.email;
+  const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-  }
+  const userEmail = keycloak.tokenParsed?.email as string | undefined;
 
-  function closeDropdown() {
-    setIsOpen(false);
-  }
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
+  const closeDropdown = () => setIsOpen(false);
 
   const handleSignOut = () => {
-    // Clear user data from localStorage
-    keycloak.logout();
-    // Close dropdown
     closeDropdown();
-    // Navigate to sign in page
-    navigate("/signin");
+    keycloak.logout({
+      redirectUri: window.location.origin + "/landing",
+    });
+  };
+
+  const goToProfile = () => {
+    closeDropdown();
+    navigate("/profile");
   };
 
   return (
     <div className="relative">
       <button
-        className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full dropdown-toggle hover:text-gray-700 h-11 w-11 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+        className="relative flex items-center justify-center h-11 w-11 rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
         onClick={toggleDropdown}
         aria-label="User Menu"
       >
         <UserCircleIcon className="h-5 w-5" />
       </button>
+
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+        className="absolute right-0 mt-4 w-[280px] rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
-        <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
+        {/* Header */}
+        <div className="mb-3 flex items-center justify-between border-b border-gray-100 pb-3 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             User Account
           </h5>
           <button
             onClick={closeDropdown}
-            className="text-gray-500 transition dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
-            <svg
-              className="fill-current"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M6.21967 7.28131C5.92678 6.98841 5.92678 6.51354 6.21967 6.22065C6.51256 5.92775 6.98744 5.92775 7.28033 6.22065L11.999 10.9393L16.7176 6.22078C17.0105 5.92789 17.4854 5.92788 17.7782 6.22078C18.0711 6.51367 18.0711 6.98855 17.7782 7.28144L13.0597 12L17.7782 16.7186C18.0711 17.0115 18.0711 17.4863 17.7782 17.7792C17.4854 18.0721 17.0105 18.0721 16.7176 17.7792L11.999 13.0607L7.28033 17.7794C6.98744 18.0722 6.51256 18.0722 6.21967 17.7794C5.92678 17.4865 5.92678 17.0116 6.21967 16.7187L10.9384 12L6.21967 7.28131Z"
-                fill="currentColor"
-              />
-            </svg>
+            ✕
           </button>
         </div>
 
-        <div className="flex flex-col gap-3">
-          {/* User Email Display */}
-          <div className="flex items-center gap-3 rounded-lg p-3 bg-gray-50 dark:bg-gray-800/50">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/10">
-              <UserCircleIcon className="h-5 w-5 text-brand-500 dark:text-brand-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                {userEmail}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Logged in</p>
-            </div>
+        {/* User Info */}
+        <div className="mb-4 flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/10">
+            <UserCircleIcon className="h-5 w-5 text-brand-500 dark:text-brand-400" />
           </div>
-
-          {/* Sign Out Button */}
-          <DropdownItem
-            onItemClick={handleSignOut}
-            className="flex items-center gap-3 rounded-lg p-3 text-error-500 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-500/10 transition-colors"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span className="font-medium">Sign Out</span>
-          </DropdownItem>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+              {userEmail ?? "Unknown User"}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Logged in
+            </p>
+          </div>
         </div>
+
+        {/* Menu Items */}
+        <ul className="flex flex-col gap-1">
+          <li>
+            <DropdownItem
+              onItemClick={goToProfile}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+            >
+              Edit Profile
+            </DropdownItem>
+          </li>
+
+          <li>
+            <DropdownItem
+              onItemClick={handleSignOut}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-error-500 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-500/10"
+            >
+              Sign Out
+            </DropdownItem>
+          </li>
+        </ul>
       </Dropdown>
     </div>
   );
 }
-

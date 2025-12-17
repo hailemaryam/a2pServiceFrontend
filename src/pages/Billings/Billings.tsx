@@ -2,6 +2,7 @@ import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { CloseIcon } from "../../icons";
+import { useInitializePaymentMutation } from "../../api/paymentApi";
 
 // Type definition for the SMS package data
 interface Package {
@@ -66,6 +67,9 @@ export default function Billings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billingName, setBillingName] = useState("");
   const [subscription, setSubscription] = useState("");
+  
+  const [initializePayment, { isLoading: isPaying }] = useInitializePaymentMutation();
+
   const minSms = 1000;
   const maxSms = 100000;
 
@@ -348,6 +352,31 @@ export default function Billings() {
                   </span>
                 </div>
               </div>
+
+              <button
+                disabled={isPaying}
+                 onClick={async () => {
+                   if (!selectedPackage) return;
+                   try {
+                     const response = await initializePayment({ 
+                       amount: selectedPackage.price,
+                       // description: `Purchase ${selectedPackage.name} package` // If API supports it
+                     }).unwrap();
+                     
+                     if (response.checkoutUrl) {
+                       window.location.href = response.checkoutUrl;
+                     } else {
+                       alert("Payment initialized but no checkout URL returned.");
+                     }
+                   } catch (error: any) {
+                     console.error("Payment failed", error);
+                     alert(error?.data?.message || "Payment initialization failed");
+                   }
+                 }}
+                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
+              >
+                {isPaying ? "Processing..." : "Pay Now"}
+              </button>
 
               <div>
                 <h4 className="mb-2 text-base font-semibold text-gray-900 dark:text-white">

@@ -7,34 +7,29 @@ import {
   PencilIcon,
   TrashBinIcon,
   CloseIcon,
-  DownloadIcon,
 } from "../../icons";
-
-// Type definition for Group
-interface Group {
-  id: number;
-  name: string;
-  createdAt: string;
-  contactCount: number;
-}
-
-const dummyGroups: Group[] = [
-  {
-    id: 1,
-    name: "tamcon-dev",
-    createdAt: "16/08/2025",
-    contactCount: 0,
-  },
-];
+import {
+  useGetContactGroupsQuery,
+  useCreateContactGroupMutation,
+  useUpdateContactGroupMutation,
+  useDeleteContactGroupMutation,
+  ContactGroupResponse,
+} from "../../api/contactGroupsApi";
 
 export default function ContactGroup() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [groupSearch, setGroupSearch] = useState("");
 
+  // RTK Query hooks
+  const { data: groups = [], isLoading } = useGetContactGroupsQuery();
+  const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
+  const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
+  const [deleteGroup] = useDeleteContactGroupMutation();
+
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+  const [editingGroup, setEditingGroup] = useState<ContactGroupResponse | null>(null);
 
   // Check if we should open the group modal from URL
   useEffect(() => {
@@ -45,59 +40,81 @@ export default function ContactGroup() {
     }
   }, [searchParams, setSearchParams]);
 
-  // Form states
+  // Create form states
   const [groupName, setGroupName] = useState("");
-  const [groupColor, setGroupColor] = useState("#000000");
+  const [groupDescription, setGroupDescription] = useState("");
   
   // Edit form states
   const [editGroupName, setEditGroupName] = useState("");
-  const [editGroupColor, setEditGroupColor] = useState("#000000");
+  const [editGroupDescription, setEditGroupDescription] = useState("");
 
   // Handlers
-  const handleGroupSubmit = (e: FormEvent) => {
+  const handleGroupSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!groupName.trim()) {
       alert("Group Name is required.");
       return;
     }
-    console.log("Creating group:", { name: groupName, color: groupColor });
-    // Reset form
-    setGroupName("");
-    setGroupColor("#000000");
-    setIsGroupModalOpen(false);
+    try {
+      await createGroup({ name: groupName, description: groupDescription }).unwrap();
+      // Reset form
+      setGroupName("");
+      setGroupDescription("");
+      setIsGroupModalOpen(false);
+    } catch (error: any) {
+      console.error("Failed to create group", error);
+      alert(error?.data?.message || "Failed to create group");
+    }
   };
 
-  const handleEditClick = (group: Group) => {
+  const handleEditClick = (group: ContactGroupResponse) => {
     setEditingGroup(group);
     setEditGroupName(group.name);
-    setEditGroupColor("#000000"); // You might want to store color in the Group interface
+    setEditGroupDescription(group.description || "");
     setIsEditModalOpen(true);
   };
 
-  const handleEditSubmit = (e: FormEvent) => {
+  const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!editGroupName.trim()) {
+    if (!editGroupName.trim() || !editingGroup) {
       alert("Group Name is required.");
       return;
     }
-    console.log("Updating group:", { 
-      id: editingGroup?.id, 
-      name: editGroupName, 
-      color: editGroupColor 
-    });
-    // Reset form
-    setEditGroupName("");
-    setEditGroupColor("#000000");
-    setEditingGroup(null);
-    setIsEditModalOpen(false);
+    try {
+      await updateGroup({ 
+        id: editingGroup.id, 
+        payload: { name: editGroupName, description: editGroupDescription } 
+      }).unwrap();
+      // Reset form
+      closeEditModal();
+    } catch (error: any) {
+      console.error("Failed to update group", error);
+      alert(error?.data?.message || "Failed to update group");
+    }
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this group? Contacts in this group will not be deleted.")) {
+      try {
+        await deleteGroup(id).unwrap();
+      } catch (error: any) {
+        console.error("Failed to delete group", error);
+        alert(error?.data?.message || "Failed to delete group");
+      }
+    }
   };
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setEditingGroup(null);
     setEditGroupName("");
-    setEditGroupColor("#000000");
+    setEditGroupDescription("");
   };
+
+  // Filter groups locally
+  const filteredGroups = groups.filter((group) =>
+    group.name.toLowerCase().includes(groupSearch.toLowerCase())
+  );
 
   return (
     <div>
@@ -136,7 +153,7 @@ export default function ContactGroup() {
               </div>
               <input
                 type="text"
-                placeholder="Group Name"
+                placeholder="Search Groups..."
                 value={groupSearch}
                 onChange={(e) => setGroupSearch(e.target.value)}
                 className="h-11 w-full max-w-xs rounded-lg border border-gray-300 bg-transparent pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
@@ -145,29 +162,13 @@ export default function ContactGroup() {
 
             {/* Action Toolbar for Groups */}
             <div className="mb-6 flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                Upload Groups
-              </button>
               <button
-                onClick={() => setIsGroupModalOpen(true)}
-                className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
-              >
-                <GroupIcon className="h-4 w-4" />
-                Create Group
-              </button>
+                 onClick={() => setIsGroupModalOpen(true)}
+                 className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+               >
+                 <GroupIcon className="h-4 w-4" />
+                 Create Group
+               </button>
             </div>
 
             {/* Groups Table */}
@@ -177,6 +178,9 @@ export default function ContactGroup() {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       Group Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Description
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       Created At
@@ -190,45 +194,57 @@ export default function ContactGroup() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
-                  {dummyGroups.map((group) => (
-                    <tr
-                      key={group.id}
-                      className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
-                    >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                        {group.name}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                        {group.createdAt}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                        {group.contactCount}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                            title="Download Group"
-                          >
-                            <DownloadIcon className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => handleEditClick(group)}
-                            className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                            title="Edit Group"
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </button>
-                          <button
-                            className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
-                            title="Delete Group"
-                          >
-                            <TrashBinIcon className="h-4 w-4" />
-                          </button>
-                        </div>
+                  {isLoading ? (
+                     <tr>
+                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                        Loading groups...
                       </td>
                     </tr>
-                  ))}
+                  ) : filteredGroups.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                        No groups found.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredGroups.map((group) => (
+                      <tr
+                        key={group.id}
+                        className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                      >
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                          {group.name}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">
+                          {group.description || "-"}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                          {new Date(group.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                          {group.contactCount || 0}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleEditClick(group)}
+                              className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                              title="Edit Group"
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(group.id)}
+                              className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
+                              title="Delete Group"
+                            >
+                              <TrashBinIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -236,7 +252,7 @@ export default function ContactGroup() {
         </div>
       </div>
 
-      {/* Group Information Modal */}
+      {/* Create Group Modal */}
       {isGroupModalOpen && (
         <div
           className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
@@ -258,7 +274,7 @@ export default function ContactGroup() {
             {/* Modal Header */}
             <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
               <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                Group Information
+                Create New Group
               </h3>
             </div>
             <form onSubmit={handleGroupSubmit} className="space-y-5">
@@ -274,36 +290,33 @@ export default function ContactGroup() {
                   type="text"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder="e.g. VIP Customers"
                   required
                   className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />
               </div>
               <div>
                 <label
-                  htmlFor="groupColor"
+                  htmlFor="groupDescription"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Color
+                  Description (Optional)
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    id="groupColor"
-                    type="color"
-                    value={groupColor}
-                    onChange={(e) => setGroupColor(e.target.value)}
-                    className="h-11 w-20 cursor-pointer rounded-lg border border-gray-300 bg-transparent dark:border-gray-700"
-                  />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {groupColor}
-                  </span>
-                </div>
+                <textarea
+                  id="groupDescription"
+                  value={groupDescription}
+                  onChange={(e) => setGroupDescription(e.target.value)}
+                  placeholder="Description of the group..."
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
               </div>
               <button
                 type="submit"
-                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+                disabled={isCreating}
+                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
               >
-                Submit
+                {isCreating ? "Creating..." : "Create Group"}
               </button>
             </form>
           </div>
@@ -332,7 +345,7 @@ export default function ContactGroup() {
             {/* Modal Header */}
             <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
               <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                Edit Group Information
+                Edit Group
               </h3>
             </div>
             <form onSubmit={handleEditSubmit} className="space-y-5">
@@ -355,30 +368,27 @@ export default function ContactGroup() {
               </div>
               <div>
                 <label
-                  htmlFor="editGroupColor"
+                  htmlFor="editGroupDescription"
                   className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Color
+                   Description (Optional)
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    id="editGroupColor"
-                    type="color"
-                    value={editGroupColor}
-                    onChange={(e) => setEditGroupColor(e.target.value)}
-                    className="h-11 w-20 cursor-pointer rounded-lg border border-gray-300 bg-transparent dark:border-gray-700"
-                  />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {editGroupColor}
-                  </span>
-                </div>
+                 <textarea
+                  id="editGroupDescription"
+                  value={editGroupDescription}
+                  onChange={(e) => setEditGroupDescription(e.target.value)}
+                  placeholder="Description of the group..."
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
               </div>
               <div className="flex justify-center gap-4">
                 <button
                   type="submit"
-                  className="rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+                  disabled={isUpdating}
+                  className="rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
                 >
-                  Save
+                  {isUpdating ? "Saving..." : "Save Changes"}
                 </button>
                 <button
                   type="button"
@@ -395,4 +405,3 @@ export default function ContactGroup() {
     </div>
   );
 }
-

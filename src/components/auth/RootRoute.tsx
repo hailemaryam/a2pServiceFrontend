@@ -46,11 +46,12 @@ export default function RootRoute() {
   const { isAuthenticated, isSysAdmin, isTenantRole } = useAuth();
   const { keycloak } = useKeycloak();
 
-  // Handle tenant registration for tenant users (not sys_admin)
+  // Handle tenant registration for tenant users only (sys_admin never registers)
   useEffect(() => {
     const handleTenantRegistration = async () => {
-      // Only register tenant for tenant users, not sys_admin
-      if (isAuthenticated && isTenantRole && !isSysAdmin) {
+      // sys_admin users are already authorized and never need registration
+      // Only tenant users (tenant_admin, tenant_user) should register
+      if (isAuthenticated && !isSysAdmin && isTenantRole) {
         // Check if we've already attempted registration (prevent duplicate calls)
         const registrationKey = `tenant_registered_${keycloak.tokenParsed?.sub}`;
         const hasRegistered = sessionStorage.getItem(registrationKey);

@@ -23,10 +23,12 @@ export default function SystemAdminDashboard() {
     <>
       <PageMeta title="System Admin Dashboard | Fast SMS" description="System administration dashboard" />
       <PageBreadcrumb pageTitle="System Admin Dashboard" />
-      <div className="space-y-6">
+      <div className="space-y-6 pb-8">
         <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
           <div className="mb-6">
-           
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              System Admin Dashboard
+            </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Welcome, {username || "System Admin"}
             </p>
