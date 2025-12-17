@@ -5,6 +5,7 @@ import NotFound from "./pages/OtherPage/NotFound";
 import Landing from "./pages/Landing/Landing";
 import RootRoute from "./components/auth/RootRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminRoute from "./components/auth/AdminRoute";
 
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
@@ -44,8 +45,13 @@ export default function App() {
           <Route index path="/" element={<RootRoute />} />
 
           {/* System Admin Routes - Only accessible to sys_admin */}
-          {/* TEMP: System Admin Routes (NO AUTH – frontend only) */}
-          <Route element={<SystemAdminLayout />}>
+          <Route
+            element={
+              <AdminRoute redirectTo="/landing">
+                <SystemAdminLayout />
+              </AdminRoute>
+            }
+          >
             <Route path="/admin" element={<SystemAdminDashboard />} />
             <Route path="/admin/tenants" element={<TenantsPage />} />
             <Route path="/admin/senders" element={<SenderApprovalsPage />} />
@@ -66,8 +72,8 @@ export default function App() {
           >
             <Route path="/blank" element={<Blank />} />
 
-            {/* Admin */}
-            <Route path="/admin" element={<Admin />} />
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<Admin />} />
 
             {/* Billings */}
             <Route path="/billings" element={<Billings />} />
@@ -99,11 +105,11 @@ export default function App() {
           </Route>
 
           {/* Auth Layout - Keep for backward compatibility */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} /> */}
 
           {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Landing />} />
         </Routes>
       </Router>
     </>
