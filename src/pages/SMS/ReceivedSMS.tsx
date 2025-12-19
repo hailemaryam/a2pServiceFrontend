@@ -1,80 +1,15 @@
 import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import { useGetReceivedSmsQuery, ReceivedSmsResponse } from "../../api/smsApi";
 
 // --- Type Definitions ---
-interface ReceivedSmsRecord {
-  id: string;
-  message: string;
-  contact: string;
-  status: "RECEIVED";
-  date: string;
-}
+// Removed local ReceivedSmsRecord interface in favor of ReceivedSmsResponse
 
 interface ReplyData {
   contact: string;
   message: string;
 }
-
-// Dummy Data
-const dummyReceivedLogs: ReceivedSmsRecord[] = [
-  {
-    id: "ELS",
-    message: "681896410",
-    contact: "+251 946 70 57 41",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "U",
-    contact: "+251 978 65 45 44",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "667432521",
-    contact: "+251 951 51 06 04",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "1096066748",
-    contact: "+251 970 57 03 77",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "Stop",
-    contact: "+251 949 67 36 89",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "667432521",
-    contact: "+251 900 64 01 60",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "(859115026)8989",
-    contact: "+251 923 42 32 14",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-  {
-    id: "ELS",
-    message: "2676817",
-    contact: "+251 948 76 99 11",
-    status: "RECEIVED",
-    date: "08/23/25, 3:00 AM",
-  },
-];
 
 // --- Reply Modal Component ---
 interface ReplyModalProps {
@@ -187,7 +122,14 @@ export default function ReceivedSMS() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [replyData, setReplyData] = useState<ReplyData | null>(null);
-  const totalPages = 5;
+
+  const { data: receivedData, isLoading, isError, refetch } = useGetReceivedSmsQuery({
+    page: currentPage - 1,
+    size: 10,
+  });
+
+  const receivedLogs: ReceivedSmsResponse[] = receivedData?.items || [];
+  const totalPages = Math.ceil((receivedData?.total || 0) / 10);
 
   const handleReplyClick = (contact: string, message: string) => {
     setReplyData({ contact, message });
@@ -289,9 +231,8 @@ export default function ReceivedSMS() {
               {/* Refresh Button */}
               <button
                 onClick={() => {
-                  // Refresh logic here
-                  console.log("Refreshing received SMS...");
-                }}
+                    refetch();
+                  }}
                 className="flex items-center justify-center h-11 px-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-lg shadow-theme-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-150 whitespace-nowrap"
               >
                 <svg
@@ -358,38 +299,58 @@ export default function ReceivedSMS() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-white/[0.03] divide-y divide-gray-200 dark:divide-gray-700">
-                {dummyReceivedLogs.map((log, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      {log.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {log.message}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {log.contact}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {log.date}
-                    </td>
-                    {/* ADDED REPLY BUTTON (using dark blue color for consistency with the image) */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => handleReplyClick(log.contact, log.message)}
-                        className="px-3 py-1 text-xs font-semibold rounded-lg text-white transition"
-                        style={{ backgroundColor: "#E57A38" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#d4692a")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E57A38")}
-                      >
-                        Reply
-                      </button>
+                {isError ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-red-500">
+                      Failed to load received SMS.
                     </td>
                   </tr>
-                ))}
+                ) : isLoading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : receivedLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      No received SMS found.
+                    </td>
+                  </tr>
+                ) : (
+                  receivedLogs.map((log) => (
+                    <tr
+                      key={log.id}
+                      className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {log.id.substring(0, 8)}...
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {log.message}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {log.sender}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(log.receivedAt).toLocaleString()}
+                      </td>
+                      {/* ADDED REPLY BUTTON (using dark blue color for consistency with the image) */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleReplyClick(log.sender, log.message)}
+                          className="px-3 py-1 text-xs font-semibold rounded-lg text-white transition"
+                          style={{ backgroundColor: "#E57A38" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#d4692a")}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E57A38")}
+                        >
+                          Reply
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
 

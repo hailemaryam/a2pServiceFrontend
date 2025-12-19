@@ -1,0 +1,15 @@
+
+> tailadmin-react@2.0.2 build
+> tsc -b && vite build
+
+src/components/auth/RootRoute.tsx(60,34): error TS2554: Expected 1 arguments, but got 0.
+src/pages/API/API.tsx(15,8): error TS2307: Cannot find module '../../api/apiKeyApi' or its corresponding type declarations.
+src/pages/API/API.tsx(16,36): error TS2307: Cannot find module '../../api/sendersApi' or its corresponding type declarations.
+src/pages/API/API.tsx(74,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/API/API.tsx(183,33): error TS7006: Parameter 'token' implicitly has an 'any' type.
+src/pages/API/API.tsx(273,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/Billings/Billings.tsx(5,46): error TS2307: Cannot find module '../../api/paymentApi' or its corresponding type declarations.
+src/pages/ContactGroup/ContactGroup.tsx(15,8): error TS2307: Cannot find module '../../api/contactGroupsApi' or its corresponding type declarations.
+src/pages/ContactGroup/ContactGroup.tsx(101,41): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/pages/ContactGroup/ContactGroup.tsx(196,41): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/pages/Profile/Profile.tsx(5,62): error TS2307: Cannot find module '../../api/profileApi' or its corresponding type declarations.

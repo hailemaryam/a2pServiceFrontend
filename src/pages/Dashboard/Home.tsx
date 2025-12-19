@@ -1,25 +1,26 @@
 import { useState } from "react";
+import { useFetchContactsQuery } from "../../api/contactsApi";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { DownloadIcon, PlusIcon, FileIcon, GroupIcon } from "../../icons";
 
-// Define the shape of a Contact object
-interface Contact {
-  id: number;
-  name: string;
-  phoneNumber: string;
-}
 
 /**
  * Renders the main Contact Management interface.
  */
 export default function Home() {
-  // State for the list of contacts (initially empty)
-  const [contacts, setContacts] = useState<Contact[]>([]);
   // State for the search query
   const [searchQuery, setSearchQuery] = useState<string>("");
   // State to track the active tab
   const [activeTab, setActiveTab] = useState<"contacts" | "groups">("contacts");
+
+  // Fetch contacts from API
+  const { data: contactsData, isLoading, isError, refetch } = useFetchContactsQuery({ 
+    page: 0, 
+    size: 50 // Fetching more for the dashboard view
+  });
+
+  const contacts = contactsData?.items || [];
 
   // --- Handlers for button actions ---
 
@@ -35,8 +36,7 @@ export default function Home() {
 
   const handleRefresh = () => {
     console.log("Refreshing contact list...");
-    // Logic to re-fetch contact data from an API
-    setContacts([]); // Example: reset or re-fetch
+    refetch();
   };
 
   const handleUploadContacts = () => {
@@ -53,8 +53,8 @@ export default function Home() {
 
   const filteredContacts = contacts.filter(
     (contact) =>
-      contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.phoneNumber.includes(searchQuery)
+      (contact.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contact.phone.includes(searchQuery)
   );
 
   return (
@@ -195,18 +195,54 @@ export default function Home() {
                 </div>
 
                 {/* Contact List / No Contacts Found Message */}
-                {filteredContacts.length === 0 ? (
+                {isError ? (
+                  <div className="flex flex-col items-center justify-center rounded-lg border border-red-200 bg-red-50 py-8 dark:border-red-900/50 dark:bg-red-900/10">
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      Failed to load contacts. Please try refreshing.
+                    </p>
+                    <button 
+                      onClick={() => refetch()}
+                      className="mt-2 text-sm font-medium text-red-600 underline hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : isLoading ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-500 border-t-transparent"></div>
+                     <p className="mt-4 text-sm text-gray-500">Loading contacts...</p>
+                  </div>
+                ) : filteredContacts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 py-12 dark:border-gray-800 dark:bg-gray-800/50">
                     <FileIcon className="mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No contacts found by this name.
+                      No contacts found matching your criteria.
                     </p>
                   </div>
                 ) : (
-                  <div className="contact-list">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Contacts loaded: {filteredContacts.length}
+                  <div className="contact-list space-y-3">
+                     <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+                      Showing {filteredContacts.length} contacts
                     </p>
+                    {filteredContacts.map((contact) => (
+                      <div 
+                        key={contact.id} 
+                        className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                      >
+                         <div>
+                            <h4 className="font-semibold text-gray-800 dark:text-white">
+                              {contact.name || "Unknown Name"}
+                            </h4>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {contact.phone}
+                            </p>
+                         </div>
+                         <div className="flex gap-2">
+                             {/* Placeholder actions */}
+                             <button className="text-sm text-brand-500 hover:underline">Edit</button>
+                         </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

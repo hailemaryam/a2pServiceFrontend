@@ -1,0 +1,7 @@
+
+> tailadmin-react@2.0.2 build
+> tsc -b && vite build
+
+src/pages/API/API.tsx(26,21): error TS6133: 'setIsLoading' is declared but its value is never read.
+src/pages/ContactGroup/ContactGroup.tsx(23,21): error TS6133: 'setIsLoading' is declared but its value is never read.
+src/pages/Profile/Profile.tsx(17,21): error TS6133: 'setIsLoading' is declared but its value is never read.

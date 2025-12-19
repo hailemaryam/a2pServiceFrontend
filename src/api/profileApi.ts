@@ -16,6 +16,13 @@ export type UpdateProfilePayload = {
   lastName: string;
 };
 
+// Password update payload
+export type UpdatePasswordPayload = {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+};
+
 // Profile API using RTK Query
 export const profileApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -34,6 +41,15 @@ export const profileApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Profile", id: "CURRENT" }],
     }),
+
+    // Update password
+    updatePassword: builder.mutation<void, UpdatePasswordPayload>({
+      query: (payload) => ({
+        url: "/api/profile/password",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -42,5 +58,6 @@ export const {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useLazyGetProfileQuery,
+  useUpdatePasswordMutation,
 } = profileApi;
 

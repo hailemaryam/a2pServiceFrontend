@@ -1,84 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-
-// --- Type Definitions ---
-interface SmsRecord {
-  id: string;
-  message: string;
-  contact: string;
-  status: "PENDING" | "SENT" | "FAILED" | "Deliverd";
-  tagName: string;
-  date: string;
-}
-
-// --- Dummy Data ---
-const dummyLogs: SmsRecord[] = [
-  {
-    id: "ELS",
-    message: "test",
-    contact: "0980269063",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "10/08",
-  },
-  {
-    id: "ELS",
-    message: "hi",
-    contact: "0900640160",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-  {
-    id: "ELS",
-    message: "yes sofo it works",
-    contact: "+251912063417",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-  {
-    id: "ELS",
-    message: "test kal",
-    contact: "0900640160",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-  {
-    id: "ELS",
-    message: "test kal",
-    contact: "0900640160",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-  {
-    id: "ELS",
-    message: "test kal",
-    contact: "0900640160",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-  {
-    id: "ELS",
-    message: "test kal",
-    contact: "0900640160",
-    status: "PENDING",
-    tagName: "N/A",
-    date: "09/24",
-  },
-];
+import { useGetSmsJobsQuery } from "../../api/smsApi";
 
 export default function SMSLog() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const totalPages = 5;
   const calendarRef = useRef<HTMLDivElement>(null);
+
+  const { data: smsJobsData, isLoading, isError, refetch } = useGetSmsJobsQuery({
+    page: currentPage - 1,
+    size: 10,
+  });
+
+  const smsJobs = smsJobsData?.items || [];
+  const totalPages = Math.ceil((smsJobsData?.total || 0) / 10);
+
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -129,7 +68,7 @@ export default function SMSLog() {
   }, [isCalendarOpen]);
 
   // Function to determine badge style based on status
-  const getStatusBadge = (status: SmsRecord["status"]) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
         return (
@@ -444,8 +383,7 @@ export default function SMSLog() {
               <div className="sm:col-span-2 lg:col-span-1">
                 <button
                   onClick={() => {
-                    // Refresh logic here
-                    console.log("Refreshing SMS log...");
+                    refetch();
                   }}
                   className="flex items-center justify-center w-full h-11 px-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-lg shadow-theme-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-150"
                 >
@@ -474,74 +412,72 @@ export default function SMSLog() {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800/50">
                 <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
-                    ID
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    JOB ID
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
-                    message
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Message
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[150px]"
-                  >
-                    contact
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Type
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
-                    status
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Recipients
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[150px]"
-                  >
-                    Tag Name
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Status
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Date
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-white/[0.03] divide-y divide-gray-200 dark:divide-gray-700">
-                {dummyLogs.map((log, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      {log.id}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="block break-words" title={log.message}>
-                        {log.message}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="block break-words" title={log.contact}>
-                        {log.contact}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(log.status)}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="block break-words" title={log.tagName}>
-                        {log.tagName}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {log.date}
+                {isError ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-red-500">
+                      Failed to load SMS logs.
                     </td>
                   </tr>
-                ))}
+                ) : isLoading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : smsJobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      No SMS jobs found.
+                    </td>
+                  </tr>
+                ) : (
+                  smsJobs.map((job) => (
+                    <tr
+                      key={job.id}
+                      className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {job.id.substring(0, 8)}...
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="block break-words max-w-xs" title={job.message}>
+                          {job.message.length > 50 ? job.message.substring(0, 50) + "..." : job.message}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        {job.jobType}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        {job.totalRecipients}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(job.status)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(job.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
 

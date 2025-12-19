@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { UserCircleIcon } from "../../icons";
-import { useGetProfileQuery, useUpdateProfileMutation } from "../../api/profileApi";
+import { useGetProfileQuery, useUpdateProfileMutation, useUpdatePasswordMutation } from "../../api/profileApi";
 
 export default function Profile() {
   const { data: profile, isLoading } = useGetProfileQuery();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [updatePassword, { isLoading: isChangingPassword }] = useUpdatePasswordMutation();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -29,6 +36,30 @@ export default function Profile() {
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       console.error("Failed to update profile", error);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordSuccessMessage("");
+    setPasswordError("");
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    try {
+      await updatePassword({ currentPassword, newPassword, confirmPassword }).unwrap();
+      setPasswordSuccessMessage("Password changed successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      // Clear success message after 3 seconds
+      setTimeout(() => setPasswordSuccessMessage(""), 3000);
+    } catch (error: any) {
+      console.error("Failed to update password", error);
+      setPasswordError(error?.data?.message || "Failed to update password");
     }
   };
 
@@ -138,6 +169,81 @@ export default function Profile() {
               {successMessage && (
                 <span className="text-sm font-medium text-success-600 dark:text-success-400">
                   {successMessage}
+                </span>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+              Change Password
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Update your password associated with this account.
+            </p>
+          </div>
+
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+              <div className="col-span-1 sm:col-span-2">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+
+              <div className="col-span-1">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+
+              <div className="col-span-1">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center gap-4">
+              <button
+                type="submit"
+                disabled={isChangingPassword}
+                className="flex items-center justify-center rounded-lg bg-brand-500 px-6 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600 disabled:opacity-70"
+              >
+                {isChangingPassword ? "Updating..." : "Update Password"}
+              </button>
+              
+              {passwordSuccessMessage && (
+                <span className="text-sm font-medium text-success-600 dark:text-success-400">
+                  {passwordSuccessMessage}
+                </span>
+              )}
+
+              {passwordError && (
+                <span className="text-sm font-medium text-error-600 dark:text-error-400">
+                  {passwordError}
                 </span>
               )}
             </div>
