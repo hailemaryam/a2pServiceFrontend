@@ -20,7 +20,7 @@ export default defineConfig({
     // Proxy dev requests to local backend to avoid needing CORS on backend
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "https://fastsms.dev",
         changeOrigin: true,
         secure: false,
       },
