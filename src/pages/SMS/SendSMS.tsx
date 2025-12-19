@@ -52,7 +52,7 @@ export default function SendSMS() {
 
   // Get approved senders only
   const approvedSenders = useMemo(
-    () => senders.filter((sender) => sender.status === "APPROVED"),
+    () => senders.filter((sender) => sender.status === "ACTIVE"),
     [senders]
   );
 
@@ -247,7 +247,7 @@ export default function SendSMS() {
                       >
                          <option value="">Select Sender ID</option>
                         {approvedSenders.map((s) => (
-                          <option key={s.id} value={s.id}>{s.name || s.senderId}</option>
+                          <option key={s.id} value={s.id}>{s.name || s.id}</option>
                         ))}
                       </select>
                     </label>

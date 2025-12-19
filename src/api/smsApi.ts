@@ -22,33 +22,23 @@ export type BulkSmsPayload = {
   scheduledAt?: string; // ISO 8601 datetime string for scheduled SMS
 };
 
-export type SmsResponse = {
-  id: string;
-  status: string;
-  message?: string;
-  phoneNumber?: string;
-  sentAt?: string;
-  [key: string]: any;
-};
-
 export type SmsJobResponse = {
   id: string;
-  status: string;
-  senderId: string;
-  message: string;
+  jobType: "SINGLE" | "GROUP" | "BULK";
+  status: "PENDING_APPROVAL" | "SCHEDULED" | "SENDING" | "COMPLETED" | "FAILED";
+  approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
+  totalRecipients: number;
+  totalSmsCount: number;
+  scheduledAt?: string;
   createdAt: string;
-  updatedAt: string;
-  totalRecipients?: number;
-  successCount?: number;
-  failureCount?: number;
-  [key: string]: any;
+  message: string;
 };
 
 // SMS API using RTK Query
 export const smsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Send single SMS
-    sendSingleSms: builder.mutation<SmsResponse, SingleSmsPayload>({
+    sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload>({
       query: (payload) => ({
         url: "/api/sms/single",
         method: "POST",
@@ -58,7 +48,7 @@ export const smsApi = baseApi.injectEndpoints({
     }),
 
     // Send group SMS
-    sendGroupSms: builder.mutation<SmsResponse, GroupSmsPayload>({
+    sendGroupSms: builder.mutation<SmsJobResponse, GroupSmsPayload>({
       query: (payload) => ({
         url: "/api/sms/group",
         method: "POST",
@@ -68,7 +58,7 @@ export const smsApi = baseApi.injectEndpoints({
     }),
 
     // Send bulk SMS (multipart file upload)
-    sendBulkSms: builder.mutation<SmsResponse, BulkSmsPayload>({
+    sendBulkSms: builder.mutation<SmsJobResponse, BulkSmsPayload>({
       query: ({ file, senderId, message, scheduledAt }) => {
         const formData = new FormData();
         formData.append("file", file);

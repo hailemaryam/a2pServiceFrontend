@@ -3,17 +3,16 @@ import { baseApi } from "./baseApi";
 // Types for API Key operations
 export type ApiKeyResponse = {
   id: string;
-  key: string; // May be masked or shown only once
-  name?: string;
+  senderId: string;
+  senderName: string;
+  apiKey: string;
+  name: string;
   createdAt: string;
-  lastUsedAt?: string;
-  isActive: boolean;
-  [key: string]: any;
 };
 
 export type CreateApiKeyPayload = {
+  senderId: string;
   name?: string;
-  // Add other fields based on backend requirements
 };
 
 // API Key API using RTK Query
@@ -34,12 +33,9 @@ export const apiKeyApi = baseApi.injectEndpoints({
           : [{ type: "ApiKey", id: "LIST" }],
     }),
 
-    // Get API key by ID
-    getApiKeyById: builder.query<ApiKeyResponse, string>({
-      query: (id) => `/api/api-keys/${id}`,
-      providesTags: (_result, _error, id) => [{ type: "ApiKey", id }],
-    }),
-
+    // Get API key by ID - Not in spec (only DELETE /api/api-keys/{id} and GET /api/api-keys list)
+    // Actually spec has NO get by ID endpoint. Removing it.
+    
     // Create new API key
     createApiKey: builder.mutation<ApiKeyResponse, CreateApiKeyPayload>({
       query: (payload) => ({
@@ -62,28 +58,15 @@ export const apiKeyApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Update API key (e.g., change name, toggle active)
-    updateApiKey: builder.mutation<ApiKeyResponse, { id: string; payload: Partial<CreateApiKeyPayload & { isActive?: boolean }> }>({
-      query: ({ id, payload }) => ({
-        url: `/api/api-keys/${id}`,
-        method: "PUT",
-        body: payload,
-      }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: "ApiKey", id },
-        { type: "ApiKey", id: "LIST" },
-      ],
-    }),
+    // Update API key - Not in spec
   }),
 });
 
 // Export hooks for usage in functional components
 export const {
   useGetApiKeysQuery,
-  useGetApiKeyByIdQuery,
   useCreateApiKeyMutation,
   useRevokeApiKeyMutation,
-  useUpdateApiKeyMutation,
   useLazyGetApiKeysQuery,
 } = apiKeyApi;
 

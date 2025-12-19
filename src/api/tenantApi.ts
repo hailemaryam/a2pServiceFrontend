@@ -7,7 +7,7 @@ const baseUrl = (import.meta.env as any).VITE_API_BASE_URL || "";
  * This should only be called for users with tenant roles (tenant_user, tenant_admin)
  * @returns Promise with the registration response
  */
-export const registerTenant = async (): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const registerTenant = async (payload: { name: string; phone?: string }): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
     const token = await ensureKeycloakToken();
     
@@ -15,12 +15,13 @@ export const registerTenant = async (): Promise<{ success: boolean; data?: any; 
       return { success: false, error: "No authentication token available" };
     }
 
-    const response = await fetch(`${baseUrl}/api/register`, {
+    const response = await fetch(`${baseUrl}/api/register/onboard`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

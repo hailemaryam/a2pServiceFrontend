@@ -3,15 +3,11 @@ import { baseApi } from "./baseApi";
 // Types for Profile operations
 export type ProfileResponse = {
   id: string;
-  email?: string;
+  email: string;
   firstName?: string;
   lastName?: string;
-  name?: string;
-  username?: string;
-  balance?: number;
-  credit?: number;
-  tenantId?: string;
-  [key: string]: any;
+  username: string;
+  // balance and credit not in spec UserProfileDto
 };
 
 // Profile update payload - restricted to firstName and lastName only

@@ -52,7 +52,7 @@ export default function Profile() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                {profile?.name || "User Profile"}
+                {profile?.firstName ? `${profile.firstName} ${profile.lastName || ""}` : "User Profile"}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {profile?.email}

@@ -5,14 +5,12 @@ import PageMeta from "../../components/common/PageMeta";
 import {
   GroupIcon,
   PencilIcon,
-  TrashBinIcon,
   CloseIcon,
 } from "../../icons";
 import {
   useGetContactGroupsQuery,
   useCreateContactGroupMutation,
   useUpdateContactGroupMutation,
-  useDeleteContactGroupMutation,
   ContactGroupResponse,
 } from "../../api/contactGroupsApi";
 
@@ -24,7 +22,6 @@ export default function ContactGroup() {
   const { data: groups = [], isLoading } = useGetContactGroupsQuery();
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
-  const [deleteGroup] = useDeleteContactGroupMutation();
 
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -90,17 +87,6 @@ export default function ContactGroup() {
     } catch (error: any) {
       console.error("Failed to update group", error);
       alert(error?.data?.message || "Failed to update group");
-    }
-  };
-
-  const handleDeleteClick = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this group? Contacts in this group will not be deleted.")) {
-      try {
-        await deleteGroup(id).unwrap();
-      } catch (error: any) {
-        console.error("Failed to delete group", error);
-        alert(error?.data?.message || "Failed to delete group");
-      }
     }
   };
 
@@ -233,13 +219,7 @@ export default function ContactGroup() {
                             >
                               <PencilIcon className="h-4 w-4" />
                             </button>
-                            <button
-                              onClick={() => handleDeleteClick(group.id)}
-                              className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
-                              title="Delete Group"
-                            >
-                              <TrashBinIcon className="h-4 w-4" />
-                            </button>
+                            {/* Delete removed as per spec */}
                           </div>
                         </td>
                       </tr>

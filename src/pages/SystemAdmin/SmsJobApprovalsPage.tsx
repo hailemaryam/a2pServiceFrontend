@@ -159,7 +159,7 @@ export default function SmsJobApprovalsPage() {
                       className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     >
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {job.tenantName || "N/A"}
+                        {"N/A"}
                       </TableCell>
                       <TableCell className="hidden md:table-cell px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
                         <div className="truncate" title={job.message}>

@@ -1,32 +1,33 @@
 import { baseApi } from "./baseApi";
 
 // Types for Payment operations
+// Types for Payment operations
 export type InitializePaymentPayload = {
   amount: number;
-  // Add other fields based on backend requirements (e.g., currency, description)
 };
 
 export type PaymentResponse = {
-  id: string;
-  status: string;
-  amount: number;
-  currency?: string;
-  transactionId?: string;
-  checkoutUrl?: string; // For Chapa redirect
-  createdAt: string;
-  updatedAt: string;
-  [key: string]: any;
+  checkoutUrl: string;
+  transactionId: string;
+  smsCredits: number;
 };
 
-export type TransactionResponse = {
+export type PaymentTransaction = {
   id: string;
-  amount: number;
-  status: string;
-  type?: string;
-  description?: string;
-  transactionId?: string;
+  tenantId: string;
+  amountPaid: number;
+  smsCredited: number;
+  paymentStatus: "SUCCESSFUL" | "FAILED" | "IN_PROGRESS" | "CANCELED";
+  smsPackage?: {
+    id: string;
+    minSmsCount: number;
+    maxSmsCount?: number;
+    pricePerSms: number;
+    description?: string;
+    isActive: boolean;
+  };
   createdAt: string;
-  [key: string]: any;
+  updatedAt: string;
 };
 
 // Payment API using RTK Query
@@ -42,20 +43,14 @@ export const paymentApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: "Payment", id: "LIST" }],
     }),
 
-    // Verify payment status
-    verifyPayment: builder.query<PaymentResponse, string>({
-      query: (paymentId) => `/api/payments/verify/${paymentId}`,
-      providesTags: (_result, _error, id) => [{ type: "Payment", id }],
-    }),
-
     // Get payment history/transactions
     getTransactions: builder.query<
-      { items: TransactionResponse[]; total: number; page: number; size: number },
-      { page?: number; size?: number }
+      { items: PaymentTransaction[]; total: number; page: number; size: number },
+      { page?: number; size?: number; status?: string }
     >({
-      query: ({ page = 0, size = 20 }) => ({
+      query: ({ page = 0, size = 20, status }) => ({
         url: "/api/payments/transactions",
-        params: { page, size },
+        params: { page, size, status },
       }),
       transformResponse: (response: any, _meta, arg) => {
         return {
@@ -74,21 +69,18 @@ export const paymentApi = baseApi.injectEndpoints({
           : [{ type: "Payment", id: "LIST" }],
     }),
 
-    // Get single transaction by ID
-    getTransactionById: builder.query<TransactionResponse, string>({
-      query: (id) => `/api/payments/transactions/${id}`,
-      providesTags: (_result, _error, id) => [{ type: "Payment", id }],
-    }),
+    // Get single transaction by ID has been removed from spec or not explicitly detailed but might be useful?
+    // Spec doesn't show /api/payments/transactions/{id}. It shows LIST.
+    // Spec: /api/payments/transactions LIST only. 
+    // We will keep getTransactions. Remove verifyPayment and getTransactionById if not in spec. 
+    // Actually spec has NO getTransactionById.
   }),
 });
 
 // Export hooks for usage in functional components
 export const {
   useInitializePaymentMutation,
-  useVerifyPaymentQuery,
   useGetTransactionsQuery,
-  useGetTransactionByIdQuery,
   useLazyGetTransactionsQuery,
-  useLazyVerifyPaymentQuery,
 } = paymentApi;
 

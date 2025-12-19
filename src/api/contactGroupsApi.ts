@@ -66,18 +66,7 @@ export const contactGroupsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Delete contact group
-    deleteContactGroup: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `/api/contact-groups/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: (_result, _error, id) => [
-        { type: "ContactGroup", id },
-        { type: "ContactGroup", id: "LIST" },
-        { type: "Contact", id: "LIST" }, // Invalidate contacts as they may reference groups
-      ],
-    }),
+    // Delete contact group - Not in Spec
   }),
 });
 
@@ -87,7 +76,6 @@ export const {
   useGetContactGroupByIdQuery,
   useCreateContactGroupMutation,
   useUpdateContactGroupMutation,
-  useDeleteContactGroupMutation,
   useLazyGetContactGroupsQuery,
 } = contactGroupsApi;
 

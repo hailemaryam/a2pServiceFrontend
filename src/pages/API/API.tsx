@@ -13,14 +13,17 @@ import {
   useCreateApiKeyMutation,
   useRevokeApiKeyMutation,
 } from "../../api/apiKeyApi";
+import { useGetSendersQuery } from "../../api/sendersApi";
 
 export default function API() {
   const { data: tokens = [], isLoading } = useGetApiKeysQuery();
+  const { data: senders = [] } = useGetSendersQuery();
   const [createApiKey, { isLoading: isCreating }] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [keyName, setKeyName] = useState("");
+  const [selectedSenderId, setSelectedSenderId] = useState("");
 
   // Helper to copy token to clipboard
   const handleCopyToken = (token: string) => {
@@ -47,6 +50,7 @@ export default function API() {
   const closeCreateModal = () => {
     setIsCreateModalOpen(false);
     setKeyName("");
+    setSelectedSenderId("");
   };
 
   const handleSaveApi = async () => {
@@ -54,14 +58,20 @@ export default function API() {
       alert("Please enter a name for the API Key");
       return;
     }
+    if (!selectedSenderId) {
+      alert("Please select a Sender ID");
+      return;
+    }
     try {
-      await createApiKey({ name: keyName }).unwrap();
+      await createApiKey({ name: keyName, senderId: selectedSenderId }).unwrap();
       closeCreateModal();
     } catch (error) {
       console.error("Failed to create key", error);
       alert("Failed to create API key");
     }
   };
+
+  const activeSenders = senders.filter(s => s.status === "ACTIVE");
 
   return (
     <div>
@@ -146,6 +156,9 @@ export default function API() {
                       API Token
                     </th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Sender Name
+                    </th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       Created At
                     </th>
                     <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -156,13 +169,13 @@ export default function API() {
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                         Loading API keys...
                       </td>
                     </tr>
                   ) : tokens.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                         No API keys found. Generate one to get started.
                       </td>
                     </tr>
@@ -178,16 +191,19 @@ export default function API() {
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">
-                              {token.key ? `${token.key.substring(0, 8)}...` : "****************"}
+                              {token.apiKey ? `${token.apiKey.substring(0, 8)}...` : "****************"}
                             </span>
                             <button
-                              onClick={() => handleCopyToken(token.key || "")}
+                              onClick={() => handleCopyToken(token.apiKey || "")}
                               className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                               title="Copy Token"
                             >
                               <CopyIcon className="h-4 w-4" />
                             </button>
                           </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                          {token.senderName || "N/A"}
                         </td>
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                           {token.createdAt ? new Date(token.createdAt).toLocaleDateString() : "N/A"}
@@ -242,6 +258,27 @@ export default function API() {
                   placeholder="Enter a name for this key"
                   className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
                 />
+              </div>
+
+               <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Linked Sender ID
+                </label>
+                <select
+                  value={selectedSenderId}
+                  onChange={(e) => setSelectedSenderId(e.target.value)}
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+                >
+                  <option value="">Select a sender ID</option>
+                  {activeSenders.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-gray-500">
+                  Only ACTIVE sender IDs can be used.
+                </p>
               </div>
 
               <button

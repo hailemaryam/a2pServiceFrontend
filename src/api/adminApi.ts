@@ -6,13 +6,13 @@ import { baseApi } from "./baseApi";
 export type TenantResponse = {
   id: string;
   name: string;
-  email?: string;
-  phone?: string;
+  email: string;
+  phone: string;
   status: "ACTIVE" | "INACTIVE";
   smsCredit: number; // int64
   smsApprovalThreshold: number; // int32
   createdAt: string; // Instant
-  updatedAt?: string; // Instant
+  updatedAt: string; // Instant
 };
 
 export type UpdateTenantStatusPayload = {
@@ -26,12 +26,12 @@ export type UpdateTenantThresholdPayload = {
 // --- Senders ---
 export type SenderResponse = {
   id: string;
-  name: string; // "senderId" in old code, "name" in spec
-  tenantId: string;
+  name: string;
   status: "ACTIVE" | "INACTIVE" | "PENDING_VERIFICATION" | "REJECTED";
+  tenantId: string;
   createdAt: string;
-  updatedAt?: string;
-  message?: string; // from spec ?? maybe rejection reason? spec says "message"
+  updatedAt: string;
+  message: string;
 };
 
 export type RejectSenderPayload = {
@@ -49,8 +49,6 @@ export type SmsJobResponse = {
   scheduledAt?: string;
   createdAt: string;
   message: string;
-  tenantName?: string; // Note: Spec doesn't explicitly list tenantName in SmsJobResponse, but UI might need it. 
-                       // If backend doesn't send it, we won't show it.
 };
 
 export type RejectSmsJobPayload = {

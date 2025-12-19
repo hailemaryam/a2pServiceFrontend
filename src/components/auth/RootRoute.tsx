@@ -58,7 +58,8 @@ export default function RootRoute() {
 
         if (!hasRegistered) {
           try {
-            const result = await registerTenant();
+            const payload = { name: keycloak.tokenParsed?.preferred_username || "User" };
+            const result = await registerTenant(payload);
             if (result.success) {
               // Mark as registered to prevent duplicate calls
               sessionStorage.setItem(registrationKey, "true");

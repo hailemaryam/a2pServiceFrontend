@@ -1,19 +1,19 @@
 import { baseApi } from "./baseApi";
 
 // Types for Sender ID operations
+// Types for Sender ID operations
 export type SenderResponse = {
   id: string;
-  senderId: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  name: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING_VERIFICATION" | "REJECTED";
+  tenantId: string;
   createdAt: string;
   updatedAt: string;
-  rejectionReason?: string;
-  [key: string]: any;
+  message: string;
 };
 
 export type CreateSenderPayload = {
-  name: string; // Backend expects 'name' not 'senderId'
-  // Add other required fields based on backend
+  name: string;
 };
 
 // Senders API using RTK Query

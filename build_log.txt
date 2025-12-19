@@ -1,0 +1,6 @@
+
+> tailadmin-react@2.0.2 build
+> tsc -b && vite build
+
+src/components/auth/RoleBasedRedirect.tsx(25,34): error TS2554: Expected 1 arguments, but got 0.
+src/components/auth/RootRoute.tsx(61,34): error TS2554: Expected 1 arguments, but got 0.
