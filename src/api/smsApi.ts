@@ -34,27 +34,7 @@ export type SmsJobResponse = {
   message: string;
 };
 
-export type PaginatedSmsJobs = {
-  items: SmsJobResponse[];
-  total: number;
-  page: number;
-  size: number;
-};
 
-export type ReceivedSmsResponse = {
-  id: string;
-  sender: string;
-  recipient: string;
-  message: string;
-  receivedAt: string;
-};
-
-export type PaginatedReceivedSms = {
-  items: ReceivedSmsResponse[];
-  total: number;
-  page: number;
-  size: number;
-};
 
 // SMS API using RTK Query
 export const smsApi = baseApi.injectEndpoints({
@@ -98,51 +78,6 @@ export const smsApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: "Sms", id: "LIST" }],
     }),
 
-    // Get SMS History (Jobs)
-    getSmsJobs: builder.query<PaginatedSmsJobs, { page?: number; size?: number }>({
-      query: ({ page = 0, size = 10 }) => ({
-        url: "/api/sms/jobs",
-        params: { page, size },
-      }),
-      transformResponse: (response: any, _meta, arg) => {
-        return {
-          items: response?.items ?? response?.content ?? [],
-          total: response?.total ?? response?.totalElements ?? 0,
-          page: response?.page ?? response?.pageNumber ?? arg.page ?? 0,
-          size: response?.size ?? response?.pageSize ?? arg.size ?? 10,
-        };
-      },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.items.map(({ id }) => ({ type: "SmsJob" as const, id })),
-              { type: "SmsJob", id: "LIST" },
-            ]
-          : [{ type: "SmsJob", id: "LIST" }],
-    }),
-
-    // Get Received SMS
-    getReceivedSms: builder.query<PaginatedReceivedSms, { page?: number; size?: number }>({
-      query: ({ page = 0, size = 10 }) => ({
-        url: "/api/sms/received",
-        params: { page, size },
-      }),
-      transformResponse: (response: any, _meta, arg) => {
-        return {
-          items: response?.items ?? response?.content ?? [],
-          total: response?.total ?? response?.totalElements ?? 0,
-          page: response?.page ?? response?.pageNumber ?? arg.page ?? 0,
-          size: response?.size ?? response?.pageSize ?? arg.size ?? 10,
-        };
-      },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.items.map(({ id }) => ({ type: "Sms" as const, id })),
-              { type: "Sms", id: "RECEIVED_LIST" },
-            ]
-          : [{ type: "Sms", id: "RECEIVED_LIST" }],
-    }),
   }),
 });
 
@@ -151,7 +86,6 @@ export const {
   useSendSingleSmsMutation,
   useSendGroupSmsMutation,
   useSendBulkSmsMutation,
-  useGetSmsJobsQuery,
-  useGetReceivedSmsQuery,
+
 } = smsApi;
 

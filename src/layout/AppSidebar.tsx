@@ -44,8 +44,6 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     subItems: [
       { name: "Send SMS", path: "/send-sms", pro: false },
-      { name: "SMS Log", path: "/sms-log", pro: false },
-      { name: "Received SMS", path: "/received-sms", pro: false },
     ],
   },
 

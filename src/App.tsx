@@ -23,8 +23,6 @@ import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
 import SendSMS from "./pages/SMS/SendSMS";
-import SMSLog from "./pages/SMS/SMSLog";
-import ReceivedSMS from "./pages/SMS/ReceivedSMS";
 import Contact from "./pages/Contact/Contact";
 import ContactGroup from "./pages/ContactGroup/ContactGroup";
 import API from "./pages/API/API";
@@ -79,8 +77,7 @@ export default function App() {
 
             {/* SMS */}
             <Route path="/send-sms" element={<SendSMS />} />
-            <Route path="/sms-log" element={<SMSLog />} />
-            <Route path="/received-sms" element={<ReceivedSMS />} />
+            {/* SMS Logs and Received SMS removed for tenants per RBAC */}
 
             {/* Contact */}
             <Route path="/contact" element={<Contact />} />
