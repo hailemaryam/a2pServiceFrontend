@@ -5,7 +5,6 @@ import {
   PlusIcon,
   TrashBinIcon,
   CopyIcon,
-  FileIcon,
   CloseIcon,
 } from "../../icons";
 import {
@@ -28,12 +27,16 @@ export default function API() {
   // Helper to copy token to clipboard
   const handleCopyToken = (token: string) => {
     navigator.clipboard.writeText(token);
-    alert("Token copied to clipboard!"); 
+    alert("Token copied to clipboard!");
   };
 
   // Handle Revoke
   const handleDeleteToken = async (id: string) => {
-    if (confirm("Are you sure you want to revoke this API key? This cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to revoke this API key? This cannot be undone."
+      )
+    ) {
       try {
         await revokeApiKey(id).unwrap();
       } catch (error) {
@@ -63,7 +66,10 @@ export default function API() {
       return;
     }
     try {
-      await createApiKey({ name: keyName, senderId: selectedSenderId }).unwrap();
+      await createApiKey({
+        name: keyName,
+        senderId: selectedSenderId,
+      }).unwrap();
       closeCreateModal();
     } catch (error) {
       console.error("Failed to create key", error);
@@ -71,7 +77,7 @@ export default function API() {
     }
   };
 
-  const activeSenders = senders.filter(s => s.status === "ACTIVE");
+  const activeSenders = senders.filter((s) => s.status === "ACTIVE");
 
   return (
     <div>
@@ -88,22 +94,26 @@ export default function API() {
               <p className="text-gray-800 dark:text-white">
                 For API usage please use:
               </p>
-              <button className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
+              {/* <button className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
                 <FileIcon className="h-4 w-4" />
                 Docs
-              </button>
+              </button> */}
             </div>
             <div className="mb-3 text-brand-500 dark:text-brand-400">
-              https://api.fastsms.dev/v1/sms/send
+              https://fastsms.dev/api/p/sms/send
             </div>
             <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
               URL in POST method using body, JSON:
             </p>
             <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
               {`{
+{
+  "to": "2519...",
   "message": "Hello World",
-  "phoneNumber": "251911..."
-}`}
+  "scheduledAt": "2030-03-10T16:15:50Z",
+  "webhookUrl": "https://test.com/api/verifySmsDelivery/123522"
+}
+`}
             </pre>
           </div>
 
@@ -169,13 +179,19 @@ export default function API() {
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                      <td
+                        colSpan={5}
+                        className="px-6 py-4 text-center text-gray-500"
+                      >
                         Loading API keys...
                       </td>
                     </tr>
                   ) : tokens.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                      <td
+                        colSpan={5}
+                        className="px-6 py-4 text-center text-gray-500"
+                      >
                         No API keys found. Generate one to get started.
                       </td>
                     </tr>
@@ -185,16 +201,20 @@ export default function API() {
                         key={token.id}
                         className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                       >
-                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 dark:text-white font-medium">
+                        <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 dark:text-white font-medium">
                           {token.name || "Unnamed Key"}
                         </td>
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">
-                              {token.apiKey ? `${token.apiKey.substring(0, 8)}...` : "****************"}
+                              {token.apiKey
+                                ? `${token.apiKey.substring(0, 8)}...`
+                                : "****************"}
                             </span>
                             <button
-                              onClick={() => handleCopyToken(token.apiKey || "")}
+                              onClick={() =>
+                                handleCopyToken(token.apiKey || "")
+                              }
                               className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                               title="Copy Token"
                             >
@@ -206,17 +226,19 @@ export default function API() {
                           {token.senderName || "N/A"}
                         </td>
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                          {token.createdAt ? new Date(token.createdAt).toLocaleDateString() : "N/A"}
+                          {token.createdAt
+                            ? new Date(token.createdAt).toLocaleDateString()
+                            : "N/A"}
                         </td>
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2">
-                             <button
-                            onClick={() => handleDeleteToken(token.id)}
-                            className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
-                            title="Revoke Token"
-                          >
-                            <TrashBinIcon className="h-4 w-4" />
-                          </button>
+                            <button
+                              onClick={() => handleDeleteToken(token.id)}
+                              className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
+                              title="Revoke Token"
+                            >
+                              <TrashBinIcon className="h-4 w-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -260,7 +282,7 @@ export default function API() {
                 />
               </div>
 
-               <div>
+              <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Linked Sender ID
                 </label>

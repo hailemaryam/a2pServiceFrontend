@@ -69,11 +69,11 @@ export const paymentApi = baseApi.injectEndpoints({
           : [{ type: "Payment", id: "LIST" }],
     }),
 
-    // Get single transaction by ID has been removed from spec or not explicitly detailed but might be useful?
-    // Spec doesn't show /api/payments/transactions/{id}. It shows LIST.
-    // Spec: /api/payments/transactions LIST only. 
-    // We will keep getTransactions. Remove verifyPayment and getTransactionById if not in spec. 
-    // Actually spec has NO getTransactionById.
+    // Get single transaction by ID
+    getTransactionById: builder.query<PaymentTransaction, string>({
+      query: (id) => `/api/payments/transactions/${id}`,
+      providesTags: (_result, _error, id) => [{ type: "Payment", id }],
+    }),
   }),
 });
 
@@ -82,5 +82,6 @@ export const {
   useInitializePaymentMutation,
   useGetTransactionsQuery,
   useLazyGetTransactionsQuery,
+  useGetTransactionByIdQuery,
 } = paymentApi;
 
