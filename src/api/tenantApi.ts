@@ -1,3 +1,4 @@
+import { baseApi } from "./baseApi";
 import { ensureKeycloakToken } from "./keycloak";
 
 const baseUrl = (import.meta.env as any).VITE_API_BASE_URL || "";
@@ -43,5 +44,34 @@ export const registerTenant = async (payload: { name: string; phone?: string }):
   }
 };
 
+// Types for Tenant API
+export type SmsPackageTier = {
+  id: string;
+  minSmsCount: number;
+  maxSmsCount?: number;
+  pricePerSms: number;
+  description?: string;
+  isActive: boolean;
+};
 
+// Tenant API using RTK Query
+export const tenantApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getTenantSmsPackages: builder.query<SmsPackageTier[], void>({
+      query: () => "/api/tenant/sms-packages",
+      transformResponse: (response: any) => {
+        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "SmsPackage" as const, id })),
+              { type: "SmsPackage", id: "LIST" },
+            ]
+          : [{ type: "SmsPackage", id: "LIST" }],
+    }),
+  }),
+});
 
+// Export hooks
+export const { useGetTenantSmsPackagesQuery } = tenantApi;
