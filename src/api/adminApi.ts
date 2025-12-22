@@ -223,8 +223,35 @@ export const adminApi = baseApi.injectEndpoints({
             ]
           : [{ type: "SmsPackage", id: "LIST" }],
     }),
-    
-    // Spec has Create/Update but UI was read-only. We leave mutations out unless needed.
+
+    createSmsPackage: builder.mutation<SmsPackageTier, CreateSmsPackagePayload>({
+      query: (body) => ({
+        url: "/api/admin/sms-packages",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
+    }),
+
+    updateSmsPackage: builder.mutation<SmsPackageTier, { id: string; body: Partial<CreateSmsPackagePayload> }>({
+      query: ({ id, body }) => ({
+        url: `/api/admin/sms-packages/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "SmsPackage", id },
+        { type: "SmsPackage", id: "LIST" },
+      ],
+    }),
+
+    deleteSmsPackage: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/api/admin/sms-packages/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
+    }),
   }),
 });
 
@@ -241,4 +268,7 @@ export const {
   useApproveSmsJobMutation,
   useRejectSmsJobMutation,
   useGetSmsPackagesQuery,
+  useCreateSmsPackageMutation,
+  useUpdateSmsPackageMutation,
+  useDeleteSmsPackageMutation,
 } = adminApi;
