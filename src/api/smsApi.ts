@@ -40,11 +40,19 @@ export type SmsJobResponse = {
 export const smsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Send single SMS
-    sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload>({
-      query: (payload) => ({
-        url: "/api/sms/single",
+    sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload & { apiKey: string }>({
+      query: ({ apiKey, senderId, phoneNumber, message, scheduledAt }) => ({
+        url: "/api/p/sms/send",
         method: "POST",
-        body: payload,
+        headers: {
+          "API-Key": apiKey,
+        },
+        body: {
+          to: phoneNumber,
+          message,
+          scheduledAt,
+          // senderId is inferred from API Key by backend, or ignored
+        },
       }),
       invalidatesTags: [{ type: "Sms", id: "LIST" }],
     }),

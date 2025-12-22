@@ -8,6 +8,7 @@ import {
 } from "../../api/smsApi";
 import { useGetSendersQuery, useCreateSenderMutation } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
+import { useGetApiKeysQuery } from "../../api/apiKeyApi";
 import { CloseIcon } from "../../icons";
 
 // Type definitions for component state
@@ -44,6 +45,7 @@ export default function SendSMS() {
   // RTK Query hooks
   const { data: senders = [] } = useGetSendersQuery();
   const { data: contactGroups = [] } = useGetContactGroupsQuery();
+  const { data: apiKeys = [] } = useGetApiKeysQuery(); // Fetch API Keys
   
   const [sendSingleSms, { isLoading: isSendingSingle }] = useSendSingleSmsMutation();
   const [sendGroupSms, { isLoading: isSendingGroup }] = useSendGroupSmsMutation();
@@ -103,7 +105,16 @@ export default function SendSMS() {
           alert("Please fill in all required fields");
           return;
         }
+
+        // FIND API KEY FOR SELECTED SENDER
+        const validKey = apiKeys.find(k => k.senderId === smsData.senderId);
+        if (!validKey) {
+           alert("No API Key found for this Sender ID. Please generate an API Key in the API Keys section first.");
+           return;
+        }
+
         await sendSingleSms({
+          apiKey: validKey.apiKey,
           senderId: smsData.senderId,
           phoneNumber: smsData.phoneNumber,
           message: smsData.message,

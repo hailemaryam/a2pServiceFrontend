@@ -6,14 +6,16 @@ const baseUrl = (import.meta.env as any).VITE_API_BASE_URL || "";
 // Custom base query with Keycloak authentication
 const baseQuery = fetchBaseQuery({
   baseUrl,
-  prepareHeaders: async (headers) => {
+  prepareHeaders: async (headers, { getState, endpoint }) => {
     try {
       const token = await ensureKeycloakToken();
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
-      // Don't set Content-Type header here - it will be set automatically by fetchBaseQuery
-      // For FormData, browser will set it with boundary automatically
+      
+      console.log(`[API Debug] Requesting: ${baseUrl}${endpoint}`);
+      console.log(`[API Debug] Token present: ${!!token}`);
+      
       return headers;
     } catch (error) {
       console.warn("Keycloak token refresh failed", error);

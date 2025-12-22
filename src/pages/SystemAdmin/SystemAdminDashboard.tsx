@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useAuth } from "../../hooks/useAuth";
+import { useGetAdminDashboardQuery } from "../../api/dashboardApi";
 
 /**
  * System Admin Dashboard - Overview with KPIs
@@ -10,14 +11,19 @@ import { useAuth } from "../../hooks/useAuth";
  */
 export default function SystemAdminDashboard() {
   const { username } = useAuth();
+  const { data: adminData, isLoading } = useGetAdminDashboardQuery();
 
-  // Dummy KPI data - will be replaced with API calls
+  // Use API data or fallbacks
   const kpis = {
-    totalTenants: 150,
-    pendingApprovals: 12,
-    activeSmsJobs: 8,
-    totalPackages: 4,
+    totalTenants: adminData?.tenantCount ?? 0,
+    pendingApprovals: adminData?.pendingSenderCount ?? 0,
+    activeSmsJobs: adminData?.pendingSmsJobCount ?? 0, // Assuming API returns 'pending' count as per prompt, key mapped accordingly
+    totalPackages: adminData?.activePackageCount ?? 0,
   };
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-gray-500">Loading Admin Dashboard...</div>;
+  }
 
   return (
     <>
@@ -26,9 +32,7 @@ export default function SystemAdminDashboard() {
       <div className="space-y-6 pb-8">
         <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              System Admin Dashboard
-            </h1>
+      
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Welcome, {username || "System Admin"}
             </p>
@@ -91,7 +95,7 @@ export default function SystemAdminDashboard() {
             <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active SMS Jobs</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending SMS Jobs</p>
                   <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                     {kpis.activeSmsJobs}
                   </p>
@@ -117,7 +121,7 @@ export default function SystemAdminDashboard() {
             <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Packages</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Packages</p>
                   <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                     {kpis.totalPackages}
                   </p>

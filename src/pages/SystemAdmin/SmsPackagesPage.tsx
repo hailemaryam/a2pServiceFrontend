@@ -201,8 +201,8 @@ export default function SmsPackagesPage() {
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03]">
           
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Pricing Tiers</h3>
+          <div className="mb-6  flex items-center justify-between">
+         
             <button
               onClick={() => { setEditingPackage(null); setIsModalOpen(true); }}
               className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
