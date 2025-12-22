@@ -1,9 +1,8 @@
-import { useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { MailIcon, ChatIcon, PlugInIcon, PieChartIcon, FileIcon } from "../../icons";
+import { MailIcon, ChatIcon, PlugInIcon, PieChartIcon } from "../../icons";
 import { useGetTenantDashboardQuery } from "../../api/dashboardApi";
 
 /*

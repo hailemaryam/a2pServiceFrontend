@@ -41,7 +41,7 @@ export const smsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Send single SMS
     sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload & { apiKey: string }>({
-      query: ({ apiKey, senderId, phoneNumber, message, scheduledAt }) => ({
+      query: ({ apiKey, phoneNumber, message, scheduledAt }) => ({
         url: "/api/p/sms/send",
         method: "POST",
         headers: {
