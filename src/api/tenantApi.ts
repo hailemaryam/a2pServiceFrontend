@@ -54,11 +54,11 @@ export type SmsPackageTier = {
   isActive: boolean;
 };
 
-// Tenant API using RTK Query
+// Tenant API 
 export const tenantApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getTenantSmsPackages: builder.query<SmsPackageTier[], void>({
-      query: () => "/api/tenant/sms-packages",
+      query: () => "/api/admin/sms-packages",
       transformResponse: (response: any) => {
         return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
       },

@@ -22,6 +22,7 @@ import SmsJobApprovalsPage from "./pages/SystemAdmin/SmsJobApprovalsPage";
 import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
+import Checkout from "./pages/Billings/Checkout";
 import SendSMS from "./pages/SMS/SendSMS";
 import Contact from "./pages/Contact/Contact";
 import ContactGroup from "./pages/ContactGroup/ContactGroup";
@@ -74,6 +75,7 @@ export default function App() {
             {/* Billings */}
             <Route path="/billings" element={<Billings />} />
             <Route path="/billings-form" element={<BillingsForm />} />
+            <Route path="/billing/checkout" element={<Checkout />} />
 
             {/* SMS */}
             <Route path="/send-sms" element={<SendSMS />} />
