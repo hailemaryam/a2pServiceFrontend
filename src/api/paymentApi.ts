@@ -36,7 +36,7 @@ export const paymentApi = baseApi.injectEndpoints({
     // Initialize payment (Chapa integration)
     initializePayment: builder.mutation<PaymentResponse, InitializePaymentPayload>({
       query: (payload) => ({
-        url: "/api/tenant/payments/initialize",
+        url: "/api/payments/initialize",
         method: "POST",
         body: payload,
       }),
