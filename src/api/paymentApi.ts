@@ -36,7 +36,7 @@ export const paymentApi = baseApi.injectEndpoints({
     // Initialize payment (Chapa integration)
     initializePayment: builder.mutation<PaymentResponse, InitializePaymentPayload>({
       query: (payload) => ({
-        url: "/api/payments/initialize",
+        url: "/api/tenant/payments/initialize",
         method: "POST",
         body: payload,
       }),
@@ -49,7 +49,7 @@ export const paymentApi = baseApi.injectEndpoints({
       { page?: number; size?: number; status?: string }
     >({
       query: ({ page = 0, size = 20, status }) => ({
-        url: "/api/payments/transactions",
+        url: "/api/tenant/payments/transactions",
         params: { page, size, status },
       }),
       transformResponse: (response: any, _meta, arg) => {
@@ -71,7 +71,7 @@ export const paymentApi = baseApi.injectEndpoints({
 
     // Get single transaction by ID
     getTransactionById: builder.query<PaymentTransaction, string>({
-      query: (id) => `/api/payments/transactions/${id}`,
+      query: (id) => `/api/tenant/payments/transactions/${id}`,
       providesTags: (_result, _error, id) => [{ type: "Payment", id }],
     }),
   }),
