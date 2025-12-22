@@ -90,31 +90,40 @@ export default function API() {
         <div className="mx-auto max-w-6xl">
           {/* 1. API Instructions */}
           <div className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-800/50">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-800 dark:text-white">
-                For API usage please use:
-              </p>
-              {/* <button className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
-                <FileIcon className="h-4 w-4" />
-                Docs
-              </button> */}
-            </div>
-            <div className="mb-3 text-brand-500 dark:text-brand-400">
-              https://fastsms.dev/api/p/sms/send
-            </div>
-            <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-              URL in POST method using body, JSON:
-            </p>
-            <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
-              {`{
-{
+            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+              Integration Details
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Endpoint URL (POST)</p>
+                <code className="text-brand-500 dark:text-brand-400 break-all">
+                  https://fastsms.dev/api/p/sms/send
+                </code>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Headers</p>
+                <div className="rounded border border-gray-200 bg-white p-2 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-mono">
+                  API-Key: &lt;Your_API_Key_Below&gt;
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Request Body (JSON)</p>
+                <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+{`{
   "to": "2519...",
   "message": "Hello World",
-  "scheduledAt": "2030-03-10T16:15:50Z",
-  "webhookUrl": "https://test.com/api/verifySmsDelivery/123522"
-}
-`}
-            </pre>
+  "scheduledAt": "2030-03-10T16:15:50Z",      // Optional
+  "webhookUrl": "https://test.com/webhook"    // Optional
+}`}
+                </pre>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  * <code>scheduledAt</code> and <code>webhookUrl</code> are optional fields.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* 2. Search and Action Section */}
