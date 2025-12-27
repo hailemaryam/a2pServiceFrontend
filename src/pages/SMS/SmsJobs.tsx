@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { useGetSmsJobsQuery, SmsJobResponse } from "../../api/smsApi";
-import { DownloadIcon } from "../../icons";
+import { useGetSmsJobsQuery } from "../../api/smsApi";
 
 export default function SmsJobs() {
   const [page, setPage] = useState(0);
