@@ -19,7 +19,7 @@ export default function ContactGroup() {
   const [groupSearch, setGroupSearch] = useState("");
 
   // RTK Query hooks
-  const { data: groups = [], isLoading } = useGetContactGroupsQuery();
+  const { data: groups = [], isLoading, refetch } = useGetContactGroupsQuery();
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
 
@@ -85,6 +85,19 @@ export default function ContactGroup() {
       // Reset form
       closeEditModal();
     } catch (error: any) {
+      // Workaround for 500 error on successful update
+      if (error?.status === 500) {
+        // Wait a bit for the DB to update
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const result = await refetch();
+        const updatedGroup = result.data?.find((g: ContactGroupResponse) => g.id === editingGroup.id);
+        if (updatedGroup && updatedGroup.name === editGroupName && updatedGroup.description === editGroupDescription) {
+           // It was actually updated
+           closeEditModal();
+           return;
+        }
+      }
       console.error("Failed to update group", error);
       alert(error?.data?.message || "Failed to update group");
     }
