@@ -4,13 +4,13 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import {
   GroupIcon,
-  PencilIcon,
   CloseIcon,
 } from "../../icons";
 import {
   useGetContactGroupsQuery,
   useCreateContactGroupMutation,
   useUpdateContactGroupMutation,
+  useDeleteContactGroupMutation,
   ContactGroupResponse,
 } from "../../api/contactGroupsApi";
 
@@ -22,6 +22,7 @@ export default function ContactGroup() {
   const { data: groups = [], isLoading, refetch } = useGetContactGroupsQuery();
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
+  const [deleteGroup] = useDeleteContactGroupMutation();
 
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -108,6 +109,28 @@ export default function ContactGroup() {
     setEditingGroup(null);
     setEditGroupName("");
     setEditGroupDescription("");
+  };
+
+  const handleDeleteGroup = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this group?")) {
+      try {
+        await deleteGroup(id).unwrap();
+      } catch (error: any) {
+        
+        if (error?.status === 500) {
+           await new Promise(resolve => setTimeout(resolve, 2000));
+           const result = await refetch();
+           const stillExists = result.data?.find((g) => g.id === id);
+           
+           if (!stillExists) {
+             refetch();
+             return;
+           }
+        }
+        console.error("Failed to delete group", error);
+        alert(error?.data?.message || "Failed to delete group");
+      }
+    }
   };
 
   // Filter groups locally
@@ -227,12 +250,16 @@ export default function ContactGroup() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEditClick(group)}
-                              className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                              title="Edit Group"
+                              className="rounded-md px-3 py-1 text-xs font-medium text-brand-600 transition hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/30"
                             >
-                              <PencilIcon className="h-4 w-4" />
+                              Edit
                             </button>
-                            {/* Delete removed as per spec */}
+                            <button
+                              onClick={() => handleDeleteGroup(group.id)}
+                              className="ml-2 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition hover:bg-red-200 dark:bg-red-900/50 dark:text-red-200 dark:hover:bg-red-900"
+                            >
+                              Delete
+                            </button>
                           </div>
                         </td>
                       </tr>
