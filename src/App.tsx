@@ -24,6 +24,7 @@ import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
 import Checkout from "./pages/Billings/Checkout";
 import SendSMS from "./pages/SMS/SendSMS";
+import SmsJobs from "./pages/SMS/SmsJobs";
 import Contact from "./pages/Contact/Contact";
 import ContactGroup from "./pages/ContactGroup/ContactGroup";
 import API from "./pages/API/API";
@@ -79,6 +80,7 @@ export default function App() {
 
             {/* SMS */}
             <Route path="/send-sms" element={<SendSMS />} />
+            <Route path="/sms-log" element={<SmsJobs />} />
             {/* SMS Logs and Received SMS removed for tenants per RBAC */}
 
             {/* Contact */}

@@ -6,6 +6,7 @@ import {
   useFetchContactsQuery,
   useCreateContactMutation,
   useUpdateContactMutation,
+  useDeleteContactMutation,
   useUploadContactsBinaryMutation,
   useUploadContactsMultipartMutation,
   ContactResponse,
@@ -27,6 +28,7 @@ export default function Contact() {
 
   const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
   const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
+  const [deleteContact] = useDeleteContactMutation();
   const [uploadContactsBinary, { isLoading: isUploadingBinary }] =
     useUploadContactsBinaryMutation();
   const [uploadContactsMultipart, { isLoading: isUploadingMultipart }] =
@@ -144,6 +146,19 @@ export default function Contact() {
     setPhoneNumber(contact.phone || "");
     setEmail(contact.email || "");
     setIsContactModalOpen(true);
+  };
+
+  const handleDeleteContact = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this contact?")) {
+      try {
+        await deleteContact(id).unwrap();
+        refetch();
+      } catch (err: any) {
+        setLocalError(
+          err?.data?.message || err?.message || "Failed to delete contact"
+        );
+      }
+    }
   };
 
   const handlePageChange = (nextPage: number) => {
@@ -332,6 +347,12 @@ export default function Contact() {
                                 className="rounded-md px-3 py-1 text-xs font-medium text-brand-600 transition hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/30"
                               >
                                 Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteContact(contact.id)}
+                                className="ml-2 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition hover:bg-red-200 dark:bg-red-900/50 dark:text-red-200 dark:hover:bg-red-900"
+                              >
+                                Delete
                               </button>
                             </td>
                           </tr>

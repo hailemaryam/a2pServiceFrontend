@@ -86,6 +86,24 @@ export const smsApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: "Sms", id: "LIST" }],
     }),
 
+
+    // Get SMS Jobs (Tenant)
+    getSmsJobs: builder.query<
+      { items: SmsJobResponse[]; total: number; page: number; size: number },
+      { page?: number; size?: number }
+    >({
+      query: ({ page = 0, size = 20 }) => ({
+          url: "/api/sms",
+          params: { page, size },
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: "Sms" as const, id })),
+              { type: "Sms", id: "LIST" },
+            ]
+          : [{ type: "Sms", id: "LIST" }],
+    }),
   }),
 });
 
@@ -94,6 +112,7 @@ export const {
   useSendSingleSmsMutation,
   useSendGroupSmsMutation,
   useSendBulkSmsMutation,
+  useGetSmsJobsQuery,
 
 } = smsApi;
 

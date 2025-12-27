@@ -155,6 +155,19 @@ export const contactsApi = baseApi.injectEndpoints({
       },
       invalidatesTags: [{ type: "Contact", id: "LIST" }],
     }),
+
+
+    // Delete contact
+    deleteContact: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/api/contacts/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: "Contact", id },
+        { type: "Contact", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -164,6 +177,7 @@ export const {
   useGetContactByIdQuery,
   useCreateContactMutation,
   useUpdateContactMutation,
+  useDeleteContactMutation,
   useSearchContactByPhoneQuery,
   useUploadContactsBinaryMutation,
   useUploadContactsMultipartMutation,
