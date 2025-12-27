@@ -9,7 +9,6 @@ import {
 import { useGetSendersQuery } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import { useGetApiKeysQuery } from "../../api/apiKeyApi";
-import { CloseIcon } from "../../icons";
 
 // Type definitions for component state
 interface SmsState {
