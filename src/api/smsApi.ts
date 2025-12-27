@@ -54,7 +54,7 @@ export const smsApi = baseApi.injectEndpoints({
           // senderId is inferred from API Key by backend, or ignored
         },
       }),
-      invalidatesTags: [{ type: "Sms", id: "LIST" }],
+      invalidatesTags: [{ type: "SmsJob", id: "LIST" }],
     }),
 
     // Send group SMS
@@ -64,7 +64,7 @@ export const smsApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: [{ type: "Sms", id: "LIST" }],
+      invalidatesTags: [{ type: "SmsJob", id: "LIST" }],
     }),
 
     // Send bulk SMS (multipart file upload)
@@ -83,7 +83,7 @@ export const smsApi = baseApi.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: [{ type: "Sms", id: "LIST" }],
+      invalidatesTags: [{ type: "SmsJob", id: "LIST" }],
     }),
 
 
@@ -99,10 +99,10 @@ export const smsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "Sms" as const, id })),
-              { type: "Sms", id: "LIST" },
+              ...result.items.map(({ id }) => ({ type: "SmsJob" as const, id })),
+              { type: "SmsJob", id: "LIST" },
             ]
-          : [{ type: "Sms", id: "LIST" }],
+          : [{ type: "SmsJob", id: "LIST" }],
     }),
   }),
 });

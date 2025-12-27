@@ -6,7 +6,7 @@ import {
   useSendGroupSmsMutation,
   useSendBulkSmsMutation,
 } from "../../api/smsApi";
-import { useGetSendersQuery, useCreateSenderMutation } from "../../api/sendersApi";
+import { useGetSendersQuery } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import { useGetApiKeysQuery } from "../../api/apiKeyApi";
 import { CloseIcon } from "../../icons";
@@ -39,8 +39,8 @@ export default function SendSMS() {
   });
 
   // Modal State
-  const [isSenderModalOpen, setIsSenderModalOpen] = useState(false);
-  const [newSenderName, setNewSenderName] = useState("");
+  // const [isSenderModalOpen, setIsSenderModalOpen] = useState(false);
+  // const [newSenderName, setNewSenderName] = useState("");
 
   // RTK Query hooks
   const { data: senders = [] } = useGetSendersQuery();
@@ -50,7 +50,7 @@ export default function SendSMS() {
   const [sendSingleSms, { isLoading: isSendingSingle }] = useSendSingleSmsMutation();
   const [sendGroupSms, { isLoading: isSendingGroup }] = useSendGroupSmsMutation();
   const [sendBulkSms, { isLoading: isSendingBulk }] = useSendBulkSmsMutation();
-  const [createSender, { isLoading: isCreatingSender }] = useCreateSenderMutation();
+  // const [createSender, { isLoading: isCreatingSender }] = useCreateSenderMutation();
 
   // Get approved senders only
   const approvedSenders = useMemo(
@@ -205,15 +205,9 @@ export default function SendSMS() {
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
           
-          {/* Header & Sender ID Request */}
+          {/* Header */}
           <div className="flex justify-between items-center mb-4 sm:mb-8">
             {/* <h2 className="text-lg font-semibold text-gray-900 dark:text-white">New Campaign</h2> */}
-             <button
-              onClick={() => setIsSenderModalOpen(true)}
-              className="px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition"
-            >
-              Request New Sender ID
-            </button>
           </div>
 
           <div className="bg-white dark:bg-white/[0.03] p-4 sm:p-6 lg:p-8 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
@@ -344,54 +338,7 @@ export default function SendSMS() {
         </div>
       </div>
 
-      {/* Request Sender ID Modal */}
-      {isSenderModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-900">
-             <button
-              onClick={() => setIsSenderModalOpen(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 dark:text-gray-400"
-            >
-              <CloseIcon className="h-5 w-5" />
-            </button>
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-              Request Sender ID
-            </h3>
-            <input
-              type="text"
-              value={newSenderName}
-              onChange={(e) => setNewSenderName(e.target.value)}
-              placeholder="e.g. MyBrand"
-              className="mb-4 w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
-            />
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setIsSenderModalOpen(false)}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={isCreatingSender}
-                onClick={async () => {
-                   if (!newSenderName.trim()) return;
-                   try {
-                     await createSender({ name: newSenderName }).unwrap();
-                     alert("Sender ID requested! Waiting for admin approval.");
-                     setIsSenderModalOpen(false);
-                     setNewSenderName("");
-                   } catch (error: any) {
-                     alert(error?.data?.message || "Failed.");
-                   }
-                }}
-                className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
-              >
-                {isCreatingSender ? "Requesting..." : "Request"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Request Sender ID Modal Removed */}
     </div>
   );
 }

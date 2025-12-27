@@ -25,9 +25,7 @@ const navItems: NavItem[] = [
   {
     name: "Dashboard",
     icon: <GridIcon />,
-    subItems: [
-      { name: "Admin", path: "/dashboard", pro: false },
-    ],
+    path: "/dashboard",
   },
 
   {
@@ -35,7 +33,7 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "Billings", path: "/billings", pro: false },
-      { name: "Billings Form", path: "/billings-form", pro: false },
+      { name: "Transaction list", path: "/billings-form", pro: false },
     ],
   },
 
@@ -44,7 +42,14 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     subItems: [
       { name: "Send SMS", path: "/send-sms", pro: false },
+      { name: "SMS jobs", path: "/sms-log", pro: false },
     ],
+  },
+
+  {
+    name: "Sender List",
+    icon: <GridIcon />, // You might want to import a different icon or use an existing one
+    path: "/senders",
   },
 
   {

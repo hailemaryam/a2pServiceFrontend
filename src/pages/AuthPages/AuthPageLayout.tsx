@@ -18,19 +18,19 @@ export default function AuthLayout({
           <div className="relative flex items-center justify-center w-full h-full z-1">
             {/* <!-- ===== Common Grid Shape Start ===== --> */}
             <GridShape />
-            <div className="flex flex-col items-center max-w-xs px-4">
+            <div className="flex flex-col items-center max-w-sm px-4">
               <Link to="/" className="block mb-4">
                 <img
-                  width={231}
-                  height={48}
+                  width={300}
+                  height={100}
                   src="/images/logo/auth-logo.png"
                   alt="Logo"
-                  className="w-auto h-12 object-contain"
+                  className="w-auto h-24 object-contain"
                   onError={(e) => {
                     // Fallback to banner if auth-logo doesn't exist
                     const target = e.target as HTMLImageElement;
                     target.src = "/banner.png";
-                    target.className = "w-auto h-12 object-contain";
+                    target.className = "w-auto h-24 object-contain";
                   }}
                 />
               </Link>

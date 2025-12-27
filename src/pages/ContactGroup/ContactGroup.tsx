@@ -11,8 +11,10 @@ import {
   useGetContactGroupsQuery,
   useCreateContactGroupMutation,
   useUpdateContactGroupMutation,
+  useDeleteContactGroupMutation,
   ContactGroupResponse,
 } from "../../api/contactGroupsApi";
+import { TrashBinIcon } from "../../icons";
 
 export default function ContactGroup() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,6 +24,7 @@ export default function ContactGroup() {
   const { data: groups = [], isLoading } = useGetContactGroupsQuery();
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
+  const [deleteGroup] = useDeleteContactGroupMutation();
 
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -95,6 +98,17 @@ export default function ContactGroup() {
     setEditingGroup(null);
     setEditGroupName("");
     setEditGroupDescription("");
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this group?")) {
+      try {
+        await deleteGroup(id).unwrap();
+      } catch (error: any) {
+        console.error("Failed to delete group", error);
+        alert(error?.data?.message || "Failed to delete group");
+      }
+    }
   };
 
   // Filter groups locally
@@ -175,6 +189,9 @@ export default function ContactGroup() {
                       Number of Contacts
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       Actions
                     </th>
                   </tr>
@@ -210,6 +227,11 @@ export default function ContactGroup() {
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                           {group.contactCount || 0}
                         </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm">
+                          <span className="inline-flex rounded-full bg-green-50 px-2 text-xs font-semibold leading-5 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Active
+                          </span>
+                        </td>
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="flex items-center gap-2">
                             <button
@@ -219,7 +241,13 @@ export default function ContactGroup() {
                             >
                               <PencilIcon className="h-4 w-4" />
                             </button>
-                            {/* Delete removed as per spec */}
+                            <button
+                              onClick={() => handleDelete(group.id)}
+                              className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
+                              title="Delete Group"
+                            >
+                              <TrashBinIcon className="h-4 w-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
