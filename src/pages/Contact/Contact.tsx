@@ -91,22 +91,6 @@ export default function Contact() {
       resetContactForm();
       setIsContactModalOpen(false);
     } catch (err: any) {
-      
-      if (editingId && (err?.status === 500 || err?.originalStatus === 500)) {
-         await new Promise(resolve => setTimeout(resolve, 2000));
-         const result = await refetch();
-         const updatedContact = result.data?.items?.find((c) => c.id === editingId);
-         
-         
-         if (updatedContact && 
-             updatedContact.name === payload.name && 
-             updatedContact.phone === payload.phone) {
-            resetContactForm();
-            setIsContactModalOpen(false);
-            return;
-         }
-      }
-
       setLocalError(
         err?.data?.message || err?.message || "Unable to save contact"
       );
@@ -170,19 +154,6 @@ export default function Contact() {
         await deleteContact(id).unwrap();
         refetch();
       } catch (err: any) {
-       
-        if (err?.status === 500 || err?.originalStatus === 500) {
-           
-           await new Promise(resolve => setTimeout(resolve, 2000));
-           
-           const result = await refetch();
-           const stillExists = result.data?.items?.some((c) => c.id === id);
-           
-           if (!stillExists) {
-             refetch(); 
-             return;
-           }
-        }
         setLocalError(
           err?.data?.message || err?.message || "Failed to delete contact"
         );

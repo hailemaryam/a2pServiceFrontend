@@ -18,7 +18,7 @@ export default function UserDropdown() {
   const handleSignOut = () => {
     closeDropdown();
     keycloak.logout({
-      redirectUri: window.location.origin + "#/landing",
+      redirectUri: `${window.location.origin}#/landing`,
     });
   };
 

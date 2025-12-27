@@ -199,13 +199,13 @@ const SystemAdminSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-4 sm:px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-[calc(100vh-4rem)] lg:h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
-            ? "w-[290px]"
+            ? "w-[280px] sm:w-[290px]"
             : isHovered
             ? "w-[290px]"
-            : "w-[90px]"
+            : "w-[80px] sm:w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -214,7 +214,7 @@ const SystemAdminSidebar: React.FC = () => {
     >
       {/* Logo */}
       <div
-        className={`py-8 flex ${
+        className={`py-6 sm:py-8 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -223,13 +223,23 @@ const SystemAdminSidebar: React.FC = () => {
             <img
               src="/banner.png"
               alt="Logo"
-              className="w-52 h-auto object-contain"
+              className="w-48 sm:w-52 h-auto object-contain max-w-full"
+              onError={(e) => {
+                // Fallback to images/logo if banner doesn't exist
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/logo/logo.png";
+              }}
             />
           ) : (
             <img
               src="/favicon.png"
               alt="Logo"
-              className="w-14 h-14 object-contain"
+              className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
+              onError={(e) => {
+                // Fallback to logo icon if favicon doesn't exist
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/logo/logo-icon.png";
+              }}
             />
           )}
         </Link>

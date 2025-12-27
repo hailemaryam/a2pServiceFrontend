@@ -31,11 +31,11 @@ const navItems: NavItem[] = [
   },
 
   {
-    name: "SMS Package",
+    name: "Billings",
     icon: <ListIcon />,
     subItems: [
-      { name: "SMS Package", path: "/billings", pro: false },
-      { name: "Transaction List", path: "/billings-form", pro: false },
+      { name: "Billings", path: "/billings", pro: false },
+      { name: "Billings Form", path: "/billings-form", pro: false },
     ],
   },
 
@@ -44,7 +44,6 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     subItems: [
       { name: "Send SMS", path: "/send-sms", pro: false },
-      { name: "SMS Jobs", path: "/sms-log", pro: false },
     ],
   },
 
