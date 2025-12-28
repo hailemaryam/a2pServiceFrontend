@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "Billings", path: "/billings", pro: false },
-      { name: "Transaction list", path: "/billings-form", pro: false },
+      { name: "Transaction History", path: "/transactions", pro: false },
     ],
   },
 

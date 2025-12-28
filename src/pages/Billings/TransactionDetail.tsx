@@ -44,7 +44,7 @@ export default function TransactionDetail() {
           Please wait while we look for your transaction.
         </p>
         <button
-          onClick={() => navigate("/billings-form")}
+          onClick={() => navigate("/transactions")}
           className="mt-4 text-brand-500 hover:text-brand-600 font-medium"
         >
           Go to Transaction History
@@ -76,7 +76,7 @@ export default function TransactionDetail() {
               Transaction Details
             </h2>
             <button
-              onClick={() => navigate("/billings-form")}
+              onClick={() => navigate("/transactions")}
               className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Back to History
