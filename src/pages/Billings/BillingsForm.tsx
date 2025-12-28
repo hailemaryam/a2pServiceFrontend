@@ -129,16 +129,9 @@ export default function TransactionHistory() {
         
         {/* Header & Controls */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-              Transactions
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              History of all your payments
-            </p>
-          </div>
+         
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
              <select
                value={statusFilter}
                onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}

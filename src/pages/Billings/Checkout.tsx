@@ -32,7 +32,19 @@ export default function Checkout() {
 
   const handleProceed = async () => {
     try {
-      const response = await initializePayment({ amount: state.estimatedPrice }).unwrap();
+      const returnUrl = `${window.location.origin}/#/transactions/verify`; // Verify maps to id 'verify', page should handle loading latest or allow backend to append ID? 
+      // User asked for /transactions/<id>. 
+      // If backend appends ID to returnUrl, perfect. If not, we land on /transactions/verify.
+      // Let's assume backend might append to query param? 
+      // Or let's just point to /transactions/callback and hope.
+      // Actually, simplest is to point to a page that lists transactions or checks latest status.
+      // But adhering to request:
+      const payload = { 
+        amount: state.estimatedPrice,
+        returnUrl: `${window.location.origin}/#/transactions/check-status` 
+      };
+      
+      const response = await initializePayment(payload).unwrap();
       
       if (response.checkoutUrl) {
         // Redirect to Chapa checkout

@@ -31,6 +31,7 @@ export const useAuth = () => {
     keycloak,
     username: authState.username || keycloak.tokenParsed?.preferred_username || null,
     token: authState.token || keycloak.token || null,
+    tenantId: keycloak.tokenParsed?.tenantId || null,
   };
 };
 

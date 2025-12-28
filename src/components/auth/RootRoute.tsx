@@ -1,5 +1,5 @@
 import { Navigate } from "react-router";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useKeycloak } from "@react-keycloak/web";
 import Admin from "../../pages/Admin/Admin";
@@ -7,7 +7,7 @@ import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
 import AppHeader from "../../layout/AppHeader";
 import Backdrop from "../../layout/Backdrop";
 import AppSidebar from "../../layout/AppSidebar";
-import { registerTenant } from "../../api/tenantApi";
+// import { registerTenant } from "../../api/tenantApi";
 
 /**
  * Layout wrapper for tenant dashboard at root path
@@ -43,47 +43,26 @@ const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ childr
  * Also handles tenant registration for tenant users after Keycloak login
  */
 export default function RootRoute() {
-  const { isAuthenticated, isSysAdmin, isTenantRole } = useAuth();
-  const { keycloak } = useKeycloak();
+  const { isAuthenticated, isSysAdmin, isTenantRole, tenantId } = useAuth();
+  // const { keycloak } = useKeycloak();
 
-  // Handle tenant registration for tenant users only (sys_admin never registers)
-  useEffect(() => {
-    const handleTenantRegistration = async () => {
-      // sys_admin users are already authorized and never need registration
-      // Only tenant users (tenant_admin, tenant_user) should register
-      if (isAuthenticated && !isSysAdmin && isTenantRole) {
-        // Check if we've already attempted registration (prevent duplicate calls)
-        const registrationKey = `tenant_registered_${keycloak.tokenParsed?.sub}`;
-        const hasRegistered = sessionStorage.getItem(registrationKey);
+  // Redirect to onboarding if tenant is not fully set up
+  if (isAuthenticated && isTenantRole && (!tenantId || tenantId === "unassigned")) {
+      return <Navigate to="/onboard" replace />;
+  }
 
-        if (!hasRegistered) {
-          try {
-            const payload = { 
-              name: keycloak.tokenParsed?.preferred_username || "User",
-              phone: "" 
-            };
-            const result = await registerTenant(payload);
-            if (result.success) {
-              // Mark as registered to prevent duplicate calls
-              sessionStorage.setItem(registrationKey, "true");
-              console.log("Tenant registration successful");
-            } else {
-              console.error("Tenant registration failed:", result.error);
-              // Don't block navigation on registration failure
-              // Backend should handle duplicate registrations gracefully
-            }
-          } catch (error) {
-            console.error("Error during tenant registration:", error);
-            // Don't block navigation on error
-          }
-        }
-      }
-    };
-
-    if (isAuthenticated) {
-      handleTenantRegistration();
-    }
-  }, [isAuthenticated, isTenantRole, isSysAdmin, keycloak]);
+  // Check for payment callback params (Chapa, etc. often redirect to root/dashboard with params)
+  // If found, redirect to our transaction detail page
+  const searchParams = new URLSearchParams(window.location.hash.split('?')[1] || window.location.search);
+  const txRef = searchParams.get('tx_ref') || searchParams.get('transactionId') || searchParams.get('id');
+  
+  if (isAuthenticated && txRef) {
+      // Clean redirect to transaction detail
+      // Using 'check-status' logic if we want to be safe, or direct ID if we trust it's the ID.
+      // Chapa 'tx_ref' is usually the transaction ID in our system contexts.
+      console.log("Payment callback detected, redirecting to transaction:", txRef);
+      return <Navigate to={`/transactions/${txRef}`} replace />;
+  }
 
   // If not authenticated, redirect to landing
   if (!isAuthenticated) {

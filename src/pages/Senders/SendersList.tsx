@@ -17,6 +17,7 @@ import {
 
 export default function SendersList() {
   const [senderSearch, setSenderSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   // RTK Query hooks
   const { data: senders = [], isLoading } = useGetSendersQuery();
@@ -101,9 +102,11 @@ export default function SendersList() {
   };
 
   // Filter local
-  const filteredSenders = senders.filter((s) =>
-    s.name.toLowerCase().includes(senderSearch.toLowerCase())
-  );
+  const filteredSenders = senders.filter((s) => {
+    const matchesSearch = s.name.toLowerCase().includes(senderSearch.toLowerCase());
+    const matchesStatus = statusFilter ? s.status === statusFilter : true;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div>
@@ -117,9 +120,7 @@ export default function SendersList() {
         <div className="mx-auto max-w-5xl">
           
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Sender IDs
-            </h2>
+          
             <button
               onClick={() => setIsCreateModalOpen(true)}
               className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
@@ -129,14 +130,29 @@ export default function SendersList() {
             </button>
           </div>
 
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Search Senders..."
-              value={senderSearch}
-              onChange={(e) => setSenderSearch(e.target.value)}
-              className="h-11 w-full max-w-sm rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white"
-            />
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search Senders..."
+                value={senderSearch}
+                onChange={(e) => setSenderSearch(e.target.value)}
+                className="h-11 w-full max-w-sm rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white"
+              />
+            </div>
+             <div className="flex items-center gap-3">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-none dark:border-gray-700 dark:text-white dark:focus:border-brand-800"
+              >
+                <option value="">All Statuses</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+                <option value="PENDING_VERIFICATION">Pending Verification</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
           </div>
 
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">

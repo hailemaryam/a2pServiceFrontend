@@ -4,6 +4,7 @@ import { baseApi } from "./baseApi";
 // Types for Payment operations
 export type InitializePaymentPayload = {
   amount: number;
+  returnUrl?: string;
 };
 
 export type PaymentResponse = {

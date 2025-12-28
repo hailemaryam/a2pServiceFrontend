@@ -90,11 +90,11 @@ export const smsApi = baseApi.injectEndpoints({
     // Get SMS Jobs (Tenant)
     getSmsJobs: builder.query<
       { items: SmsJobResponse[]; total: number; page: number; size: number },
-      { page?: number; size?: number }
+      { page?: number; size?: number; status?: string }
     >({
-      query: ({ page = 0, size = 20 }) => ({
+      query: ({ page = 0, size = 20, status }) => ({
           url: "/api/sms",
-          params: { page, size },
+          params: { page, size, status },
       }),
       providesTags: (result) =>
         result

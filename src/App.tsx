@@ -3,6 +3,7 @@ import Landing from "./pages/Landing/Landing";
 import RootRoute from "./components/auth/RootRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
+import Onboarding from "./pages/AuthPages/Onboarding";
 
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
@@ -23,6 +24,7 @@ import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
 import Checkout from "./pages/Billings/Checkout";
+import TransactionDetail from "./pages/Billings/TransactionDetail";
 import SendSMS from "./pages/SMS/SendSMS";
 import SendersList from "./pages/Senders/SendersList";
 import SmsJobs from "./pages/SMS/SmsJobs";
@@ -39,6 +41,7 @@ export default function App() {
         <Routes>
           {/* Landing page for unauthenticated users */}
           <Route path="/landing" element={<Landing />} />
+          <Route path="/onboard" element={<Onboarding />} />
 
           {/* Root path - handles role-based routing */}
           <Route index path="/" element={<RootRoute />} />
@@ -78,6 +81,7 @@ export default function App() {
             <Route path="/billings" element={<Billings />} />
             <Route path="/billings-form" element={<BillingsForm />} />
             <Route path="/billing/checkout" element={<Checkout />} />
+            <Route path="/transactions/:id" element={<TransactionDetail />} />
 
             {/* SMS */}
             <Route path="/senders" element={<SendersList />} />

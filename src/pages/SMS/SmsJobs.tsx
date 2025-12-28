@@ -7,12 +7,14 @@ export default function SmsJobs() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
 
+  const [statusFilter, setStatusFilter] = useState<string>("");
+
   const {
     data: smsJobsData,
     isLoading,
     error,
     refetch,
-  } = useGetSmsJobsQuery({ page, size });
+  } = useGetSmsJobsQuery({ page, size, status: statusFilter || undefined });
 
   const jobs = smsJobsData?.items ?? [];
   const total = smsJobsData?.total ?? 0;
@@ -49,14 +51,29 @@ export default function SmsJobs() {
 
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-7xl">
-            <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-        
-             <button
-                onClick={() => refetch()}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-            >
-                Refresh
-            </button>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center border-b border-gray-200 pb-4 dark:border-gray-700">
+             
+             <div className="flex items-center gap-3 ml-auto">
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(0); }}
+                className="h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-none dark:border-gray-700 dark:text-white dark:focus:border-brand-800"
+              >
+                <option value="">All Statuses</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="SENDING">Sending</option>
+                <option value="FAILED">Failed</option>
+                <option value="PENDING_APPROVAL">Pending Approval</option>
+                <option value="SCHEDULED">Scheduled</option>
+              </select>
+
+              <button
+                  onClick={() => refetch()}
+                  className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                  Refresh
+              </button>
+             </div>
             </div>
 
           {isLoading ? (

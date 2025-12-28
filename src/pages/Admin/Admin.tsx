@@ -1,4 +1,5 @@
 import Chart from "react-apexcharts";
+import { Navigate } from "react-router";
 import { ApexOptions } from "apexcharts";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
@@ -256,6 +257,17 @@ const StatisticsChart: React.FC = () => {
 };
 
 export default function Admin() {
+  const searchParams = new URLSearchParams(window.location.hash.split('?')[1] || window.location.search);
+  const txRef = searchParams.get('tx_ref') || searchParams.get('transactionId') || searchParams.get('id');
+
+  if (txRef) {
+    console.log("Payment callback detected on Dashboard, redirecting to transaction:", txRef);
+    // Use window.location to force a redirect if Navigate behaves oddly inside nested routes/layouts, 
+    // though Navigate should work fine.
+    // Ensure we are redirecting to the transaction page
+    return <Navigate to={`/transactions/${txRef}`} replace />;
+  }
+
   return (
     <>
       <PageMeta title="Dashboard | Fast SMS" description="Dashboard page for Fast SMS" />
