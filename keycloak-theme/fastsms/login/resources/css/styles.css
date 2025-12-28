@@ -13,36 +13,109 @@ body {
 }
 
 :root {
+  /* Brand Colors */
   --orange: #e67936;
   --orange-700: #d15f28;
   --brown: #371a0f;
   --brown-2: #2e1a13;
-  --muted: #98a0ab;
-  --input-bg: #eef6ff;
-  --page-padding: 48px;
   --radius: 12px;
+  --page-padding: 48px;
+
+  /* Theme variables - Light Mode */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --text-primary: #101828;
+  --text-secondary: #475467;
+  --text-muted: #98a0ab;
+  --input-bg: #f9fafb;
+  --input-border: #d0d5dd;
+  --input-text: #101828;
+  --border-color: rgba(0, 0, 0, 0.06);
+
+  /* Feedback colors - Light Mode */
+  --error-bg: #fde8e8;
+  --error-text: #c81e1e;
+  --error-border: #f8b4b4;
+  --warning-bg: #fdf6b2;
+  --warning-text: #8e4b10;
+  --warning-border: #fce96a;
+  --success-bg: #def7ec;
+  --success-text: #03543f;
+  --success-border: #84e1bc;
+  --info-bg: #e1effe;
+  --info-text: #1a56db;
+  --info-border: #b3cde0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Theme variables - Dark Mode */
+    --bg-primary: #0c111d;
+    --bg-secondary: #101828;
+    --text-primary: #ffffff;
+    --text-secondary: #d0d5dd;
+    --text-muted: #98a2b3;
+    --input-bg: #1d2939;
+    --input-border: #344054;
+    --input-text: #ffffff;
+    --border-color: #344054;
+
+    /* Adjust brand background slightly for dark mode */
+    --brown: #1a0d07;
+    --brown-2: #140b08;
+
+    /* Feedback colors - Dark Mode */
+    --error-bg: rgba(240, 68, 56, 0.1);
+    --error-text: #f97066;
+    --error-border: rgba(240, 68, 56, 0.2);
+    --warning-bg: rgba(247, 144, 9, 0.1);
+    --warning-text: #fdb022;
+    --warning-border: rgba(247, 144, 9, 0.2);
+    --success-bg: rgba(18, 183, 106, 0.1);
+    --success-text: #32d583;
+    --success-border: rgba(18, 183, 106, 0.2);
+    --info-bg: rgba(43, 108, 176, 0.1);
+    --info-text: #63b3ed;
+    --info-border: rgba(43, 108, 176, 0.2);
+  }
 }
 
 .fastsms-root {
   display: flex;
   min-height: 100vh;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #222a31;
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 
 .left-panel {
   width: 55%;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding: var(--page-padding);
   display: flex;
   flex-direction: column;
 }
 
 .back-link {
-  color: #2a6ad4;
+  color: var(--orange);
   margin-bottom: 28px;
   text-decoration: none;
   font-weight: 600;
+}
+
+.forgot {
+  color: var(--orange);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+.required {
+  color: #f04438;
 }
 
 .form-wrap {
@@ -54,10 +127,11 @@ body {
   font-size: 48px;
   margin: 0 0 8px 0;
   font-weight: 800;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  color: var(--muted);
+  color: var(--text-muted);
   margin: 0 0 28px 0;
   font-size: 16px;
 }
@@ -70,15 +144,30 @@ label {
   font-weight: 600;
   margin-bottom: 8px;
   display: block;
+  color: var(--text-secondary);
 }
 
 .form-control {
   width: 100%;
   padding: 18px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  background: #eef6ff;
+  border-radius: var(--radius);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-text);
   font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(230, 121, 54, 0.1);
+}
+
+.password-row {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .form-row {
@@ -92,6 +181,7 @@ label {
   font-weight: 500;
   display: flex;
   gap: 10px;
+  color: var(--text-secondary);
 }
 
 .btn-primary {
@@ -99,11 +189,12 @@ label {
   color: #fff;
   padding: 16px;
   width: 100%;
-  border-radius: 12px;
+  border-radius: var(--radius);
   font-size: 18px;
   font-weight: 700;
   border: none;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .btn-primary:hover {
@@ -112,6 +203,13 @@ label {
 
 .signup {
   margin-top: 8px;
+  color: var(--text-secondary);
+}
+
+.signup a {
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .right-panel {
@@ -126,8 +224,7 @@ label {
 .brand-grid {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 80px 80px;
   opacity: 0.18;
@@ -147,27 +244,27 @@ label {
 }
 
 .kc-error {
-  background-color: #fde8e8;
-  color: #c81e1e;
-  border: 1px solid #f8b4b4;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
 }
 
 .kc-warning {
-  background-color: #fdf6b2;
-  color: #8e4b10;
-  border: 1px solid #fce96a;
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--warning-border);
 }
 
 .kc-success {
-  background-color: #def7ec;
-  color: #03543f;
-  border: 1px solid #84e1bc;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
 }
 
 .kc-info {
-  background-color: #e1effe;
-  color: #1a56db;
-  border: 1px solid #b3cde0;
+  background-color: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
 }
 
 /* Mobile Responsiveness */
