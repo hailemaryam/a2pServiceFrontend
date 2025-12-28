@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import Badge from "../../components/ui/badge/Badge";
@@ -121,12 +122,11 @@ const TransactionDetailModal = ({
 };
 
 export default function TransactionHistory() {
+  const { transactionId } = useParams<{ transactionId: string }>();
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [pageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [selectedTransactionId, setSelectedTransactionId] = useState<
-    string | null
-  >(null);
 
   // Fetch transactions list
   const { data, isLoading, error } = useGetTransactionsQuery({
@@ -195,7 +195,7 @@ export default function TransactionHistory() {
                 {transactions.map((tx) => (
                   <tr
                     key={tx.id}
-                    onClick={() => setSelectedTransactionId(tx.id)}
+                    onClick={() => navigate(`/transactions/${tx.id}`)}
                     className="border-b border-gray-100 last:border-0 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
                   >
                     <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
@@ -262,10 +262,10 @@ export default function TransactionHistory() {
         )}
       </div>
 
-      {selectedTransactionId && (
+      {transactionId && (
         <TransactionDetailModal
-          transactionId={selectedTransactionId}
-          onClose={() => setSelectedTransactionId(null)}
+          transactionId={transactionId}
+          onClose={() => navigate("/transactions")}
         />
       )}
     </div>

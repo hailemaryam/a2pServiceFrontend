@@ -26,9 +26,8 @@ import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import SystemAdminTransactions from "./pages/SystemAdmin/SystemAdminTransactions";
 import SystemAdminTenantDetail from "./pages/SystemAdmin/SystemAdminTenantDetail";
 import Billings from "./pages/Billings/Billings";
-import BillingsForm from "./pages/Billings/BillingsForm";
+import TransactionHistory from "./pages/Billings/TransactionHistory";
 import Checkout from "./pages/Billings/Checkout";
-import TransactionDetail from "./pages/Billings/TransactionDetail";
 import SendSMS from "./pages/SMS/SendSMS";
 import SendersList from "./pages/Senders/SendersList";
 import SmsJobs from "./pages/SMS/SmsJobs";
@@ -101,11 +100,10 @@ export default function App() {
             {/* Dashboard */}
             <Route path="/dashboard" element={<Admin />} />
 
-            {/* Billings */}
             <Route path="/billings" element={<Billings />} />
-            <Route path="/billings-form" element={<BillingsForm />} />
+            <Route path="/transactions" element={<TransactionHistory />} />
+            <Route path="/transactions/:transactionId" element={<TransactionHistory />} />
             <Route path="/billing/checkout" element={<Checkout />} />
-            <Route path="/transactions/:id" element={<TransactionDetail />} />
 
             {/* SMS */}
             <Route path="/senders" element={<SendersList />} />
