@@ -5,7 +5,6 @@ import PageMeta from "../../components/common/PageMeta";
 import {
   GroupIcon,
   PencilIcon,
-  CloseIcon,
 } from "../../icons";
 import {
   useGetContactGroupsQuery,
@@ -14,6 +13,8 @@ import {
   useDeleteContactGroupMutation,
   ContactGroupResponse,
 } from "../../api/contactGroupsApi";
+import { toast } from "react-toastify";
+import Modal from "../../components/ui/modal/Modal";
 import { TrashBinIcon } from "../../icons";
 
 export default function ContactGroup() {
@@ -30,6 +31,10 @@ export default function ContactGroup() {
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<ContactGroupResponse | null>(null);
+
+  // Delete Modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
 
   // Check if we should open the group modal from URL
   useEffect(() => {
@@ -52,7 +57,7 @@ export default function ContactGroup() {
   const handleGroupSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!groupName.trim()) {
-      alert("Group Name is required.");
+      toast.error("Group Name is required.");
       return;
     }
     try {
@@ -61,9 +66,10 @@ export default function ContactGroup() {
       setGroupName("");
       setGroupDescription("");
       setIsGroupModalOpen(false);
+      toast.success("Contact group created successfully!");
     } catch (error: any) {
       console.error("Failed to create group", error);
-      alert(error?.data?.message || "Failed to create group");
+      toast.error(error?.data?.message || "Failed to create group");
     }
   };
 
@@ -77,7 +83,7 @@ export default function ContactGroup() {
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!editGroupName.trim() || !editingGroup) {
-      alert("Group Name is required.");
+      toast.error("Group Name is required.");
       return;
     }
     try {
@@ -87,9 +93,10 @@ export default function ContactGroup() {
       }).unwrap();
       // Reset form
       closeEditModal();
+      toast.success("Contact group updated successfully!");
     } catch (error: any) {
       console.error("Failed to update group", error);
-      alert(error?.data?.message || "Failed to update group");
+      toast.error(error?.data?.message || "Failed to update group");
     }
   };
 
@@ -100,13 +107,21 @@ export default function ContactGroup() {
     setEditGroupDescription("");
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this group?")) {
+  const confirmDelete = (id: string) => {
+    setGroupToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (groupToDelete) {
       try {
-        await deleteGroup(id).unwrap();
+        await deleteGroup(groupToDelete).unwrap();
+        toast.success("Contact group deleted successfully");
+        setIsDeleteModalOpen(false);
+        setGroupToDelete(null);
       } catch (error: any) {
         console.error("Failed to delete group", error);
-        alert(error?.data?.message || "Failed to delete group");
+        toast.error(error?.data?.message || "Failed to delete group");
       }
     }
   };
@@ -242,7 +257,7 @@ export default function ContactGroup() {
                               <PencilIcon className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(group.id)}
+                              onClick={() => confirmDelete(group.id)}
                               className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
                               title="Delete Group"
                             >
@@ -261,155 +276,140 @@ export default function ContactGroup() {
       </div>
 
       {/* Create Group Modal */}
-      {isGroupModalOpen && (
-        <div
-          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setIsGroupModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setIsGroupModalOpen(false)}
-              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              aria-label="Close"
+      <Modal
+        isOpen={isGroupModalOpen}
+        onClose={() => setIsGroupModalOpen(false)}
+        title="Create New Group"
+      >
+        <form onSubmit={handleGroupSubmit} className="space-y-5">
+          <div>
+            <label
+              htmlFor="groupName"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              <CloseIcon className="h-6 w-6" />
-            </button>
-
-            {/* Modal Header */}
-            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
-              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                Create New Group
-              </h3>
-            </div>
-            <form onSubmit={handleGroupSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="groupName"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Group Name
-                </label>
-                <input
-                  id="groupName"
-                  type="text"
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                  placeholder="e.g. VIP Customers"
-                  required
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="groupDescription"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Description (Optional)
-                </label>
-                <textarea
-                  id="groupDescription"
-                  value={groupDescription}
-                  onChange={(e) => setGroupDescription(e.target.value)}
-                  placeholder="Description of the group..."
-                  rows={3}
-                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isCreating}
-                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
-              >
-                {isCreating ? "Creating..." : "Create Group"}
-              </button>
-            </form>
+              Group Name
+            </label>
+            <input
+              id="groupName"
+              type="text"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              placeholder="e.g. VIP Customers"
+              required
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
           </div>
-        </div>
-      )}
+          <div>
+            <label
+              htmlFor="groupDescription"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Description (Optional)
+            </label>
+            <textarea
+              id="groupDescription"
+              value={groupDescription}
+              onChange={(e) => setGroupDescription(e.target.value)}
+              placeholder="Description of the group..."
+              rows={3}
+              className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isCreating}
+            className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
+          >
+            {isCreating ? "Creating..." : "Create Group"}
+          </button>
+        </form>
+      </Modal>
 
       {/* Edit Group Modal */}
-      {isEditModalOpen && editingGroup && (
-        <div
-          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
-          onClick={closeEditModal}
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={closeEditModal}
-              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              aria-label="Close"
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        title="Edit Group"
+      >
+        <form onSubmit={handleEditSubmit} className="space-y-5">
+          <div>
+            <label
+              htmlFor="editGroupName"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              <CloseIcon className="h-6 w-6" />
+              Group Name
+            </label>
+            <input
+              id="editGroupName"
+              type="text"
+              value={editGroupName}
+              onChange={(e) => setEditGroupName(e.target.value)}
+              placeholder="Group Name"
+              required
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="editGroupDescription"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+                Description (Optional)
+            </label>
+              <textarea
+              id="editGroupDescription"
+              value={editGroupDescription}
+              onChange={(e) => setEditGroupDescription(e.target.value)}
+              placeholder="Description of the group..."
+              rows={3}
+              className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <div className="flex justify-center gap-4">
+            <button
+              type="submit"
+              disabled={isUpdating}
+              className="rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
+            >
+              {isUpdating ? "Saving..." : "Save Changes"}
             </button>
+            <button
+              type="button"
+              onClick={closeEditModal}
+              className="rounded-lg bg-gray-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
 
-            {/* Modal Header */}
-            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
-              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                Edit Group
-              </h3>
-            </div>
-            <form onSubmit={handleEditSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="editGroupName"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Group Name
-                </label>
-                <input
-                  id="editGroupName"
-                  type="text"
-                  value={editGroupName}
-                  onChange={(e) => setEditGroupName(e.target.value)}
-                  placeholder="Group Name"
-                  required
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="editGroupDescription"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                   Description (Optional)
-                </label>
-                 <textarea
-                  id="editGroupDescription"
-                  value={editGroupDescription}
-                  onChange={(e) => setEditGroupDescription(e.target.value)}
-                  placeholder="Description of the group..."
-                  rows={3}
-                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <div className="flex justify-center gap-4">
-                <button
-                  type="submit"
-                  disabled={isUpdating}
-                  className="rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600 disabled:opacity-70"
-                >
-                  {isUpdating ? "Saving..." : "Save Changes"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeEditModal}
-                  className="rounded-lg bg-gray-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Deletion"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-300">
+            Are you sure you want to delete this contact group? This action cannot be undone.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="px-4 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

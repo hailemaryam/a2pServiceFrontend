@@ -3,7 +3,6 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import {
   PencilIcon,
-  CloseIcon,
   TrashBinIcon,
   PlusIcon,
 } from "../../icons";
@@ -14,6 +13,8 @@ import {
   useDeleteSenderMutation,
   SenderResponse,
 } from "../../api/sendersApi";
+import { toast } from "react-toastify";
+import Modal from "../../components/ui/modal/Modal";
 
 export default function SendersList() {
   const [senderSearch, setSenderSearch] = useState("");
@@ -29,6 +30,10 @@ export default function SendersList() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingSender, setEditingSender] = useState<SenderResponse | null>(null);
+  
+  // Delete Modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [senderToDelete, setSenderToDelete] = useState<string | null>(null);
 
   // Form states
   const [senderName, setSenderName] = useState("");
@@ -42,9 +47,10 @@ export default function SendersList() {
       await createSender({ name: senderName }).unwrap();
       setSenderName("");
       setIsCreateModalOpen(false);
+      toast.success("Sender request submitted successfully!");
     } catch (error: any) {
       console.error("Failed to create sender", error);
-      alert(error?.data?.message || "Failed to create sender");
+      toast.error(error?.data?.message || "Failed to create sender");
     }
   };
 
@@ -63,9 +69,10 @@ export default function SendersList() {
         payload: { name: editSenderName } 
       }).unwrap();
       closeEditModal();
+      toast.success("Sender updated successfully!");
     } catch (error: any) {
       console.error("Failed to update sender", error);
-      alert(error?.data?.message || "Failed to update sender");
+      toast.error(error?.data?.message || "Failed to update sender");
     }
   };
 
@@ -75,13 +82,21 @@ export default function SendersList() {
     setEditSenderName("");
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this sender?")) {
+  const confirmDelete = (id: string) => {
+    setSenderToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (senderToDelete) {
       try {
-        await deleteSender(id).unwrap();
+        await deleteSender(senderToDelete).unwrap();
+        toast.success("Sender deleted successfully");
+        setIsDeleteModalOpen(false);
+        setSenderToDelete(null);
       } catch (error: any) {
         console.error("Failed to delete sender", error);
-        alert(error?.data?.message || "Failed to delete sender");
+        toast.error(error?.data?.message || "Failed to delete sender");
       }
     }
   };
@@ -193,7 +208,7 @@ export default function SendersList() {
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(sender.id)}
+                            onClick={() => confirmDelete(sender.id)}
                             className="text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-400"
                             title="Delete"
                           >
@@ -211,67 +226,87 @@ export default function SendersList() {
       </div>
 
       {/* Create Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold dark:text-white">Request Sender ID</h3>
-              <button onClick={() => setIsCreateModalOpen(false)}><CloseIcon className="h-5 w-5" /></button>
-            </div>
-            <form onSubmit={handleCreateSubmit}>
-              <div className="mb-4">
-                <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
-                <input
-                  type="text"
-                  required
-                  value={senderName}
-                  onChange={(e) => setSenderName(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                  placeholder="e.g. MyBrand"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isCreating}
-                className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
-              >
-                {isCreating ? "Submitting..." : "Submit Request"}
-              </button>
-            </form>
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title="Request Sender ID"
+        disableBackdropBlur={true}
+      >
+        <form onSubmit={handleCreateSubmit}>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
+            <input
+              type="text"
+              required
+              value={senderName}
+              onChange={(e) => setSenderName(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              placeholder="e.g. MyBrand"
+            />
           </div>
-        </div>
-      )}
+          <button
+            type="submit"
+            disabled={isCreating}
+            className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
+          >
+            {isCreating ? "Submitting..." : "Submit Request"}
+          </button>
+        </form>
+      </Modal>
 
       {/* Edit Modal */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
-             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold dark:text-white">Edit Sender ID</h3>
-              <button onClick={closeEditModal}><CloseIcon className="h-5 w-5" /></button>
-            </div>
-            <form onSubmit={handleEditSubmit}>
-               <div className="mb-4">
-                <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
-                <input
-                  type="text"
-                  required
-                  value={editSenderName}
-                  onChange={(e) => setEditSenderName(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isUpdating}
-                className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
-              >
-                {isUpdating ? "Saving..." : "Save Changes"}
-              </button>
-            </form>
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        title="Edit Sender ID"
+      >
+        <form onSubmit={handleEditSubmit}>
+           <div className="mb-4">
+            <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
+            <input
+              type="text"
+              required
+              value={editSenderName}
+              onChange={(e) => setEditSenderName(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
+          >
+            {isUpdating ? "Saving..." : "Save Changes"}
+          </button>
+        </form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Deletion"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-300">
+            Are you sure you want to delete this sender? This action cannot be undone.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="px-4 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

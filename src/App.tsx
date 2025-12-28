@@ -4,6 +4,8 @@ import RootRoute from "./components/auth/RootRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import Onboarding from "./pages/AuthPages/Onboarding";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
@@ -40,6 +42,7 @@ export default function App() {
     <>
       <Router>
         <ScrollToTop />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
         <Routes>
           {/* Landing page for unauthenticated users */}
           <Route path="/landing" element={<Landing />} />

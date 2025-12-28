@@ -5,7 +5,6 @@ import {
   PlusIcon,
   TrashBinIcon,
   CopyIcon,
-  CloseIcon,
 } from "../../icons";
 import {
   useGetApiKeysQuery,
@@ -13,6 +12,8 @@ import {
   useRevokeApiKeyMutation,
 } from "../../api/apiKeyApi";
 import { useGetSendersQuery } from "../../api/sendersApi";
+import { toast } from "react-toastify";
+import Modal from "../../components/ui/modal/Modal";
 
 export default function API() {
   const { data: tokens = [], isLoading } = useGetApiKeysQuery();
@@ -24,24 +25,32 @@ export default function API() {
   const [keyName, setKeyName] = useState("");
   const [selectedSenderId, setSelectedSenderId] = useState("");
 
+  // Revoke Modal State
+  const [isRevokeModalOpen, setIsRevokeModalOpen] = useState(false);
+  const [keyToRevoke, setKeyToRevoke] = useState<string | null>(null);
+
   // Helper to copy token to clipboard
   const handleCopyToken = (token: string) => {
     navigator.clipboard.writeText(token);
-    alert("Token copied to clipboard!");
+    toast.success("Token copied to clipboard!");
   };
 
   // Handle Revoke
-  const handleDeleteToken = async (id: string) => {
-    if (
-      confirm(
-        "Are you sure you want to revoke this API key? This cannot be undone."
-      )
-    ) {
+  const confirmRevoke = (id: string) => {
+    setKeyToRevoke(id);
+    setIsRevokeModalOpen(true);
+  };
+
+  const handleDeleteToken = async () => {
+    if (keyToRevoke) {
       try {
-        await revokeApiKey(id).unwrap();
+        await revokeApiKey(keyToRevoke).unwrap();
+        toast.success("API Key revoked successfully");
+        setIsRevokeModalOpen(false);
+        setKeyToRevoke(null);
       } catch (error) {
         console.error("Failed to revoke key", error);
-        alert("Failed to revoke API key");
+        toast.error("Failed to revoke API key");
       }
     }
   };
@@ -58,11 +67,11 @@ export default function API() {
 
   const handleSaveApi = async () => {
     if (!keyName.trim()) {
-      alert("Please enter a name for the API Key");
+      toast.error("Please enter a name for the API Key");
       return;
     }
     if (!selectedSenderId) {
-      alert("Please select a Sender ID");
+      toast.error("Please select a Sender ID");
       return;
     }
     try {
@@ -71,9 +80,10 @@ export default function API() {
         senderId: selectedSenderId,
       }).unwrap();
       closeCreateModal();
+      toast.success("API Key generated successfully");
     } catch (error) {
       console.error("Failed to create key", error);
-      alert("Failed to create API key");
+      toast.error("Failed to create API key");
     }
   };
 
@@ -242,7 +252,7 @@ export default function API() {
                         <td className="whitespace-nowrap px-3 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleDeleteToken(token.id)}
+                              onClick={() => confirmRevoke(token.id)}
                               className="text-error-500 transition hover:text-error-700 dark:text-error-400 dark:hover:text-error-300"
                               title="Revoke Token"
                             >
@@ -261,68 +271,82 @@ export default function API() {
       </div>
 
       {/* Create API Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-3 sm:p-4">
-          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900 max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={closeCreateModal}
-              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+        title="Generate API Key"
+      >
+        <div className="space-y-6">
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Key Name (e.g. "Production App")
+            </label>
+            <input
+              type="text"
+              value={keyName}
+              onChange={(e) => setKeyName(e.target.value)}
+              placeholder="Enter a name for this key"
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Linked Sender ID
+            </label>
+            <select
+              value={selectedSenderId}
+              onChange={(e) => setSelectedSenderId(e.target.value)}
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
             >
-              <CloseIcon className="h-6 w-6" />
+              <option value="">Select a sender ID</option>
+              {activeSenders.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              Only ACTIVE sender IDs can be used.
+            </p>
+          </div>
+
+          <button
+            onClick={handleSaveApi}
+            disabled={isCreating}
+            className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700 disabled:opacity-50"
+          >
+            {isCreating ? "Generating..." : "Generate Key"}
+          </button>
+        </div>
+      </Modal>
+
+      {/* Revoke Confirmation Modal */}
+      <Modal
+        isOpen={isRevokeModalOpen}
+        onClose={() => setIsRevokeModalOpen(false)}
+        title="Revoke API Key"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-300">
+            Are you sure you want to revoke this API key? This action cannot be undone.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setIsRevokeModalOpen(false)}
+              className="px-4 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Cancel
             </button>
-
-            <div className="mb-6 border-b border-gray-200 pb-4 dark:border-gray-700">
-              <h3 className="pr-8 text-xl font-semibold text-gray-900 dark:text-white">
-                Generate API Key
-              </h3>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Key Name (e.g. "Production App")
-                </label>
-                <input
-                  type="text"
-                  value={keyName}
-                  onChange={(e) => setKeyName(e.target.value)}
-                  placeholder="Enter a name for this key"
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Linked Sender ID
-                </label>
-                <select
-                  value={selectedSenderId}
-                  onChange={(e) => setSelectedSenderId(e.target.value)}
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
-                >
-                  <option value="">Select a sender ID</option>
-                  {activeSenders.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1 text-xs text-gray-500">
-                  Only ACTIVE sender IDs can be used.
-                </p>
-              </div>
-
-              <button
-                onClick={handleSaveApi}
-                disabled={isCreating}
-                className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700 disabled:opacity-50"
-              >
-                {isCreating ? "Generating..." : "Generate Key"}
-              </button>
-            </div>
+            <button
+              onClick={handleDeleteToken}
+              className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700"
+            >
+              Revoke
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

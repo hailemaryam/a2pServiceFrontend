@@ -6,6 +6,7 @@ import {
   useSendGroupSmsMutation,
   useSendBulkSmsMutation,
 } from "../../api/smsApi";
+import { toast } from "react-toastify";
 import { useGetSendersQuery } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import { useGetApiKeysQuery } from "../../api/apiKeyApi";
@@ -22,7 +23,9 @@ interface SmsState {
 
 // Constants for SMS limits (GSM encoding)
 const GSM_CHAR_LIMIT = 160;
-const GSM_CONCAT_CHAR_LIMIT = 153;
+const GSM_CONCAT_CHAR_LIMIT = 153; // Standard GSM 7-bit concat limit
+const UNICODE_CHAR_LIMIT = 70;
+const UNICODE_CONCAT_CHAR_LIMIT = 67; // Standard UCS-2 concat limit
 
 export default function SendSMS() {
   // Tabs: Single, Group, Bulk (File)
@@ -58,22 +61,34 @@ export default function SendSMS() {
   );
 
   // Calculate SMS metrics (based on GSM encoding)
-  const { charsUsed, smsParts, price } = useMemo(() => {
+  const { charsUsed, smsParts, encoding } = useMemo(() => {
     const chars = smsData.message.length;
+    let detectedEncoding: "GSM" | "UNICODE" = "GSM";
+
+    // Detect encoding (User provided logic: charCode > 127 is Unicode)
+    for (let i = 0; i < chars; i++) {
+        if (smsData.message.charCodeAt(i) > 127) {
+            detectedEncoding = "UNICODE";
+            break;
+        }
+    }
+
     let parts = 0;
+    const singleLimit = detectedEncoding === "GSM" ? GSM_CHAR_LIMIT : UNICODE_CHAR_LIMIT;
+    const concatLimit = detectedEncoding === "GSM" ? GSM_CONCAT_CHAR_LIMIT : UNICODE_CONCAT_CHAR_LIMIT;
+
     if (chars > 0) {
-      if (chars <= GSM_CHAR_LIMIT) {
+      if (chars <= singleLimit) {
         parts = 1;
       } else {
-        parts = Math.ceil(chars / GSM_CONCAT_CHAR_LIMIT);
+        parts = Math.ceil(chars / concatLimit);
       }
     }
-    // Placeholder price logic
-    const calculatedPrice = (parts * 0.5).toFixed(2);
+
     return {
       charsUsed: chars,
       smsParts: parts,
-      price: calculatedPrice,
+      encoding: detectedEncoding,
     };
   }, [smsData.message]);
 
@@ -101,14 +116,14 @@ export default function SendSMS() {
     try {
       if (activeTab === "Single") {
         if (!smsData.senderId || !smsData.phoneNumber || !smsData.message) {
-          alert("Please fill in all required fields");
+          toast.error("Please fill in all required fields");
           return;
         }
 
         // FIND API KEY FOR SELECTED SENDER
         const validKey = apiKeys.find(k => k.senderId === smsData.senderId);
         if (!validKey) {
-           alert("No API Key found for this Sender ID. Please generate an API Key in the API Keys section first.");
+           toast.error("No API Key found for this Sender ID. Please generate an API Key in the API Keys section first.");
            return;
         }
 
@@ -119,11 +134,11 @@ export default function SendSMS() {
           message: smsData.message,
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
-        alert("Single SMS sent successfully!");
+        toast.success("Single SMS sent successfully!");
         setSmsData((prev) => ({ ...prev, phoneNumber: "", message: "", scheduledAt: undefined }));
       } else if (activeTab === "Group") {
         if (!smsData.senderId || !smsData.selectedGroup || !smsData.message) {
-          alert("Please fill in all required fields (Group)");
+          toast.error("Please fill in all required fields (Group)");
           return;
         }
         await sendGroupSms({
@@ -132,12 +147,12 @@ export default function SendSMS() {
           message: smsData.message,
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
-        alert("Group SMS sent successfully!");
+        toast.success("Group SMS sent successfully!");
         setSmsData((prev) => ({ ...prev, message: "", scheduledAt: undefined }));
       } else if (activeTab === "Bulk") {
         // Bulk = File Upload
         if (!smsData.senderId || !smsData.uploadedFile || !smsData.message) {
-          alert("Please fill in all required fields and upload a file");
+          toast.error("Please fill in all required fields and upload a file");
           return;
         }
         await sendBulkSms({
@@ -146,12 +161,12 @@ export default function SendSMS() {
           file: smsData.uploadedFile,
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
-        alert("Bulk SMS (File) sent successfully!");
+        toast.success("Bulk SMS (File) sent successfully!");
         setSmsData((prev) => ({ ...prev, uploadedFile: null, message: "", scheduledAt: undefined }));
       }
     } catch (error: any) {
       console.error("Failed to send SMS:", error);
-      alert(error?.data?.message || error?.message || "Failed to send SMS.");
+      toast.error(error?.data?.message || error?.message || "Failed to send SMS.");
     }
   };
 
@@ -304,10 +319,13 @@ export default function SendSMS() {
                     />
                   </label>
                   <div className="mt-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                    <p>Encoding: <span className="font-semibold">GSM</span></p>
+                    <p>Encoding: <span className="font-semibold">{encoding}</span></p>
                     <p>SMS Parts: <span className="font-semibold">{smsParts}</span></p>
-                    <p>Chars Used: <span className="font-semibold">{charsUsed}</span> / {smsParts > 1 ? GSM_CONCAT_CHAR_LIMIT * smsParts : GSM_CHAR_LIMIT}</p>
-                    <p>Price: <span className="font-semibold">{price} ETB</span></p>
+                    <p>Chars Used: <span className="font-semibold">{charsUsed}</span> / {
+                        smsParts > 1 
+                        ? (encoding === "GSM" ? GSM_CONCAT_CHAR_LIMIT : UNICODE_CONCAT_CHAR_LIMIT) * smsParts 
+                        : (encoding === "GSM" ? GSM_CHAR_LIMIT : UNICODE_CHAR_LIMIT)
+                    }</p>
                   </div>
                   <label className="block mt-4">
                     <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">

@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { useInitializePaymentMutation } from "../../api/paymentApi";
+import { toast } from "react-toastify";
 
 export default function Checkout() {
   const location = useLocation();
@@ -50,13 +51,13 @@ export default function Checkout() {
         // Redirect to Chapa checkout
         window.location.href = response.checkoutUrl;
       } else {
-        alert("Payment initialization failed: No checkout URL received.");
+        toast.error("Payment initialization failed: No checkout URL received.");
       }
     } catch (err: any) {
       console.error("Payment failed", err);
       // Try to extract a meaningful error message
       const errorMessage = err?.data?.message || err?.error || "Failed to initialize payment. Please try again.";
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
