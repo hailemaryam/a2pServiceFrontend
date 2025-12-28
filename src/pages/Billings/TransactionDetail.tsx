@@ -3,7 +3,7 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import Badge from "../../components/ui/badge/Badge";
 import { useGetTransactionByIdQuery } from "../../api/paymentApi";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function TransactionDetail() {
   const { id: paramId } = useParams<{ id: string }>();
@@ -11,10 +11,9 @@ export default function TransactionDetail() {
   const navigate = useNavigate();
   
   // Resolve ID: if paramId is a placeholder, try getting from query params
-  const [transactionId, setTransactionId] = useState<string | null>(
+  const transactionId =
     (paramId && paramId !== 'check-status' && paramId !== 'verify') ? paramId : 
-    (searchParams.get('transactionId') || searchParams.get('id') || searchParams.get('tx_ref') || null)
-  );
+    (searchParams.get('transactionId') || searchParams.get('id') || searchParams.get('tx_ref') || null);
 
   useEffect(() => {
      // If we are on check-status but found an ID in params, update state or URL

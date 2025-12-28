@@ -9,7 +9,7 @@ import {
   useDeleteSmsPackageMutation,
   SmsPackageTier
 } from "../../api/adminApi";
-import { CloseIcon } from "../../icons";
+import { CloseIcon, PencilIcon, TrashBinIcon } from "../../icons";
 
 // --- Components ---
 
@@ -232,7 +232,7 @@ export default function SmsPackagesPage() {
                   </TableRow>
                 ) : (
                   packages.map((pkg) => (
-                    <TableRow key={pkg.id} className="border-b border-gray-100 last:border-0 dark:border-gray-700/50">
+                    <TableRow key={pkg.id} className="border-b border-gray-100 last:border-0 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
                       <TableCell className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                         {pkg.minSmsCount.toLocaleString()}
                       </TableCell>
@@ -252,15 +252,17 @@ export default function SmsPackagesPage() {
                         <div className="flex items-center justify-end gap-2">
                            <button 
                              onClick={() => handleEdit(pkg)}
-                             className="text-sm font-medium text-brand-500 hover:text-brand-600"
+                             className="text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400"
+                             title="Edit Package"
                            >
-                             Edit
+                             <PencilIcon className="w-5 h-5" />
                            </button>
                            <button 
                              onClick={() => handleDelete(pkg.id)}
-                             className="text-sm font-medium text-error-500 hover:text-error-600"
+                             className="text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-400"
+                             title="Delete Package"
                            >
-                             Delete
+                             <TrashBinIcon className="w-5 h-5" />
                            </button>
                         </div>
                       </TableCell>

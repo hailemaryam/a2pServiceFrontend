@@ -32,7 +32,7 @@ export default function Checkout() {
 
   const handleProceed = async () => {
     try {
-      const returnUrl = `${window.location.origin}/#/transactions/verify`; // Verify maps to id 'verify', page should handle loading latest or allow backend to append ID? 
+      // const returnUrl = `${window.location.origin}/#/transactions/verify`; // Verify maps to id 'verify', page should handle loading latest or allow backend to append ID? 
       // User asked for /transactions/<id>. 
       // If backend appends ID to returnUrl, perfect. If not, we land on /transactions/verify.
       // Let's assume backend might append to query param? 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "../../components/ui/table";
@@ -99,7 +100,7 @@ export default function SenderApprovalsPage() {
       <PageMeta title="Sender Approvals | Fast SMS" description="Approve or reject sender ID requests" />
       <PageBreadcrumb pageTitle="Sender Approvals" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03]">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -108,7 +109,7 @@ export default function SenderApprovalsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="max-w-full overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-800">
@@ -143,10 +144,12 @@ export default function SenderApprovalsPage() {
                   senders.map((sender) => (
                     <TableRow
                       key={sender.id}
-                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                     >
-                      <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {sender.tenantId || "N/A"}
+                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+                        <Link to={`/admin/tenants/${sender.tenantId}`}>
+                          {sender.tenantId || "N/A"}
+                        </Link>
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                         {sender.name || "N/A"}

@@ -9,6 +9,7 @@ import {
   CheckCircleIcon,
   TaskIcon,
   BoxIcon,
+  DollarLineIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
@@ -46,6 +47,11 @@ const navItems: NavItem[] = [
     name: "SMS Packages",
     icon: <BoxIcon />,
     path: "/admin/sms-packages",
+  },
+  {
+    name: "All Transactions",
+    icon: <DollarLineIcon />,
+    path: "/admin/transactions",
   },
 ];
 
@@ -245,7 +251,7 @@ const SystemAdminSidebar: React.FC = () => {
         </Link>
       </div>
 
-      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+      <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>

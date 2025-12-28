@@ -73,6 +73,27 @@ export type CreateSmsPackagePayload = {
   isActive: boolean;
 };
 
+
+// --- Transactions ---
+export type TransactionResponse = {
+  id: string;
+  tenantId: string;
+  amountPaid: number;
+  smsCredited: number;
+  paymentStatus: "SUCCESSFUL" | "FAILED" | "IN_PROGRESS" | "CANCELED";
+  smsPackage: {
+    id: string;
+    minSmsCount: number;
+    maxSmsCount: number;
+    pricePerSms: number;
+    description: string;
+    isActive: boolean;
+    active: boolean;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
 // Admin API using RTK Query (for sys_admin only)
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -250,7 +271,33 @@ export const adminApi = baseApi.injectEndpoints({
         url: `/api/admin/sms-packages/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
+    invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
+    }),
+
+    // --- Transactions ---
+    getAllTransactions: builder.query<
+      { items: TransactionResponse[]; total: number; page: number; size: number },
+      { page?: number; size?: number; status?: string; tenantId?: string }
+    >({
+      query: ({ page = 0, size = 20, status, tenantId }) => ({
+        url: "/api/admin/payments/transactions",
+        params: { page, size, status, tenantId },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        return {
+          items: response?.items ?? response?.content ?? [],
+          total: response?.total ?? response?.totalElements ?? 0,
+          page: response?.page ?? response?.pageNumber ?? arg.page ?? 0,
+          size: response?.size ?? response?.pageSize ?? arg.size ?? 20,
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: "Payment" as const, id })),
+              { type: "Payment", id: "LIST" },
+            ]
+          : [{ type: "Payment", id: "LIST" }],
     }),
   }),
 });
@@ -271,4 +318,5 @@ export const {
   useCreateSmsPackageMutation,
   useUpdateSmsPackageMutation,
   useDeleteSmsPackageMutation,
+  useGetAllTransactionsQuery,
 } = adminApi;

@@ -118,7 +118,7 @@ export default function SmsJobApprovalsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="max-w-full overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-800">
@@ -156,7 +156,7 @@ export default function SmsJobApprovalsPage() {
                   smsJobs.map((job) => (
                     <TableRow
                       key={job.id}
-                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                     >
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                         {"N/A"}

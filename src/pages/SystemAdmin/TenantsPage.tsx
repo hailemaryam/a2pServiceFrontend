@@ -91,7 +91,7 @@ export default function TenantsPage() {
       <PageMeta title="Tenants Management | Fast SMS" description="Manage all tenants" />
       <PageBreadcrumb pageTitle="Tenants Management" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03]">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -100,7 +100,7 @@ export default function TenantsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="max-w-full overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-800">
@@ -139,7 +139,7 @@ export default function TenantsPage() {
                   tenants.map((tenant) => (
                     <TableRow
                       key={tenant.id}
-                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                     >
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                         {tenant.name || "N/A"}

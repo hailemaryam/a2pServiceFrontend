@@ -21,6 +21,8 @@ import TenantsPage from "./pages/SystemAdmin/TenantsPage";
 import SenderApprovalsPage from "./pages/SystemAdmin/SenderApprovalsPage";
 import SmsJobApprovalsPage from "./pages/SystemAdmin/SmsJobApprovalsPage";
 import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
+import SystemAdminTransactions from "./pages/SystemAdmin/SystemAdminTransactions";
+import SystemAdminTenantDetail from "./pages/SystemAdmin/SystemAdminTenantDetail";
 import Billings from "./pages/Billings/Billings";
 import BillingsForm from "./pages/Billings/BillingsForm";
 import Checkout from "./pages/Billings/Checkout";
@@ -56,9 +58,11 @@ export default function App() {
           >
             <Route path="/admin" element={<SystemAdminDashboard />} />
             <Route path="/admin/tenants" element={<TenantsPage />} />
+            <Route path="/admin/tenants/:id" element={<SystemAdminTenantDetail />} />
             <Route path="/admin/senders" element={<SenderApprovalsPage />} />
             <Route path="/admin/sms-jobs" element={<SmsJobApprovalsPage />} />
             <Route path="/admin/sms-packages" element={<SmsPackagesPage />} />
+            <Route path="/admin/transactions" element={<SystemAdminTransactions />} />
           </Route>
 
           {/* Tenant Routes - Only accessible to tenant_admin and tenant_user */}
