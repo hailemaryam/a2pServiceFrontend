@@ -96,12 +96,12 @@ export default function SystemAdminDashboard() {
           </div>
 
           {/* Interactive KPI Cards (Navigation) */}
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
             
             {/* Tenants Management */}
             <Link 
               to="/admin/tenants"
-              className="group relative rounded-xl border border-gray-200 bg-white p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-500/50"
+              className="group relative rounded-xl border border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-500/50"
             >
               <div className="flex items-center justify-between mb-4">
                  <div>

@@ -232,7 +232,7 @@ export default function SmsPackagesPage() {
                   </TableRow>
                 ) : (
                   packages.map((pkg) => (
-                    <TableRow key={pkg.id} className="border-b border-gray-100 last:border-0 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
+                    <TableRow key={pkg.id} className="border-b border-gray-100 last:border-0 dark:border-gray-700/50">
                       <TableCell className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                         {pkg.minSmsCount.toLocaleString()}
                       </TableCell>

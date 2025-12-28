@@ -1,5 +1,5 @@
-import { Navigate } from "react-router";
-// import { useEffect } from "react";
+import { Navigate, useNavigate } from "react-router";
+import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 // import { useKeycloak } from "@react-keycloak/web";
 import Admin from "../../pages/Admin/Admin";
@@ -44,25 +44,40 @@ const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ childr
  */
 export default function RootRoute() {
   const { isAuthenticated, isSysAdmin, isTenantRole, tenantId } = useAuth();
-  // const { keycloak } = useKeycloak();
+  const navigate = useNavigate();
 
   // Redirect to onboarding if tenant is not fully set up
   if (isAuthenticated && isTenantRole && (!tenantId || tenantId === "unassigned")) {
       return <Navigate to="/onboard" replace />;
   }
 
-  // Check for payment callback params (Chapa, etc. often redirect to root/dashboard with params)
-  // If found, redirect to our transaction detail page
-  const searchParams = new URLSearchParams(window.location.hash.split('?')[1] || window.location.search);
-  const txRef = searchParams.get('tx_ref') || searchParams.get('transactionId') || searchParams.get('id');
-  
-  if (isAuthenticated && txRef) {
-      // Clean redirect to transaction detail
-      // Using 'check-status' logic if we want to be safe, or direct ID if we trust it's the ID.
-      // Chapa 'tx_ref' is usually the transaction ID in our system contexts.
-      console.log("Payment callback detected, redirecting to transaction:", txRef);
-      return <Navigate to={`/transactions/${txRef}`} replace />;
-  }
+  // Handle Payment Callback Redirection
+  useEffect(() => {
+    if (isAuthenticated) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
+      
+      const txId = searchParams.get('transactionId') || searchParams.get('tx_ref') || searchParams.get('id') ||
+                   hashParams.get('transactionId') || hashParams.get('tx_ref') || hashParams.get('id');
+
+      if (txId) {
+        // Clear query params to prevent redirect loops when navigating back to root
+        
+        // Use history.replaceState to clean the URL without triggering a reload/navigate yet
+        // We only want to strip the 'search' part if it contained the txRef/txId
+        if (window.location.search) {
+             const cleanUrl = new URL(window.location.href);
+             cleanUrl.searchParams.delete('transactionId');
+             cleanUrl.searchParams.delete('tx_ref');
+             cleanUrl.searchParams.delete('id');
+             window.history.replaceState({}, document.title, cleanUrl.toString());
+        }
+
+        console.log("Payment callback detected, redirecting to transaction:", txId);
+        navigate(`/transactions/${txId}`, { replace: true });
+      }
+    }
+  }, [isAuthenticated, navigate]);
 
   // If not authenticated, redirect to landing
   if (!isAuthenticated) {
