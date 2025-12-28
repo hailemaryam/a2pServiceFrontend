@@ -8,7 +8,7 @@ const baseUrl = (import.meta.env as any).VITE_API_BASE_URL || "";
  * This should only be called for users with tenant roles (tenant_user, tenant_admin)
  * @returns Promise with the registration response
  */
-export const registerTenant = async (payload: { name: string; phone?: string }): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const registerTenant = async (payload: { name: string; phone?: string; isCompany: boolean; tinNumber: string; description: string; company: boolean }): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
     const token = await ensureKeycloakToken();
     

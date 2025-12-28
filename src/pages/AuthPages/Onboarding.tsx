@@ -10,6 +10,10 @@ export default function Onboarding() {
   
   const [name, setName] = useState(username || "");
   const [phone, setPhone] = useState("");
+  const [isCompany, setIsCompany] = useState(false);
+  const [tinNumber, setTinNumber] = useState("");
+  const [description, setDescription] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,7 +23,14 @@ export default function Onboarding() {
     setIsLoading(true);
 
     try {
-      const result = await registerTenant({ name, phone });
+      const result = await registerTenant({ 
+        name, 
+        phone,
+        isCompany,
+        tinNumber,
+        description,
+        company: isCompany
+      });
       
       if (result.success) {
         // Registration successful
@@ -84,6 +95,48 @@ export default function Onboarding() {
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="+251..."
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center mb-2">
+              <input
+                id="isCompany"
+                type="checkbox"
+                checked={isCompany}
+                onChange={(e) => setIsCompany(e.target.checked)}
+                className="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label htmlFor="isCompany" className="ml-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Are you a company?
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              TIN Number
+            </label>
+            <input
+              type="text"
+              value={tinNumber}
+              onChange={(e) => setTinNumber(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              placeholder="Enter TIN Number"
+              required={isCompany}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              placeholder="Enter a brief description..."
+              rows={3}
             />
           </div>
 

@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
-import { useKeycloak } from "@react-keycloak/web";
-import { registerTenant } from "../../api/tenantApi";
 
 /**
  * Component that handles role-based redirection after authentication
@@ -10,41 +8,11 @@ import { registerTenant } from "../../api/tenantApi";
  */
 export default function RoleBasedRedirect() {
   const { isAuthenticated, isSysAdmin, isTenantRole } = useAuth();
-  const { keycloak } = useKeycloak();
 
+  // Auto-registration login removed as we now require onboarding form
   useEffect(() => {
-    const handleTenantRegistration = async () => {
-      // Only register tenant for tenant users, not sys_admin
-      if (isAuthenticated && isTenantRole && !isSysAdmin) {
-        // Check if we've already attempted registration (prevent duplicate calls)
-        const registrationKey = `tenant_registered_${keycloak.tokenParsed?.sub}`;
-        const hasRegistered = sessionStorage.getItem(registrationKey);
-
-        if (!hasRegistered) {
-          try {
-            const payload = { name: keycloak.tokenParsed?.preferred_username || "User" };
-            const result = await registerTenant(payload);
-            if (result.success) {
-              // Mark as registered to prevent duplicate calls
-              sessionStorage.setItem(registrationKey, "true");
-              console.log("Tenant registration successful");
-            } else {
-              console.error("Tenant registration failed:", result.error);
-              // Don't block navigation on registration failure
-              // Backend should handle duplicate registrations gracefully
-            }
-          } catch (error) {
-            console.error("Error during tenant registration:", error);
-            // Don't block navigation on error
-          }
-        }
-      }
-    };
-
-    if (isAuthenticated) {
-      handleTenantRegistration();
-    }
-  }, [isAuthenticated, isTenantRole, isSysAdmin, keycloak]);
+    // Only kept for potential future use or if this component is used
+  }, []);
 
   if (!isAuthenticated) {
     return <Navigate to="/landing" replace />;

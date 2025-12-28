@@ -155,47 +155,7 @@ export default function SendSMS() {
     }
   };
 
-  // Reusable Message Block to avoid duplication
-  const MessageBlock = () => (
-    <div className="md:col-span-2">
-      <label className="block">
-        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
-          Message
-        </span>
-        <textarea
-          name="message"
-          value={smsData.message}
-          onChange={handleChange}
-          placeholder="Type your message here..."
-          rows={6}
-          className="mt-1 block w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 resize-y"
-        />
-      </label>
-      <div className="mt-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-        <p>Encoding: <span className="font-semibold">GSM</span></p>
-        <p>SMS Parts: <span className="font-semibold">{smsParts}</span></p>
-        <p>Chars Used: <span className="font-semibold">{charsUsed}</span> / {smsParts > 1 ? GSM_CONCAT_CHAR_LIMIT * smsParts : GSM_CHAR_LIMIT}</p>
-        <p>Price: <span className="font-semibold">{price} ETB</span></p>
-      </div>
-      <label className="block mt-4">
-        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
-          Schedule SMS (Optional)
-        </span>
-        <input
-          type="datetime-local"
-          onChange={handleScheduleChange}
-          className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-        />
-      </label>
-      <button
-        type="submit"
-        disabled={isSendingSingle || isSendingGroup || isSendingBulk}
-        className="mt-6 px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
-      >
-        {isSendingSingle || isSendingGroup || isSendingBulk ? "Sending..." : "Send SMS"}
-      </button>
-    </div>
-  );
+
 
   return (
     <div>
@@ -329,7 +289,44 @@ export default function SendSMS() {
                 )}
                 
                 {/* Full Width Message Block */}
-                <MessageBlock />
+                <div className="md:col-span-2">
+                  <label className="block">
+                    <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                      Message
+                    </span>
+                    <textarea
+                      name="message"
+                      value={smsData.message}
+                      onChange={handleChange}
+                      placeholder="Type your message here..."
+                      rows={6}
+                      className="mt-1 block w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 resize-y"
+                    />
+                  </label>
+                  <div className="mt-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p>Encoding: <span className="font-semibold">GSM</span></p>
+                    <p>SMS Parts: <span className="font-semibold">{smsParts}</span></p>
+                    <p>Chars Used: <span className="font-semibold">{charsUsed}</span> / {smsParts > 1 ? GSM_CONCAT_CHAR_LIMIT * smsParts : GSM_CHAR_LIMIT}</p>
+                    <p>Price: <span className="font-semibold">{price} ETB</span></p>
+                  </div>
+                  <label className="block mt-4">
+                    <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                      Schedule SMS (Optional)
+                    </span>
+                    <input
+                      type="datetime-local"
+                      onChange={handleScheduleChange}
+                      className="mt-1 block w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={isSendingSingle || isSendingGroup || isSendingBulk}
+                    className="mt-6 px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
+                  >
+                    {isSendingSingle || isSendingGroup || isSendingBulk ? "Sending..." : "Send SMS"}
+                  </button>
+                </div>
 
               </div>
             </form>
