@@ -1,5 +1,5 @@
-import { Navigate, useNavigate } from "react-router";
-import { useEffect } from "react";
+import { Navigate } from "react-router";
+// import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 // import { useKeycloak } from "@react-keycloak/web";
 import Admin from "../../pages/Admin/Admin";
@@ -44,52 +44,49 @@ const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ childr
  */
 export default function RootRoute() {
   const { isAuthenticated, isSysAdmin, isTenantRole, tenantId } = useAuth();
-  const navigate = useNavigate();
+
+  // 🔴 HANDLE PAYMENT CALLBACK FIRST - Synchronous check during render
+  const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
+
+  const txId =
+    searchParams.get('transactionId') ||
+    searchParams.get('tx_ref') ||
+    searchParams.get('id') ||
+    hashParams.get('transactionId') ||
+    hashParams.get('tx_ref') ||
+    hashParams.get('id');
+
+  if (isAuthenticated && txId) {
+    // clean URL immediately
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.search = '';
+    // Also clean hash params if they exist in the hash part
+    if (cleanUrl.hash.includes('?')) {
+        cleanUrl.hash = cleanUrl.hash.split('?')[0];
+    }
+    
+    window.history.replaceState({}, document.title, cleanUrl.toString());
+
+    console.log("Payment callback detected (render-phase), redirecting to transaction:", txId);
+    return <Navigate to={`/transactions/${txId}`} replace />;
+  }
+
+  // 🔽 NOW DO NORMAL AUTH FLOW
+
+  if (!isAuthenticated) {
+    return <Navigate to="/landing" replace />;
+  }
 
   // Redirect to onboarding if tenant is not fully set up
   if (isAuthenticated && isTenantRole && (!tenantId || tenantId === "unassigned")) {
       return <Navigate to="/onboard" replace />;
   }
 
-  // Handle Payment Callback Redirection
-  useEffect(() => {
-    if (isAuthenticated) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
-      
-      const txId = searchParams.get('transactionId') || searchParams.get('tx_ref') || searchParams.get('id') ||
-                   hashParams.get('transactionId') || hashParams.get('tx_ref') || hashParams.get('id');
-
-      if (txId) {
-        // Clear query params to prevent redirect loops when navigating back to root
-        
-        // Use history.replaceState to clean the URL without triggering a reload/navigate yet
-        // We only want to strip the 'search' part if it contained the txRef/txId
-        if (window.location.search) {
-             const cleanUrl = new URL(window.location.href);
-             cleanUrl.searchParams.delete('transactionId');
-             cleanUrl.searchParams.delete('tx_ref');
-             cleanUrl.searchParams.delete('id');
-             window.history.replaceState({}, document.title, cleanUrl.toString());
-        }
-
-        console.log("Payment callback detected, redirecting to transaction:", txId);
-        navigate(`/transactions/${txId}`, { replace: true });
-      }
-    }
-  }, [isAuthenticated, navigate]);
-
-  // If not authenticated, redirect to landing
-  if (!isAuthenticated) {
-    return <Navigate to="/landing" replace />;
-  }
-
-  // If sys_admin, redirect to system admin dashboard
   if (isSysAdmin) {
     return <Navigate to="/admin" replace />;
   }
 
-  // If tenant user, show tenant dashboard with layout
   if (isTenantRole) {
     return (
       <SidebarProvider>
@@ -100,7 +97,7 @@ export default function RootRoute() {
     );
   }
 
-  // Fallback - should not reach here, but redirect to landing
+  // Fallback
   return <Navigate to="/landing" replace />;
 }
 
