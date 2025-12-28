@@ -9,9 +9,6 @@ import Backdrop from "../../layout/Backdrop";
 import AppSidebar from "../../layout/AppSidebar";
 // import { registerTenant } from "../../api/tenantApi";
 
-/**
- * Layout wrapper for tenant dashboard at root path
- */
 const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
@@ -35,17 +32,11 @@ const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
-/**
- * Root route component that handles "/"
- * - Unauthenticated users -> redirect to /landing
- * - sys_admin -> redirect to /admin
- * - tenant users -> show tenant dashboard (Admin component) with layout
- * Also handles tenant registration for tenant users after Keycloak login
- */
+
 export default function RootRoute() {
   const { isAuthenticated, isSysAdmin, isTenantRole, tenantId } = useAuth();
 
-  // 🔴 HANDLE PAYMENT CALLBACK FIRST - Synchronous check during render
+ 
   const searchParams = new URLSearchParams(window.location.search);
   const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
 
@@ -58,10 +49,10 @@ export default function RootRoute() {
     hashParams.get('id');
 
   if (isAuthenticated && txId) {
-    // clean URL immediately
+   
     const cleanUrl = new URL(window.location.href);
     cleanUrl.search = '';
-    // Also clean hash params if they exist in the hash part
+    
     if (cleanUrl.hash.includes('?')) {
         cleanUrl.hash = cleanUrl.hash.split('?')[0];
     }
@@ -72,13 +63,13 @@ export default function RootRoute() {
     return <Navigate to={`/transactions/${txId}`} replace />;
   }
 
-  // 🔽 NOW DO NORMAL AUTH FLOW
+ 
 
   if (!isAuthenticated) {
     return <Navigate to="/landing" replace />;
   }
 
-  // Redirect to onboarding if tenant is not fully set up
+  
   if (isAuthenticated && isTenantRole && (!tenantId || tenantId === "unassigned")) {
       return <Navigate to="/onboard" replace />;
   }

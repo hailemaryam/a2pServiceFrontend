@@ -29,8 +29,10 @@ const UNICODE_CONCAT_CHAR_LIMIT = 67; // Standard UCS-2 concat limit
 
 export default function SendSMS() {
   // Tabs: Single, Group, Bulk (File)
-  const [activeTab, setActiveTab] = useState<"Single" | "Group" | "Bulk">("Single");
-  
+  const [activeTab, setActiveTab] = useState<"Single" | "Group" | "Bulk">(
+    "Single"
+  );
+
   const [smsData, setSmsData] = useState<SmsState>({
     senderId: "",
     phoneNumber: "",
@@ -48,9 +50,11 @@ export default function SendSMS() {
   const { data: senders = [] } = useGetSendersQuery();
   const { data: contactGroups = [] } = useGetContactGroupsQuery();
   const { data: apiKeys = [] } = useGetApiKeysQuery(); // Fetch API Keys
-  
-  const [sendSingleSms, { isLoading: isSendingSingle }] = useSendSingleSmsMutation();
-  const [sendGroupSms, { isLoading: isSendingGroup }] = useSendGroupSmsMutation();
+
+  const [sendSingleSms, { isLoading: isSendingSingle }] =
+    useSendSingleSmsMutation();
+  const [sendGroupSms, { isLoading: isSendingGroup }] =
+    useSendGroupSmsMutation();
   const [sendBulkSms, { isLoading: isSendingBulk }] = useSendBulkSmsMutation();
   // const [createSender, { isLoading: isCreatingSender }] = useCreateSenderMutation();
 
@@ -67,15 +71,19 @@ export default function SendSMS() {
 
     // Detect encoding (User provided logic: charCode > 127 is Unicode)
     for (let i = 0; i < chars; i++) {
-        if (smsData.message.charCodeAt(i) > 127) {
-            detectedEncoding = "UNICODE";
-            break;
-        }
+      if (smsData.message.charCodeAt(i) > 127) {
+        detectedEncoding = "UNICODE";
+        break;
+      }
     }
 
     let parts = 0;
-    const singleLimit = detectedEncoding === "GSM" ? GSM_CHAR_LIMIT : UNICODE_CHAR_LIMIT;
-    const concatLimit = detectedEncoding === "GSM" ? GSM_CONCAT_CHAR_LIMIT : UNICODE_CONCAT_CHAR_LIMIT;
+    const singleLimit =
+      detectedEncoding === "GSM" ? GSM_CHAR_LIMIT : UNICODE_CHAR_LIMIT;
+    const concatLimit =
+      detectedEncoding === "GSM"
+        ? GSM_CONCAT_CHAR_LIMIT
+        : UNICODE_CONCAT_CHAR_LIMIT;
 
     if (chars > 0) {
       if (chars <= singleLimit) {
@@ -93,7 +101,9 @@ export default function SendSMS() {
   }, [smsData.message]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setSmsData((prev) => ({ ...prev, [name]: value }));
@@ -107,7 +117,9 @@ export default function SendSMS() {
   const handleScheduleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSmsData((prev) => ({
       ...prev,
-      scheduledAt: e.target.value ? new Date(e.target.value).toISOString() : undefined,
+      scheduledAt: e.target.value
+        ? new Date(e.target.value).toISOString()
+        : undefined,
     }));
   };
 
@@ -121,10 +133,12 @@ export default function SendSMS() {
         }
 
         // FIND API KEY FOR SELECTED SENDER
-        const validKey = apiKeys.find(k => k.senderId === smsData.senderId);
+        const validKey = apiKeys.find((k) => k.senderId === smsData.senderId);
         if (!validKey) {
-           toast.error("No API Key found for this Sender ID. Please generate an API Key in the API Keys section first.");
-           return;
+          toast.error(
+            "No API Key found for this Sender ID. Please generate an API Key in the API Keys section first."
+          );
+          return;
         }
 
         await sendSingleSms({
@@ -135,7 +149,12 @@ export default function SendSMS() {
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
         toast.success("Single SMS sent successfully!");
-        setSmsData((prev) => ({ ...prev, phoneNumber: "", message: "", scheduledAt: undefined }));
+        setSmsData((prev) => ({
+          ...prev,
+          phoneNumber: "",
+          message: "",
+          scheduledAt: undefined,
+        }));
       } else if (activeTab === "Group") {
         if (!smsData.senderId || !smsData.selectedGroup || !smsData.message) {
           toast.error("Please fill in all required fields (Group)");
@@ -148,7 +167,11 @@ export default function SendSMS() {
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
         toast.success("Group SMS sent successfully!");
-        setSmsData((prev) => ({ ...prev, message: "", scheduledAt: undefined }));
+        setSmsData((prev) => ({
+          ...prev,
+          message: "",
+          scheduledAt: undefined,
+        }));
       } else if (activeTab === "Bulk") {
         // Bulk = File Upload
         if (!smsData.senderId || !smsData.uploadedFile || !smsData.message) {
@@ -162,15 +185,20 @@ export default function SendSMS() {
           scheduledAt: smsData.scheduledAt,
         }).unwrap();
         toast.success("Bulk SMS (File) sent successfully!");
-        setSmsData((prev) => ({ ...prev, uploadedFile: null, message: "", scheduledAt: undefined }));
+        setSmsData((prev) => ({
+          ...prev,
+          uploadedFile: null,
+          message: "",
+          scheduledAt: undefined,
+        }));
       }
     } catch (error: any) {
       console.error("Failed to send SMS:", error);
-      toast.error(error?.data?.message || error?.message || "Failed to send SMS.");
+      toast.error(
+        error?.data?.message || error?.message || "Failed to send SMS."
+      );
     }
   };
-
-
 
   return (
     <div>
@@ -178,7 +206,6 @@ export default function SendSMS() {
       <PageBreadcrumb pageTitle="Send SMS" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="font-sans">
-          
           {/* Header */}
           <div className="flex justify-between items-center mb-4 sm:mb-8">
             {/* <h2 className="text-lg font-semibold text-gray-900 dark:text-white">New Campaign</h2> */}
@@ -187,7 +214,10 @@ export default function SendSMS() {
           <div className="bg-white dark:bg-white/[0.03] p-4 sm:p-6 lg:p-8 rounded-xl shadow-theme-md border border-gray-200 dark:border-gray-800">
             {/* Tabs */}
             <div className="border-b border-gray-200 dark:border-gray-700 mb-4 sm:mb-8">
-              <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+              <nav
+                className="-mb-px flex space-x-8 overflow-x-auto"
+                aria-label="Tabs"
+              >
                 {(["Single", "Group", "Bulk"] as const).map((tab) => (
                   <button
                     key={tab}
@@ -211,7 +241,7 @@ export default function SendSMS() {
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
                     {activeTab} SMS Details
                   </h3>
-                  
+
                   <div className="space-y-6">
                     {/* Sender ID (Common) */}
                     <label className="block">
@@ -224,9 +254,11 @@ export default function SendSMS() {
                         onChange={handleChange}
                         className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
                       >
-                         <option value="">Select Sender ID</option>
+                        <option value="">Select Sender ID</option>
                         {approvedSenders.map((s) => (
-                          <option key={s.id} value={s.id}>{s.name || s.id}</option>
+                          <option key={s.id} value={s.id}>
+                            {s.name || s.id}
+                          </option>
                         ))}
                       </select>
                     </label>
@@ -258,11 +290,13 @@ export default function SendSMS() {
                           name="selectedGroup"
                           value={smsData.selectedGroup}
                           onChange={handleChange}
-                           className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
+                          className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
                         >
                           <option value="">Select Group</option>
                           {contactGroups.map((g) => (
-                            <option key={g.id} value={g.id}>{g.name}</option>
+                            <option key={g.id} value={g.id}>
+                              {g.name}
+                            </option>
                           ))}
                         </select>
                       </label>
@@ -302,7 +336,7 @@ export default function SendSMS() {
                     />
                   </div>
                 )}
-                
+
                 {/* Full Width Message Block */}
                 <div className="md:col-span-2">
                   <label className="block">
@@ -319,13 +353,25 @@ export default function SendSMS() {
                     />
                   </label>
                   <div className="mt-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                    <p>Encoding: <span className="font-semibold">{encoding}</span></p>
-                    <p>SMS Parts: <span className="font-semibold">{smsParts}</span></p>
-                    <p>Chars Used: <span className="font-semibold">{charsUsed}</span> / {
-                        smsParts > 1 
-                        ? (encoding === "GSM" ? GSM_CONCAT_CHAR_LIMIT : UNICODE_CONCAT_CHAR_LIMIT) * smsParts 
-                        : (encoding === "GSM" ? GSM_CHAR_LIMIT : UNICODE_CHAR_LIMIT)
-                    }</p>
+                    <p>
+                      Encoding:{" "}
+                      <span className="font-semibold">{encoding}</span>
+                    </p>
+                    <p>
+                      SMS Parts:{" "}
+                      <span className="font-semibold">{smsParts}</span>
+                    </p>
+                    <p>
+                      Chars Used:{" "}
+                      <span className="font-semibold">{charsUsed}</span> /{" "}
+                      {smsParts > 1
+                        ? (encoding === "GSM"
+                            ? GSM_CONCAT_CHAR_LIMIT
+                            : UNICODE_CONCAT_CHAR_LIMIT) * smsParts
+                        : encoding === "GSM"
+                        ? GSM_CHAR_LIMIT
+                        : UNICODE_CHAR_LIMIT}
+                    </p>
                   </div>
                   <label className="block mt-4">
                     <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
@@ -339,13 +385,16 @@ export default function SendSMS() {
                   </label>
                   <button
                     type="submit"
-                    disabled={isSendingSingle || isSendingGroup || isSendingBulk}
+                    disabled={
+                      isSendingSingle || isSendingGroup || isSendingBulk
+                    }
                     className="mt-6 px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
                   >
-                    {isSendingSingle || isSendingGroup || isSendingBulk ? "Sending..." : "Send SMS"}
+                    {isSendingSingle || isSendingGroup || isSendingBulk
+                      ? "Sending..."
+                      : "Send SMS"}
                   </button>
                 </div>
-
               </div>
             </form>
           </div>

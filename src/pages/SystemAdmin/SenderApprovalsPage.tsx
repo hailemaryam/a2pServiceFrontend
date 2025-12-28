@@ -2,15 +2,26 @@ import { useState } from "react";
 import { Link } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Table, TableHeader, TableBody, TableRow, TableCell } from "../../components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "../../components/ui/table";
 import { CheckCircleIcon, CloseIcon } from "../../icons";
-import { useGetPendingSendersQuery, useApproveSenderMutation, useRejectSenderMutation } from "../../api/adminApi";
+import {
+  useGetPendingSendersQuery,
+  useApproveSenderMutation,
+  useRejectSenderMutation,
+} from "../../api/adminApi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function SenderApprovalsPage() {
   const { data: senders = [], isLoading, error } = useGetPendingSendersQuery();
-  const [approveSender, { isLoading: isApproving }] = useApproveSenderMutation();
+  const [approveSender, { isLoading: isApproving }] =
+    useApproveSenderMutation();
   const [rejectSender, { isLoading: isRejecting }] = useRejectSenderMutation();
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -66,12 +77,17 @@ export default function SenderApprovalsPage() {
   if (isLoading) {
     return (
       <>
-        <PageMeta title="Sender Approvals | Fast SMS" description="Approve or reject sender ID requests" />
+        <PageMeta
+          title="Sender Approvals | Fast SMS"
+          description="Approve or reject sender ID requests"
+        />
         <PageBreadcrumb pageTitle="Sender Approvals" />
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
             <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">Loading sender requests...</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Loading sender requests...
+              </p>
             </div>
           </div>
         </div>
@@ -82,12 +98,17 @@ export default function SenderApprovalsPage() {
   if (error) {
     return (
       <>
-        <PageMeta title="Sender Approvals | Fast SMS" description="Approve or reject sender ID requests" />
+        <PageMeta
+          title="Sender Approvals | Fast SMS"
+          description="Approve or reject sender ID requests"
+        />
         <PageBreadcrumb pageTitle="Sender Approvals" />
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
             <div className="text-center py-12">
-              <p className="text-error-600 dark:text-error-400">Failed to load sender requests. Please try again.</p>
+              <p className="text-error-600 dark:text-error-400">
+                Failed to load sender requests. Please try again.
+              </p>
             </div>
           </div>
         </div>
@@ -97,7 +118,10 @@ export default function SenderApprovalsPage() {
 
   return (
     <>
-      <PageMeta title="Sender Approvals | Fast SMS" description="Approve or reject sender ID requests" />
+      <PageMeta
+        title="Sender Approvals | Fast SMS"
+        description="Approve or reject sender ID requests"
+      />
       <PageBreadcrumb pageTitle="Sender Approvals" />
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -113,22 +137,40 @@ export default function SenderApprovalsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-800">
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Tenant
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Sender Name
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                     Message
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
+                    Message
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Status
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Created At
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Actions
                   </TableCell>
                 </TableRow>
@@ -136,7 +178,10 @@ export default function SenderApprovalsPage() {
               <TableBody>
                 {senders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <TableCell
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400"
+                    >
                       No pending sender requests found
                     </TableCell>
                   </TableRow>
@@ -146,7 +191,7 @@ export default function SenderApprovalsPage() {
                       key={sender.id}
                       className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     >
-                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
+                      <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300">
                         <Link to={`/admin/tenants/${sender.tenantId}`}>
                           {sender.tenantId || "N/A"}
                         </Link>
@@ -198,7 +243,9 @@ export default function SenderApprovalsPage() {
       {rejectingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-800 dark:bg-gray-800 w-full max-w-md">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Reject Sender Request</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+              Reject Sender Request
+            </h3>
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               Please provide a reason for rejecting this sender request.
             </p>

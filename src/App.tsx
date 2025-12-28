@@ -4,8 +4,8 @@ import RootRoute from "./components/auth/RootRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import Onboarding from "./pages/AuthPages/Onboarding";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
@@ -42,7 +42,18 @@ export default function App() {
     <>
       <Router>
         <ScrollToTop />
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
         <Routes>
           {/* Landing page for unauthenticated users */}
           <Route path="/landing" element={<Landing />} />
@@ -61,11 +72,17 @@ export default function App() {
           >
             <Route path="/admin" element={<SystemAdminDashboard />} />
             <Route path="/admin/tenants" element={<TenantsPage />} />
-            <Route path="/admin/tenants/:id" element={<SystemAdminTenantDetail />} />
+            <Route
+              path="/admin/tenants/:id"
+              element={<SystemAdminTenantDetail />}
+            />
             <Route path="/admin/senders" element={<SenderApprovalsPage />} />
             <Route path="/admin/sms-jobs" element={<SmsJobApprovalsPage />} />
             <Route path="/admin/sms-packages" element={<SmsPackagesPage />} />
-            <Route path="/admin/transactions" element={<SystemAdminTransactions />} />
+            <Route
+              path="/admin/transactions"
+              element={<SystemAdminTransactions />}
+            />
           </Route>
 
           {/* Tenant Routes - Only accessible to tenant_admin and tenant_user */}

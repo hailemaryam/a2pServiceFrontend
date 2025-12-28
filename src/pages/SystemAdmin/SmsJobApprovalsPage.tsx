@@ -1,9 +1,19 @@
 import { useState } from "react";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Table, TableHeader, TableBody, TableRow, TableCell } from "../../components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "../../components/ui/table";
 import { CheckCircleIcon, CloseIcon } from "../../icons";
-import { useGetPendingSmsJobsQuery, useApproveSmsJobMutation, useRejectSmsJobMutation } from "../../api/adminApi";
+import {
+  useGetPendingSmsJobsQuery,
+  useApproveSmsJobMutation,
+  useRejectSmsJobMutation,
+} from "../../api/adminApi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,7 +21,7 @@ export default function SmsJobApprovalsPage() {
   const { data: smsJobs = [], isLoading, error } = useGetPendingSmsJobsQuery();
   const [approveJob, { isLoading: isApproving }] = useApproveSmsJobMutation();
   const [rejectJob, { isLoading: isRejecting }] = useRejectSmsJobMutation();
-  
+
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -26,7 +36,7 @@ export default function SmsJobApprovalsPage() {
   };
 
   const handleReject = async (id: string) => {
-     if (!rejectionReason.trim()) {
+    if (!rejectionReason.trim()) {
       toast.error("Please provide a rejection reason");
       return;
     }
@@ -42,7 +52,13 @@ export default function SmsJobApprovalsPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === "APPROVED" || status === "SENT" || status === "SCHEDULED" || status === "SENDING" || status === "COMPLETED") {
+    if (
+      status === "APPROVED" ||
+      status === "SENT" ||
+      status === "SCHEDULED" ||
+      status === "SENDING" ||
+      status === "COMPLETED"
+    ) {
       return (
         <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-success-100 text-success-800 rounded-full dark:bg-success-500/10 dark:text-success-400">
           {status}
@@ -52,7 +68,7 @@ export default function SmsJobApprovalsPage() {
     if (status === "REJECTED" || status === "FAILED") {
       return (
         <span className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-error-100 text-error-800 rounded-full dark:bg-error-500/10 dark:text-error-400">
-           {status}
+          {status}
         </span>
       );
     }
@@ -75,12 +91,17 @@ export default function SmsJobApprovalsPage() {
   if (isLoading) {
     return (
       <>
-        <PageMeta title="SMS Job Approvals | Fast SMS" description="Approve or reject SMS job requests" />
+        <PageMeta
+          title="SMS Job Approvals | Fast SMS"
+          description="Approve or reject SMS job requests"
+        />
         <PageBreadcrumb pageTitle="SMS Job Monitoring" />
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
             <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">Loading SMS jobs...</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Loading SMS jobs...
+              </p>
             </div>
           </div>
         </div>
@@ -91,12 +112,17 @@ export default function SmsJobApprovalsPage() {
   if (error) {
     return (
       <>
-        <PageMeta title="SMS Job Approvals | Fast SMS" description="Approve or reject SMS job requests" />
+        <PageMeta
+          title="SMS Job Approvals | Fast SMS"
+          description="Approve or reject SMS job requests"
+        />
         <PageBreadcrumb pageTitle="SMS Job Monitoring" />
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
             <div className="text-center py-12">
-              <p className="text-error-600 dark:text-error-400">Failed to load SMS jobs. Please try again.</p>
+              <p className="text-error-600 dark:text-error-400">
+                Failed to load SMS jobs. Please try again.
+              </p>
             </div>
           </div>
         </div>
@@ -106,7 +132,10 @@ export default function SmsJobApprovalsPage() {
 
   return (
     <>
-      <PageMeta title="SMS Job Monitoring | Fast SMS" description="Monitor all SMS jobs across tenants" />
+      <PageMeta
+        title="SMS Job Monitoring | Fast SMS"
+        description="Monitor all SMS jobs across tenants"
+      />
       <PageBreadcrumb pageTitle="SMS Job Approvals" />
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
@@ -122,25 +151,46 @@ export default function SmsJobApprovalsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-gray-200 dark:border-gray-800">
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Tenant
                   </TableCell>
-                  <TableCell isHeader className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Message Preview
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Recipients
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Scheduled At
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Status
                   </TableCell>
-                  <TableCell isHeader className=" hidden lg:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className=" hidden lg:table-cell px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Requested At
                   </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >
                     Actions
                   </TableCell>
                 </TableRow>
@@ -148,7 +198,10 @@ export default function SmsJobApprovalsPage() {
               <TableBody>
                 {smsJobs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <TableCell
+                      colSpan={7}
+                      className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400"
+                    >
                       No pending SMS jobs found
                     </TableCell>
                   </TableRow>
@@ -167,7 +220,9 @@ export default function SmsJobApprovalsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                        {job.totalRecipients ? job.totalRecipients.toLocaleString() : "N/A"}
+                        {job.totalRecipients
+                          ? job.totalRecipients.toLocaleString()
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                         {formatDate(job.scheduledAt)}
@@ -179,8 +234,9 @@ export default function SmsJobApprovalsPage() {
                         {formatDate(job.createdAt)}
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {(job.status === "PENDING_APPROVAL" || job.approvalStatus === "PENDING") ? (
-                           <div className="flex items-center justify-end gap-2">
+                        {job.status === "PENDING_APPROVAL" ||
+                        job.approvalStatus === "PENDING" ? (
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleApprove(job.id)}
                               disabled={isApproving || isRejecting}
@@ -211,11 +267,13 @@ export default function SmsJobApprovalsPage() {
         </div>
       </div>
 
-       {/* Rejection Reason Modal */}
-       {rejectingId && (
+      {/* Rejection Reason Modal */}
+      {rejectingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-800 dark:bg-gray-800 w-full max-w-md">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Reject SMS Job</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+              Reject SMS Job
+            </h3>
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               Please provide a reason for rejecting this SMS Job.
             </p>

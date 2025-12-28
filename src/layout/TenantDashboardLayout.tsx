@@ -6,7 +6,9 @@ import AppSidebar from "./AppSidebar";
 /**
  * Layout wrapper for tenant dashboard
  */
-const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const TenantDashboardLayout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (

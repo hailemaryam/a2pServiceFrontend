@@ -1,11 +1,7 @@
 import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import {
-  PlusIcon,
-  TrashBinIcon,
-  CopyIcon,
-} from "../../icons";
+import { PlusIcon, TrashBinIcon, CopyIcon } from "../../icons";
 import {
   useGetApiKeysQuery,
   useCreateApiKeyMutation,
@@ -103,26 +99,32 @@ export default function API() {
             <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Integration Details
             </h3>
-            
+
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Endpoint URL (POST)</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Endpoint URL (POST)
+                </p>
                 <code className="text-brand-500 dark:text-brand-400 break-all">
                   https://fastsms.dev/api/p/sms/send
                 </code>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Headers</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Headers
+                </p>
                 <div className="rounded border border-gray-200 bg-white p-2 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-mono">
                   API-Key: &lt;Your_API_Key_Below&gt;
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Request Body (JSON)</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  Request Body (JSON)
+                </p>
                 <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
-{`{
+                  {`{
   "to": "2519...",
   "message": "Hello World",
   "scheduledAt": "2030-03-10T16:15:50Z",      // Optional
@@ -130,7 +132,8 @@ export default function API() {
 }`}
                 </pre>
                 <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  * <code>scheduledAt</code> and <code>webhookUrl</code> are optional fields.
+                  * <code>scheduledAt</code> and <code>webhookUrl</code> are
+                  optional fields.
                 </p>
               </div>
             </div>
@@ -329,7 +332,8 @@ export default function API() {
       >
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-300">
-            Are you sure you want to revoke this API key? This action cannot be undone.
+            Are you sure you want to revoke this API key? This action cannot be
+            undone.
           </p>
           <div className="flex gap-3 justify-end">
             <button
