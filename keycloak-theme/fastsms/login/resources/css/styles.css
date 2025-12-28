@@ -12,99 +12,129 @@ body {
   min-height: 100vh;
 }
 
+/* Base Variables - Light Mode Default */
 :root {
-  /* Brand Colors */
-  --orange: #e67936;
-  --orange-700: #d15f28;
-  --brown: #371a0f;
-  --brown-2: #2e1a13;
-  --radius: 12px;
-  --page-padding: 48px;
+  /* Brand Colors - Shared */
+  --fs-orange: #e67936;
+  --fs-orange-700: #d15f28;
+  --fs-brown: #371a0f;
+  --fs-brown-2: #2e1a13;
+  --fs-radius: 12px;
+  --fs-page-padding: 48px;
 
   /* Theme variables - Light Mode */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --text-primary: #101828;
-  --text-secondary: #475467;
-  --text-muted: #98a0ab;
-  --input-bg: #f9fafb;
-  --input-border: #d0d5dd;
-  --input-text: #101828;
-  --border-color: rgba(0, 0, 0, 0.06);
+  --fs-bg-primary: #ffffff;
+  --fs-bg-secondary: #f9fafb;
+  --fs-text-primary: #101828;
+  --fs-text-secondary: #475467;
+  --fs-text-muted: #98a0ab;
+  --fs-input-bg: #f9fafb;
+  --fs-input-border: #d0d5dd;
+  --fs-input-text: #101828;
+  --fs-border-color: rgba(0, 0, 0, 0.06);
 
   /* Feedback colors - Light Mode */
-  --error-bg: #fde8e8;
-  --error-text: #c81e1e;
-  --error-border: #f8b4b4;
-  --warning-bg: #fdf6b2;
-  --warning-text: #8e4b10;
-  --warning-border: #fce96a;
-  --success-bg: #def7ec;
-  --success-text: #03543f;
-  --success-border: #84e1bc;
-  --info-bg: #e1effe;
-  --info-text: #1a56db;
-  --info-border: #b3cde0;
+  --fs-error-bg: #fde8e8;
+  --fs-error-text: #c81e1e;
+  --fs-error-border: #f8b4b4;
+  --fs-warning-bg: #fdf6b2;
+  --fs-warning-text: #8e4b10;
+  --fs-warning-border: #fce96a;
+  --fs-success-bg: #def7ec;
+  --fs-success-text: #03543f;
+  --fs-success-border: #84e1bc;
+  --fs-info-bg: #e1effe;
+  --fs-info-text: #1a56db;
+  --fs-info-border: #b3cde0;
 }
 
+/* Dark Mode Overrides - Triggered by .dark class or system preference */
 @media (prefers-color-scheme: dark) {
-  :root {
-    /* Theme variables - Dark Mode */
-    --bg-primary: #0c111d;
-    --bg-secondary: #101828;
-    --text-primary: #ffffff;
-    --text-secondary: #d0d5dd;
-    --text-muted: #98a2b3;
-    --input-bg: #1d2939;
-    --input-border: #344054;
-    --input-text: #ffffff;
-    --border-color: #344054;
+  :root:not(.light) {
+    --fs-bg-primary: #0c111d;
+    --fs-bg-secondary: #101828;
+    --fs-text-primary: #ffffff;
+    --fs-text-secondary: #d0d5dd;
+    --fs-text-muted: #98a2b3;
+    --fs-input-bg: #1d2939;
+    --fs-input-border: #344054;
+    --fs-input-text: #ffffff;
+    --fs-border-color: #344054;
 
     /* Adjust brand background slightly for dark mode */
-    --brown: #1a0d07;
-    --brown-2: #140b08;
+    --fs-brown: #1a0d07;
+    --fs-brown-2: #140b08;
 
     /* Feedback colors - Dark Mode */
-    --error-bg: rgba(240, 68, 56, 0.1);
-    --error-text: #f97066;
-    --error-border: rgba(240, 68, 56, 0.2);
-    --warning-bg: rgba(247, 144, 9, 0.1);
-    --warning-text: #fdb022;
-    --warning-border: rgba(247, 144, 9, 0.2);
-    --success-bg: rgba(18, 183, 106, 0.1);
-    --success-text: #32d583;
-    --success-border: rgba(18, 183, 106, 0.2);
-    --info-bg: rgba(43, 108, 176, 0.1);
-    --info-text: #63b3ed;
-    --info-border: rgba(43, 108, 176, 0.2);
+    --fs-error-bg: rgba(240, 68, 56, 0.1);
+    --fs-error-text: #f97066;
+    --fs-error-border: rgba(240, 68, 56, 0.2);
+    --fs-warning-bg: rgba(247, 144, 9, 0.1);
+    --fs-warning-text: #fdb022;
+    --fs-warning-border: rgba(247, 144, 9, 0.2);
+    --fs-success-bg: rgba(18, 183, 106, 0.1);
+    --fs-success-text: #32d583;
+    --fs-success-border: rgba(18, 183, 106, 0.2);
+    --fs-info-bg: rgba(43, 108, 176, 0.1);
+    --fs-info-text: #63b3ed;
+    --fs-info-border: rgba(43, 108, 176, 0.2);
   }
+}
+
+/* Explicit class-based dark mode (for manual toggle or specific environments) */
+.dark {
+  --fs-bg-primary: #0c111d;
+  --fs-bg-secondary: #101828;
+  --fs-text-primary: #ffffff;
+  --fs-text-secondary: #d0d5dd;
+  --fs-text-muted: #98a2b3;
+  --fs-input-bg: #1d2939;
+  --fs-input-border: #344054;
+  --fs-input-text: #ffffff;
+  --fs-border-color: #344054;
+
+  --fs-brown: #1a0d07;
+  --fs-brown-2: #140b08;
+
+  --fs-error-bg: rgba(240, 68, 56, 0.1);
+  --fs-error-text: #f97066;
+  --fs-error-border: rgba(240, 68, 56, 0.2);
+  --fs-warning-bg: rgba(247, 144, 9, 0.1);
+  --fs-warning-text: #fdb022;
+  --fs-warning-border: rgba(247, 144, 9, 0.2);
+  --fs-success-bg: rgba(18, 183, 106, 0.1);
+  --fs-success-text: #32d583;
+  --fs-success-border: rgba(18, 183, 106, 0.2);
+  --fs-info-bg: rgba(43, 108, 176, 0.1);
+  --fs-info-text: #63b3ed;
+  --fs-info-border: rgba(43, 108, 176, 0.2);
 }
 
 .fastsms-root {
   display: flex;
   min-height: 100vh;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--text-primary);
-  background: var(--bg-primary);
+  color: var(--fs-text-primary);
+  background: var(--fs-bg-primary);
 }
 
 .left-panel {
   width: 55%;
-  background: var(--bg-primary);
-  padding: var(--page-padding);
+  background: var(--fs-bg-primary);
+  padding: var(--fs-page-padding);
   display: flex;
   flex-direction: column;
 }
 
 .back-link {
-  color: var(--orange);
+  color: var(--fs-orange);
   margin-bottom: 28px;
   text-decoration: none;
   font-weight: 600;
 }
 
 .forgot {
-  color: var(--orange);
+  color: var(--fs-orange);
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -127,11 +157,11 @@ body {
   font-size: 48px;
   margin: 0 0 8px 0;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--fs-text-primary);
 }
 
 .subtitle {
-  color: var(--text-muted);
+  color: var(--fs-text-muted);
   margin: 0 0 28px 0;
   font-size: 16px;
 }
@@ -144,23 +174,23 @@ label {
   font-weight: 600;
   margin-bottom: 8px;
   display: block;
-  color: var(--text-secondary);
+  color: var(--fs-text-secondary);
 }
 
 .form-control {
   width: 100%;
   padding: 18px 20px;
-  border-radius: var(--radius);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  color: var(--input-text);
+  border-radius: var(--fs-radius);
+  border: 1px solid var(--fs-input-border);
+  background: var(--fs-input-bg);
+  color: var(--fs-input-text);
   font-size: 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: var(--orange);
+  border-color: var(--fs-orange);
   box-shadow: 0 0 0 4px rgba(230, 121, 54, 0.1);
 }
 
@@ -181,15 +211,15 @@ label {
   font-weight: 500;
   display: flex;
   gap: 10px;
-  color: var(--text-secondary);
+  color: var(--fs-text-secondary);
 }
 
 .btn-primary {
-  background: var(--orange);
+  background: var(--fs-orange);
   color: #fff;
   padding: 16px;
   width: 100%;
-  border-radius: var(--radius);
+  border-radius: var(--fs-radius);
   font-size: 18px;
   font-weight: 700;
   border: none;
@@ -198,23 +228,23 @@ label {
 }
 
 .btn-primary:hover {
-  background: var(--orange-700);
+  background: var(--fs-orange-700);
 }
 
 .signup {
   margin-top: 8px;
-  color: var(--text-secondary);
+  color: var(--fs-text-secondary);
 }
 
 .signup a {
-  color: var(--orange);
+  color: var(--fs-orange);
   text-decoration: none;
   font-weight: 600;
 }
 
 .right-panel {
   width: 45%;
-  background: linear-gradient(180deg, var(--brown), var(--brown-2));
+  background: linear-gradient(180deg, var(--fs-brown), var(--fs-brown-2));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,27 +274,27 @@ label {
 }
 
 .kc-error {
-  background-color: var(--error-bg);
-  color: var(--error-text);
-  border: 1px solid var(--error-border);
+  background-color: var(--fs-error-bg);
+  color: var(--fs-error-text);
+  border: 1px solid var(--fs-error-border);
 }
 
 .kc-warning {
-  background-color: var(--warning-bg);
-  color: var(--warning-text);
-  border: 1px solid var(--warning-border);
+  background-color: var(--fs-warning-bg);
+  color: var(--fs-warning-text);
+  border: 1px solid var(--fs-warning-border);
 }
 
 .kc-success {
-  background-color: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid var(--success-border);
+  background-color: var(--fs-success-bg);
+  color: var(--fs-success-text);
+  border: 1px solid var(--fs-success-border);
 }
 
 .kc-info {
-  background-color: var(--info-bg);
-  color: var(--info-text);
-  border: 1px solid var(--info-border);
+  background-color: var(--fs-info-bg);
+  color: var(--fs-info-text);
+  border: 1px solid var(--fs-info-border);
 }
 
 /* Mobile Responsiveness */
