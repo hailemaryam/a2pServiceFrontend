@@ -8,7 +8,7 @@
 
     <div class="form-wrap">
       <h1 class="title">Sign In</h1>
-      <p class="subtitle">Enter your email and password to sign in!</p>
+      <p class="subtitle">Enter your email and password to sign in! </p>
 
       <#if message?has_content>
         <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary}</div></#if>
