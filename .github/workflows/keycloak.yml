@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo rm -rf /opt/keycloak/themes/fastsms/*
+            rm -rf /opt/keycloak/themes/fastsms/*
             sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /opt/keycloak/themes/fastsms
 
       - name: Upload keycloak-theme folder to VPS
@@ -40,8 +40,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv /home/${{ secrets.VPS_USER }}/fastsms-temp/keycloak-theme/fastsms/* /opt/keycloak/themes/fastsms/
-            sudo rm -rf /home/${{ secrets.VPS_USER }}/fastsms-temp
+            mv /home/${{ secrets.VPS_USER }}/fastsms-temp/keycloak-theme/fastsms/* /opt/keycloak/themes/fastsms/
+            rm -rf /home/${{ secrets.VPS_USER }}/fastsms-temp
             sudo chown -R keycloak:keycloak /opt/keycloak/themes/fastsms
 
       - name: Restart Keycloak
