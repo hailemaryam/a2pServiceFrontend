@@ -22,6 +22,26 @@ export default function Onboarding() {
     setError("");
     setIsLoading(true);
 
+    // Required fields validation
+    if (!name.trim()) {
+      setError("Organization / Name is required.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (isCompany && !tinNumber.trim()) {
+      setError("TIN Number is required for companies.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Phone validation
+    if (phone && !/^(09|07)\d{8}$/.test(phone)) {
+      setError("Phone number must start with 09 or 07 and be 10 digits long.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const result = await registerTenant({ 
         name, 

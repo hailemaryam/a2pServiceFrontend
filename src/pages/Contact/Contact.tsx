@@ -1,7 +1,7 @@
 import React, { FormEvent, useMemo, useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { DownloadIcon, PlusIcon, CloseIcon } from "../../icons";
+import { DownloadIcon, PlusIcon } from "../../icons";
 import {
   useFetchContactsQuery,
   useCreateContactMutation,
@@ -11,6 +11,10 @@ import {
   useUploadContactsMultipartMutation,
   ContactResponse,
 } from "../../api/contactsApi";
+
+
+import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
+import Modal from "../../components/ui/modal/Modal";
 
 type UploadMode = "binary" | "multipart";
 
@@ -41,6 +45,9 @@ export default function Contact() {
       ? (queryError.data as any)?.message || "Failed to fetch contacts"
       : "Failed to fetch contacts"
     : null;
+
+  // Fetch groups for dropdown
+  const { data: groups = [] } = useGetContactGroupsQuery();
 
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -395,28 +402,11 @@ export default function Contact() {
         </div>
       </div>
 
-      {isContactModalOpen && (
-        <div
-          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setIsContactModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsContactModalOpen(false)}
-              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              aria-label="Close"
-            >
-              <CloseIcon className="h-6 w-6" />
-            </button>
-
-            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
-              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                {editingId ? "Update Contact" : "Contact Information"}
-              </h3>
-            </div>
+      <Modal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        title={editingId ? "Update Contact" : "Contact Information"}
+      >
             <form onSubmit={handleContactSubmit} className="space-y-5">
               <div>
                 <label
@@ -480,32 +470,13 @@ export default function Contact() {
                   : "Submit"}
               </button>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
-      {isUploadModalOpen && (
-        <div
-          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setIsUploadModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsUploadModalOpen(false)}
-              className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              aria-label="Close"
-            >
-              <CloseIcon className="h-6 w-6" />
-            </button>
-
-            <div className="mb-5 border-b border-gray-200 pb-3 dark:border-gray-700">
-              <h3 className="pr-8 text-lg font-semibold text-gray-900 dark:text-white">
-                Upload Contacts
-              </h3>
-            </div>
+      <Modal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        title="Upload Contacts"
+      >
             <form onSubmit={handleUploadSubmit} className="space-y-5">
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
@@ -563,39 +534,33 @@ export default function Contact() {
                 >
                   Select Group
                 </label>
-                <select
-                  id="uploadGroup"
-                  value={selectedGroup}
-                  onChange={(e) => setSelectedGroup(e.target.value)}
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
-                >
-                  <option value="">Select Group</option>
-                  <option value="group1">Group 1</option>
-                  <option value="group2">Group 2</option>
-                </select>
-              </div>
-              <div className="flex justify-center gap-4">
-                <button
-                  type="submit"
-                  disabled={isUploadingBinary || isUploadingMultipart}
-                  className="rounded-lg bg-[#36304a] px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-[#2a2538] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isUploadingBinary || isUploadingMultipart
-                    ? "Uploading..."
-                    : "Save"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsUploadModalOpen(false)}
-                  className="rounded-lg bg-gray-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
+                  <select
+                    id="uploadGroup"
+                    value={selectedGroup}
+                    onChange={(e) => setSelectedGroup(e.target.value)}
+                    className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+                  >
+                    <option value="">Select Group</option>
+                    {groups.map((group) => (
+                      <option key={group.id} value={group.id}>
+                        {group.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-center gap-4">
+                  <button
+                    type="submit"
+                    disabled={isUploadingBinary || isUploadingMultipart}
+                    className="w-full rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
+                  >
+                    {isUploadingBinary || isUploadingMultipart
+                      ? "Uploading..."
+                      : "Upload"}
+                  </button>
+                </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

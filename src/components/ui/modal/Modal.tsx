@@ -60,7 +60,7 @@ const Modal = ({
   };
 
   return createPortal(
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ${disableBackdropBlur ? "" : "backdrop-blur-sm"} transition-opacity`} onClick={handleOverlayClick}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ${disableBackdropBlur ? "" : ""} transition-opacity`} onClick={handleOverlayClick}>
       <div
         ref={modalRef}
         className={`w-full ${sizeClasses[size]} bg-white dark:bg-gray-800 rounded-2xl shadow-xl transform transition-all flex flex-col max-h-[90vh]`}

@@ -28,11 +28,18 @@ export default function ProtectedRoute({
   redirectTo = "/landing",
   children
 }: ProtectedRouteProps) {
-  const { isAuthenticated, roles } = useAuth();
+  const { isAuthenticated, roles, tenantId } = useAuth();
 
   // If not authenticated, redirect to landing page
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
+  }
+
+  // Check if tenant is onboarded
+  const isTenantRole = roles.includes("tenant_admin") || roles.includes("tenant_user");
+  // Check for null, undefined, "null", "undefined", "unassigned" because sometimes it comes as string
+  if (isTenantRole && (!tenantId || tenantId === "unassigned" || tenantId === "null" || tenantId === "undefined")) {
+     return <Navigate to="/onboard" replace />;
   }
 
   // If roles are specified, check if user has at least one of them

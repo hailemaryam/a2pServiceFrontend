@@ -162,6 +162,7 @@ export default function SmsPackagesPage() {
         await createPackage(data as any).unwrap();
       }
       setEditingPackage(null);
+      setIsModalOpen(false);
       toast.success("Package saved successfully");
     } catch (err: any) {
       console.error("Failed to save package", err);
