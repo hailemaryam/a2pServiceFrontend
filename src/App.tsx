@@ -27,6 +27,7 @@ import SystemAdminTransactions from "./pages/SystemAdmin/SystemAdminTransactions
 import SystemAdminTenantDetail from "./pages/SystemAdmin/SystemAdminTenantDetail";
 import Billings from "./pages/Billings/Billings";
 import TransactionHistory from "./pages/Billings/TransactionHistory";
+import TransactionDetail from "./pages/Billings/TransactionDetail";
 import Checkout from "./pages/Billings/Checkout";
 import SendSMS from "./pages/SMS/SendSMS";
 import SendersList from "./pages/Senders/SendersList";
@@ -102,7 +103,7 @@ export default function App() {
 
             <Route path="/billings" element={<Billings />} />
             <Route path="/transactions" element={<TransactionHistory />} />
-            <Route path="/transactions/:transactionId" element={<TransactionHistory />} />
+            <Route path="/transactions/:id" element={<TransactionDetail />} />
             <Route path="/billing/checkout" element={<Checkout />} />
 
             {/* SMS */}

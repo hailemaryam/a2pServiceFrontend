@@ -3,6 +3,9 @@ import { useFetchContactsQuery } from "../../api/contactsApi";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { DownloadIcon, PlusIcon, FileIcon, GroupIcon } from "../../icons";
+import { useGetTenantDashboardQuery } from "../../api/dashboardApi";
+import StatsCards from "../../components/dashboard/StatsCards";
+import SmsOverviewChart from "../../components/dashboard/SmsOverviewChart";
 
 
 /**
@@ -14,8 +17,11 @@ export default function Home() {
   // State to track the active tab
   const [activeTab, setActiveTab] = useState<"contacts" | "groups">("contacts");
 
+  // Fetch dashboard stats
+  const { data: dashboardData, isLoading: isStatsLoading } = useGetTenantDashboardQuery();
+
   // Fetch contacts from API
-  const { data: contactsData, isLoading, isError, refetch } = useFetchContactsQuery({ 
+  const { data: contactsData, isLoading: isContactsLoading, isError, refetch } = useFetchContactsQuery({ 
     page: 0, 
     size: 50 // Fetching more for the dashboard view
   });
@@ -64,8 +70,21 @@ export default function Home() {
         description="Welcome to  Fast SMS."
       />
       <PageBreadcrumb pageTitle="Dashboard" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
-        <div className="contact-management-container">
+      <div className="space-y-6 pb-8">
+        {/* Stats Section */}
+        {!isStatsLoading && dashboardData && (
+          <StatsCards 
+            remainingCredits={dashboardData.remainingCredits}
+            contactCount={dashboardData.contactCount}
+            totalSent={Object.values(dashboardData.smsSentBySource).reduce((a, b) => a + b, 0)}
+          />
+        )}
+
+        {/* Chart Section */}
+        <SmsOverviewChart />
+
+        <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+          <div className="contact-management-container">
           {/* Header section with Download Template button */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -207,7 +226,7 @@ export default function Home() {
                       Retry
                     </button>
                   </div>
-                ) : isLoading ? (
+                ) : isContactsLoading ? (
                   <div className="flex flex-col items-center justify-center py-12">
                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-500 border-t-transparent"></div>
                      <p className="mt-4 text-sm text-gray-500">Loading contacts...</p>
@@ -262,6 +281,7 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 

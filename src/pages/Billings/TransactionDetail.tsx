@@ -22,9 +22,9 @@ export default function TransactionDetail() {
   useEffect(() => {
     // If we are on check-status but found an ID in params, update state or URL
     if ((paramId === "check-status" || paramId === "verify") && transactionId) {
-      // Optionally update URL to be clean: navigate(`/transactions/${transactionId}`, { replace: true });
+       navigate(`/transactions/${transactionId}`, { replace: true });
     }
-  }, [paramId, transactionId]);
+  }, [paramId, transactionId, navigate]);
 
   const {
     data: transaction,

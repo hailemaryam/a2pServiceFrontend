@@ -1,128 +1,13 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import Badge from "../../components/ui/badge/Badge";
-import { CloseIcon } from "../../icons";
 import {
   useGetTransactionsQuery,
-  useGetTransactionByIdQuery,
 } from "../../api/paymentApi";
 
-// --- Components ---
-
-const TransactionDetailModal = ({
-  transactionId,
-  onClose,
-}: {
-  transactionId: string;
-  onClose: () => void;
-}) => {
-  const {
-    data: transaction,
-    isLoading,
-    error,
-  } = useGetTransactionByIdQuery(transactionId);
-
-  return (
-    <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900 max-h-[90vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <CloseIcon className="h-6 w-6" />
-        </button>
-
-        <h3 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">
-          Transaction Details
-        </h3>
-
-        {isLoading ? (
-          <div className="py-10 text-center">Loading details...</div>
-        ) : error || !transaction ? (
-          <div className="py-10 text-center text-error-500">
-            Failed to load transaction details.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Transaction ID
-                </p>
-                <p className="font-mono text-sm font-medium text-gray-900 dark:text-white break-all">
-                  {transaction.id}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Date</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {new Date(transaction.createdAt).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Amount Paid
-                </p>
-                <p className="text-lg font-bold text-brand-500">
-                  ETB {transaction.amountPaid.toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  SMS Credits
-                </p>
-                <p className="text-lg font-bold text-success-600">
-                  +{transaction.smsCredited.toLocaleString()}
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                Status
-              </p>
-              <Badge
-                color={
-                  transaction.paymentStatus === "SUCCESSFUL"
-                    ? "success"
-                    : transaction.paymentStatus === "FAILED"
-                    ? "error"
-                    : transaction.paymentStatus === "IN_PROGRESS"
-                    ? "warning"
-                    : "default"
-                }
-              >
-                {transaction.paymentStatus}
-              </Badge>
-            </div>
-
-            {transaction.smsPackage && (
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                  Package Details
-                </p>
-                <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {transaction.smsPackage.description || "Custom Package"}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Range: {transaction.smsPackage.minSmsCount} -{" "}
-                    {transaction.smsPackage.maxSmsCount || "Unlimited"} SMS
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 export default function TransactionHistory() {
-  const { transactionId } = useParams<{ transactionId: string }>();
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [pageSize] = useState(10);
@@ -261,13 +146,6 @@ export default function TransactionHistory() {
           </div>
         )}
       </div>
-
-      {transactionId && (
-        <TransactionDetailModal
-          transactionId={transactionId}
-          onClose={() => navigate("/transactions")}
-        />
-      )}
     </div>
   );
 }
