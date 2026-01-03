@@ -126,22 +126,22 @@ export default function SignUpForm() {
                   <Label>
                     Password<span className="text-error-500">*</span>
                   </Label>
-                  <div className="relative">
-                    <Input
-                      placeholder="Enter your password"
-                      type={showPassword ? "text" : "password"}
-                    />
-                    <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      )}
-                    </span>
-                  </div>
+                  <Input
+                    placeholder="Enter your password"
+                    type={showPassword ? "text" : "password"}
+                    renderTrailing={(className) => (
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`${className} cursor-pointer`}
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                        ) : (
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                        )}
+                      </span>
+                    )}
+                  />
                 </div>
                 {/* <!-- Checkbox --> */}
                 {/* <div className="flex items-center gap-3">

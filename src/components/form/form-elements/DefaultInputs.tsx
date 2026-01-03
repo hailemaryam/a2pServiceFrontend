@@ -39,22 +39,22 @@ export default function DefaultInputs() {
         </div>
         <div>
           <Label>Password Input</Label>
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-            />
-            <button
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-            >
-              {showPassword ? (
-                <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-              ) : (
-                <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-              )}
-            </button>
-          </div>
+          <Input
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            renderTrailing={(className) => (
+              <button
+                onClick={() => setShowPassword(!showPassword)}
+                className={`${className} cursor-pointer`}
+              >
+                {showPassword ? (
+                  <EyeIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                ) : (
+                  <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                )}
+              </button>
+            )}
+          />
         </div>
 
         <div>

@@ -23,20 +23,26 @@ export default function Onboarding() {
     setIsLoading(true);
 
     // Required fields validation
-    if (!name.trim()) {
+    if (!name || !name.trim()) {
       setError("Organization / Name is required.");
       setIsLoading(false);
       return;
     }
 
-    if (isCompany && !tinNumber.trim()) {
+    if (isCompany && (!tinNumber || !tinNumber.trim())) {
       setError("TIN Number is required for companies.");
       setIsLoading(false);
       return;
     }
 
     // Phone validation
-    if (phone && !/^(09|07)\d{8}$/.test(phone)) {
+    if (!phone || !phone.trim()) {
+      setError("Phone number is required.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/^(09|07)\d{8}$/.test(phone)) {
       setError("Phone number must start with 09 or 07 and be 10 digits long.");
       setIsLoading(false);
       return;
@@ -107,14 +113,15 @@ export default function Onboarding() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Phone Number <span className="text-gray-400 font-normal">(Optional)</span>
+              Phone Number
             </label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              required
               className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="+251..."
+              placeholder="0911..."
             />
           </div>
 

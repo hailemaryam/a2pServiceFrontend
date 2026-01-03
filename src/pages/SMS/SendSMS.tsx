@@ -304,20 +304,32 @@ export default function SendSMS() {
 
                     {/* Bulk: File Upload */}
                     {activeTab === "Bulk" && (
-                      <label className="block">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
-                          Upload File (CSV/Excel)
-                        </span>
-                        <input
-                          type="file"
-                          accept=".csv,.xlsx,.xls"
-                          onChange={handleFileChange}
-                          className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-gray-800 dark:file:text-brand-400"
-                        />
-                        <p className="mt-1 text-xs text-cool-gray-500">
-                          File should contain 'phoneNumber' column.
-                        </p>
-                      </label>
+                      <div className="space-y-2">
+                        <label className="block">
+                          <span className="text-gray-600 dark:text-gray-400 font-medium mb-1 block">
+                            Upload File (CSV/Excel)
+                          </span>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              accept=".csv,.xlsx,.xls"
+                              onChange={handleFileChange}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <div className="flex h-11 items-center justify-between rounded-lg border border-gray-300 bg-transparent px-4 py-2 text-sm dark:border-gray-700">
+                              <span className="text-gray-500 truncate mr-2">
+                                {smsData.uploadedFile ? smsData.uploadedFile.name : "Choose file..."}
+                              </span>
+                              <span className="bg-brand-50 text-brand-700 dark:bg-gray-800 dark:text-brand-400 px-3 py-1 rounded-md text-xs font-semibold">
+                                Browse
+                              </span>
+                            </div>
+                          </div>
+                          <p className="mt-1 text-xs text-cool-gray-500">
+                            File should contain 'phoneNumber' column.
+                          </p>
+                        </label>
+                      </div>
                     )}
                   </div>
                 </div>

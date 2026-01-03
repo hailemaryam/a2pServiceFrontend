@@ -16,7 +16,7 @@ const STATIC_FEATURES = [
 
 export default function Billings() {
   const navigate = useNavigate();
-  const [smsCount, setSmsCount] = useState<number>(1000);
+  const [smsCount, setSmsCount] = useState<number | "">(1000);
   
   // Fetch packages from Backend
   const { data: packages = [], isLoading, error } = useGetTenantSmsPackagesQuery();
@@ -29,16 +29,30 @@ export default function Billings() {
   };
   
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let val = Number(event.target.value);
-    if (val < minSms) val = minSms; // Clamp min? Or let user type freely then clamp? 
-    // Usually input change should allow typing, but logic depends on valid range.
-    // Let's rely on standard constraints or just set it. 
-    // Given the request "Source of Truth", we update state.
-    setSmsCount(val);
+    const value = event.target.value;
+    if (value === "") {
+      setSmsCount("");
+      return;
+    }
+    const num = Number(value);
+    setSmsCount(num);
+  };
+
+  const handleBlur = () => {
+    if (smsCount === "" || smsCount < minSms) {
+      setSmsCount(minSms);
+    } else if (smsCount > maxSms) {
+      setSmsCount(maxSms);
+    }
+  };
+
+  const handleQuickAdd = (amount: number) => {
+    setSmsCount((prev) => (Number(prev || 0) + amount));
   };
 
   // Determine active package logic: min <= smsCount <= max
-  const getActivePackageForSmsCount = (count: number): SmsPackageTier | undefined => {
+  const getActivePackageForSmsCount = (count: number | ""): SmsPackageTier | undefined => {
+    if (count === "") return undefined;
     return packages.find(
       (pkg) => 
         count >= pkg.minSmsCount && 
@@ -49,7 +63,7 @@ export default function Billings() {
   const activePackage = getActivePackageForSmsCount(smsCount);
 
   // Calculate estimated price
-  const totalPrice = activePackage ? smsCount * activePackage.pricePerSms : 0;
+  const totalPrice = activePackage && smsCount !== "" ? smsCount * activePackage.pricePerSms : 0;
 
   const handleOrderNow = () => {
     if (!activePackage) return;
@@ -139,28 +153,48 @@ export default function Billings() {
                    <input
                     type="number"
                     min={minSms}
-                    max={maxSms} // Optional: Could allow higher if backend supports it
+                    max={maxSms}
                     value={smsCount}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     className="w-28 p-2 text-right font-bold text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none"
                    />
                    <span className="text-gray-500 font-medium">SMS</span>
                 </div>
               </div>
 
+              {/* Quick Add Buttons */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {[1000, 5000, 10000, 50000].map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handleQuickAdd(amount)}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 dark:hover:bg-brand-900/30 dark:hover:text-brand-400 dark:hover:border-brand-800 transition-all"
+                  >
+                    +{amount.toLocaleString()}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setSmsCount(minSms)}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100 transition-all ml-auto"
+                >
+                  Reset
+                </button>
+              </div>
+
               <input
                 type="range"
                 min={minSms}
-                max={maxSms} // If 'packages' has higher max, logic still holds? Assuming general slider range.
+                max={maxSms}
                 step={100}
-                value={smsCount}
+                value={smsCount === "" ? minSms : smsCount}
                 onChange={handleSliderChange}
                 className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer focus:outline-none slider-thumb-brand"
                 style={{
                   background: `linear-gradient(to right, #E57A38 0%, #E57A38 ${
-                    ((smsCount - minSms) / (maxSms - minSms)) * 100
+                    (((Number(smsCount) || minSms) - minSms) / (maxSms - minSms)) * 100
                   }%, #d1d5db ${
-                    ((smsCount - minSms) / (maxSms - minSms)) * 100
+                    (((Number(smsCount) || minSms) - minSms) / (maxSms - minSms)) * 100
                   }%, #d1d5db 100%)`,
                 }}
               />
@@ -215,7 +249,7 @@ export default function Billings() {
                          {activePackage.description} Tier
                        </span>
                        <span>
-                         {smsCount.toLocaleString()} SMS × {activePackage.pricePerSms.toFixed(2)} ETB
+                         {(Number(smsCount) || 0).toLocaleString()} SMS × {activePackage.pricePerSms.toFixed(2)} ETB
                        </span>
                     </div>
                   ) : (

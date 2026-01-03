@@ -94,6 +94,11 @@ export type TransactionResponse = {
   updatedAt: string;
 };
 
+export type TransactionHistoryResponse = {
+  date: string;
+  totalAmount: number;
+}[];
+
 // Admin API using RTK Query (for sys_admin only)
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -299,6 +304,14 @@ export const adminApi = baseApi.injectEndpoints({
             ]
           : [{ type: "Payment", id: "LIST" }],
     }),
+
+    getTransactionHistory: builder.query<TransactionHistoryResponse, { days?: number }>({
+      query: ({ days = 30 }) => ({
+        url: "/api/admin/payments/transactions/history",
+        params: { days },
+      }),
+      providesTags: ["Payment"],
+    }),
   }),
 });
 
@@ -319,4 +332,5 @@ export const {
   useUpdateSmsPackageMutation,
   useDeleteSmsPackageMutation,
   useGetAllTransactionsQuery,
+  useGetTransactionHistoryQuery,
 } = adminApi;

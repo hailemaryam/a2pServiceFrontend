@@ -197,31 +197,31 @@ export default function SignInForm() {
                   <Label>
                     Password <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      id="password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={handlePasswordChange}
-                      error={!!passwordError}
-                      hint={passwordError}
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-current size-5" />
-                      ) : (
-                        <EyeCloseIcon className="fill-current size-5" />
-                      )}
-                    </button>
-                  </div>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    error={!!passwordError}
+                    hint={passwordError}
+                    disabled={isLoading}
+                    renderTrailing={(className) => (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`${className} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer`}
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                        ) : (
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 w-5 h-5" />
+                        )}
+                      </button>
+                    )}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">

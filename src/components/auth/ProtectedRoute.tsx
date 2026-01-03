@@ -23,10 +23,23 @@ interface ProtectedRouteProps {
  * Guards routes based on authentication and roles
  * Frontend-only protection - backend should always validate authorization
  */
-export default function ProtectedRoute({ 
-  allowedRoles = [], 
+const isInvalidTenantId = (tenantId: unknown): boolean => {
+  if (tenantId === null || tenantId === undefined) return true;
+
+  const normalized = String(tenantId).trim().toLowerCase();
+  return (
+    normalized === "" ||
+    normalized === "null" ||
+    normalized === "undefined" ||
+    normalized === "unassigned" ||
+    normalized === "[object object]"
+  );
+};
+
+export default function ProtectedRoute({
+  allowedRoles = [],
   redirectTo = "/landing",
-  children
+  children,
 }: ProtectedRouteProps) {
   const { isAuthenticated, roles, tenantId } = useAuth();
 
@@ -36,21 +49,23 @@ export default function ProtectedRoute({
   }
 
   // Check if tenant is onboarded
-  const isTenantRole = roles.includes("tenant_admin") || roles.includes("tenant_user");
+  const isTenantRole =
+    roles.includes("tenant_admin") || roles.includes("tenant_user");
   // Check for null, undefined, "null", "undefined", "unassigned" because sometimes it comes as string
-  if (isTenantRole && (!tenantId || tenantId === "unassigned" || tenantId === "null" || tenantId === "undefined")) {
-     return <Navigate to="/onboard" replace />;
+  if (isTenantRole && isInvalidTenantId(tenantId)) {
+    return <Navigate to="/onboard" replace />;
   }
 
   // If roles are specified, check if user has at least one of them
   if (allowedRoles.length > 0) {
     const hasRequiredRole = allowedRoles.some((role) => roles.includes(role));
-    
+
     if (!hasRequiredRole) {
       // User doesn't have required role, redirect based on their actual role
       const isSysAdmin = roles.includes("sys_admin");
-      const isTenantRole = roles.includes("tenant_admin") || roles.includes("tenant_user");
-      
+      const isTenantRole =
+        roles.includes("tenant_admin") || roles.includes("tenant_user");
+
       if (isSysAdmin) {
         return <Navigate to="/admin" replace />;
       } else if (isTenantRole) {
@@ -64,6 +79,3 @@ export default function ProtectedRoute({
   // If children are provided, render them, otherwise use Outlet for nested routes
   return children ? <>{children}</> : <Outlet />;
 }
-
-
-

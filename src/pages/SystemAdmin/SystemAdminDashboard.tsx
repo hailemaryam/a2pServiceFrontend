@@ -1,70 +1,15 @@
 import { Link } from "react-router";
-import Chart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useGetAdminDashboardQuery } from "../../api/dashboardApi";
+import RevenueLineChart from "../../components/admin/RevenueLineChart";
 
 /**
  * System Admin Dashboard - Overview with KPIs
  * This page is only accessible to users with the sys_admin role
  * Shows overview KPIs and quick links to system admin features
  */
-const DashboardBarChart: React.FC<{ kpis: { totalTenants: number; pendingApprovals: number; activeSmsJobs: number; totalPackages: number; } }> = ({ kpis }) => {
-  const options: ApexOptions = {
-    chart: {
-      type: 'bar',
-      height: 350,
-      toolbar: { show: false },
-      fontFamily: "Outfit, sans-serif",
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        horizontal: false,
-        columnWidth: '55%',
-      },
-    },
-    dataLabels: { enabled: false },
-    stroke: { show: true, width: 2, colors: ['transparent'] },
-    xaxis: {
-      categories: ['Tenants', 'Pending Senders', 'Pending SMS Jobs', 'Active Packages'],
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-    },
-    yaxis: {
-      title: { text: undefined },
-    },
-    fill: { opacity: 1 },
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return val.toString();
-        }
-      }
-    },
-    colors: ['#E57A38', '#F59E0B', '#10B981', '#3B82F6'], // Brand, Warning, Success, Info colors matching cards
-    grid: {
-      borderColor: '#f1f1f1',
-    }
-  };
-
-  const series = [{
-    name: 'Count',
-    data: [kpis.totalTenants, kpis.pendingApprovals, kpis.activeSmsJobs, kpis.totalPackages]
-  }];
-
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Platform Overview</h3>
-      <div id="chart">
-        <Chart options={options} series={series} type="bar" height={350} />
-      </div>
-    
-    </div>
-  );
-};
 
 export default function SystemAdminDashboard() {
   const { username } = useAuth();
@@ -203,8 +148,8 @@ export default function SystemAdminDashboard() {
             </Link>
           </div>
 
-          {/* Bar Chart Section */}
-          <DashboardBarChart kpis={kpis} />
+          {/* Revenue Line Chart Section */}
+          <RevenueLineChart />
           
         </div>
       </div>
