@@ -1,11 +1,7 @@
 import { useState, FormEvent } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import {
-  PencilIcon,
-  TrashBinIcon,
-  PlusIcon,
-} from "../../icons";
+import { PencilIcon, TrashBinIcon, PlusIcon } from "../../icons";
 import {
   useGetSendersQuery,
   useCreateSenderMutation,
@@ -29,8 +25,10 @@ export default function SendersList() {
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingSender, setEditingSender] = useState<SenderResponse | null>(null);
-  
+  const [editingSender, setEditingSender] = useState<SenderResponse | null>(
+    null
+  );
+
   // Delete Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [senderToDelete, setSenderToDelete] = useState<string | null>(null);
@@ -64,9 +62,9 @@ export default function SendersList() {
     e.preventDefault();
     if (!editingSender || !editSenderName.trim()) return;
     try {
-      await updateSender({ 
-        id: editingSender.id, 
-        payload: { name: editSenderName } 
+      await updateSender({
+        id: editingSender.id,
+        payload: { name: editSenderName },
       }).unwrap();
       closeEditModal();
       toast.success("Sender updated successfully!");
@@ -103,14 +101,18 @@ export default function SendersList() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      ACTIVE: "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      ACTIVE:
+        "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400",
       INACTIVE: "bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
-      PENDING_VERIFICATION: "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+      PENDING_VERIFICATION:
+        "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
       REJECTED: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     };
     const style = styles[status as keyof typeof styles] || styles.INACTIVE;
     return (
-      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${style}`}>
+      <span
+        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${style}`}
+      >
         {status.replace("_", " ")}
       </span>
     );
@@ -118,7 +120,9 @@ export default function SendersList() {
 
   // Filter local
   const filteredSenders = senders.filter((s) => {
-    const matchesSearch = s.name.toLowerCase().includes(senderSearch.toLowerCase());
+    const matchesSearch = s.name
+      .toLowerCase()
+      .includes(senderSearch.toLowerCase());
     const matchesStatus = statusFilter ? s.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
@@ -130,12 +134,10 @@ export default function SendersList() {
         description="Manage your SMS sender IDs"
       />
       <PageBreadcrumb pageTitle="Sender List" />
-      
+
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-5xl">
-          
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          
             <button
               onClick={() => setIsCreateModalOpen(true)}
               className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
@@ -155,7 +157,7 @@ export default function SendersList() {
                 className="h-11 w-full max-w-sm rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white"
               />
             </div>
-             <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -164,7 +166,9 @@ export default function SendersList() {
                 <option value="">All Statuses</option>
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
-                <option value="PENDING_VERIFICATION">Pending Verification</option>
+                <option value="PENDING_VERIFICATION">
+                  Pending Verification
+                </option>
                 <option value="REJECTED">Rejected</option>
               </select>
             </div>
@@ -174,27 +178,50 @@ export default function SendersList() {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Created At</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Created At
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-transparent">
                 {isLoading ? (
-                  <tr><td colSpan={4} className="p-4 text-center">Loading...</td></tr>
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center">
+                      Loading...
+                    </td>
+                  </tr>
                 ) : filteredSenders.length === 0 ? (
-                  <tr><td colSpan={4} className="p-4 text-center text-gray-500">No senders found.</td></tr>
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center text-gray-500">
+                      No senders found.
+                    </td>
+                  </tr>
                 ) : (
                   filteredSenders.map((sender) => (
-                    <tr key={sender.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                    <tr
+                      key={sender.id}
+                      className="hover:bg-gray-50 dark:hover:bg-white/5"
+                    >
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                         {sender.name}
                         {sender.message && (
-                          <p className="text-xs text-error-500 mt-1">{sender.message}</p>
+                          <p className="text-xs text-error-500 mt-1">
+                            {sender.message}
+                          </p>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm">{getStatusBadge(sender.status)}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {getStatusBadge(sender.status)}
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         {new Date(sender.createdAt).toLocaleDateString()}
                       </td>
@@ -230,11 +257,12 @@ export default function SendersList() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         title="Request Sender ID"
-        disableBackdropBlur={true}
       >
         <form onSubmit={handleCreateSubmit}>
           <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-300">
+              Sender Name
+            </label>
             <input
               type="text"
               required
@@ -261,8 +289,10 @@ export default function SendersList() {
         title="Edit Sender ID"
       >
         <form onSubmit={handleEditSubmit}>
-           <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium dark:text-gray-300">Sender Name</label>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-medium dark:text-gray-300">
+              Sender Name
+            </label>
             <input
               type="text"
               required
@@ -289,7 +319,8 @@ export default function SendersList() {
       >
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-300">
-            Are you sure you want to delete this sender? This action cannot be undone.
+            Are you sure you want to delete this sender? This action cannot be
+            undone.
           </p>
           <div className="flex gap-3 justify-end">
             <button
