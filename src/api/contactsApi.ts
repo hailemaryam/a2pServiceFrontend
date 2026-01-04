@@ -112,28 +112,7 @@ export const contactsApi = baseApi.injectEndpoints({
       transformResponse: (response: any) => response ?? null,
     }),
 
-    // Upload contacts (binary)
-    uploadContactsBinary: builder.mutation<
-      any,
-      { file: File; groupId?: string }
-    >({
-      queryFn: async ({ file, groupId }, _queryApi, _extraOptions, baseQuery) => {
-        try {
-          const buffer = await file.arrayBuffer();
-          const result = await baseQuery({
-            url: "/api/contacts/upload",
-            method: "POST",
-            body: buffer,
-            headers: { "Content-Type": "application/octet-stream" },
-            params: groupId ? { groupId } : undefined,
-          });
-          return result;
-        } catch (error) {
-          return { error: { status: "CUSTOM_ERROR", error: String(error) } };
-        }
-      },
-      invalidatesTags: [{ type: "Contact", id: "LIST" }],
-    }),
+
 
     // Upload contacts (multipart)
     uploadContactsMultipart: builder.mutation<
@@ -179,7 +158,6 @@ export const {
   useUpdateContactMutation,
   useDeleteContactMutation,
   useSearchContactByPhoneQuery,
-  useUploadContactsBinaryMutation,
   useUploadContactsMultipartMutation,
   useLazyFetchContactsQuery,
   useLazySearchContactByPhoneQuery,

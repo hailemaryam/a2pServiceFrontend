@@ -10,7 +10,9 @@ const baseQuery = fetchBaseQuery({
     try {
       const token = await ensureKeycloakToken();
       if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+        // Sanitize token to prevent newline injection
+        const cleanToken = token.trim().replace(/[\r\n]+/g, "");
+        headers.set("Authorization", `Bearer ${cleanToken}`);
       }
       
       console.log(`[API Debug] Requesting: ${baseUrl}${endpoint}`);

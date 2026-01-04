@@ -42,6 +42,9 @@ export default function SendSMS() {
     scheduledAt: undefined,
   });
 
+  // Key to force re-render of file input
+  const [inputKey, setInputKey] = useState(Date.now());
+
   // Modal State
   // const [isSenderModalOpen, setIsSenderModalOpen] = useState(false);
   // const [newSenderName, setNewSenderName] = useState("");
@@ -108,6 +111,8 @@ export default function SendSMS() {
     const { name, value } = e.target;
     setSmsData((prev) => ({ ...prev, [name]: value }));
   };
+
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -191,6 +196,7 @@ export default function SendSMS() {
           message: "",
           scheduledAt: undefined,
         }));
+        setInputKey(Date.now());
       }
     } catch (error: any) {
       console.error("Failed to send SMS:", error);
@@ -311,6 +317,7 @@ export default function SendSMS() {
                           </span>
                           <div className="relative">
                             <input
+                              key={inputKey}
                               type="file"
                               accept=".csv,.xlsx,.xls"
                               onChange={handleFileChange}

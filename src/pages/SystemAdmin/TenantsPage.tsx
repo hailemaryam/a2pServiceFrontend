@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function TenantsPage() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
-  const { data, isLoading, error } = useGetTenantsQuery({ page, size });
+  const { data, isLoading, error, refetch } = useGetTenantsQuery({ page, size });
   const [updateStatus, { isLoading: isUpdating }] = useUpdateTenantStatusMutation();
 
   const tenants = data?.items || [];
@@ -98,6 +98,25 @@ export default function TenantsPage() {
                 Manage all tenants in the system
               </p>
             </div>
+            <button
+                onClick={() => refetch()}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                 <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh
+              </button>
           </div>
 
           <div className="max-w-full overflow-x-auto">

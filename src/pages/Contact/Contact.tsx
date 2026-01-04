@@ -7,7 +7,6 @@ import {
   useCreateContactMutation,
   useUpdateContactMutation,
   useDeleteContactMutation,
-  useUploadContactsBinaryMutation,
   useUploadContactsMultipartMutation,
   ContactResponse,
 } from "../../api/contactsApi";
@@ -16,7 +15,6 @@ import {
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import Modal from "../../components/ui/modal/Modal";
 
-type UploadMode = "binary" | "multipart";
 
 export default function Contact() {
   const [page, setPage] = useState(0);
@@ -33,8 +31,6 @@ export default function Contact() {
   const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
   const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
   const [deleteContact] = useDeleteContactMutation();
-  const [uploadContactsBinary, { isLoading: isUploadingBinary }] =
-    useUploadContactsBinaryMutation();
   const [uploadContactsMultipart, { isLoading: isUploadingMultipart }] =
     useUploadContactsMultipartMutation();
 
@@ -58,10 +54,17 @@ export default function Contact() {
   const [email, setEmail] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadMode, setUploadMode] = useState<UploadMode>("binary");
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
+  
+  // File input ref reset key
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+
+  // Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<string | null>(null);
 
   const totalPages = useMemo(() => {
     if (!size) return 1;
@@ -113,18 +116,12 @@ export default function Contact() {
     }
 
     try {
-      if (uploadMode === "binary") {
-        await uploadContactsBinary({
-          file: uploadedFile,
-          groupId: selectedGroup || undefined,
-        }).unwrap();
-      } else {
-        await uploadContactsMultipart({
-          file: uploadedFile,
-          groupId: selectedGroup || undefined,
-        }).unwrap();
-      }
-      setUploadedFile(null);
+      await uploadContactsMultipart({
+        file: uploadedFile,
+        groupId: selectedGroup || undefined,
+      }).unwrap();
+
+      resetFileInput();
       setSelectedGroup("");
       setIsUploadModalOpen(false);
       refetch();
@@ -133,9 +130,16 @@ export default function Contact() {
     }
   };
 
+
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setUploadedFile(file);
+  };
+
+  const resetFileInput = () => {
+    setFileInputKey(Date.now());
+    setUploadedFile(null);
   };
 
   const handleRefresh = () => {
@@ -155,17 +159,65 @@ export default function Contact() {
     setIsContactModalOpen(true);
   };
 
-  const handleDeleteContact = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this contact?")) {
+  const handleDeleteContact = (id: string) => {
+    setContactToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (contactToDelete) {
       try {
-        await deleteContact(id).unwrap();
-        refetch();
+        await deleteContact(contactToDelete).unwrap();
+        // Tags invalidation handles refetch
+        setContactToDelete(null);
+        setIsDeleteModalOpen(false);
       } catch (err: any) {
         setLocalError(
           err?.data?.message || err?.message || "Failed to delete contact"
         );
+        setIsDeleteModalOpen(false);
       }
     }
+  };
+
+  const handleDownloadTemplate = () => {
+    const headers = ["name", "phone", "email"];
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      headers.join(",") +
+      "\n" +
+      "John Doe,0912345678,john@example.com";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "contact_template.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExport = () => {
+    if (contacts.length === 0) {
+      setLocalError("No contacts to export");
+      return;
+    }
+    const headers = ["Name", "Phone", "Email"];
+    const rows = contacts.map((c) =>
+      [c.name || "", c.phone, c.email || ""].join(",")
+    );
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      headers.join(",") +
+      "\n" +
+      rows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "contacts_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handlePageChange = (nextPage: number) => {
@@ -198,7 +250,7 @@ export default function Contact() {
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
             <button
               className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-              onClick={() => refetch()}
+              onClick={handleDownloadTemplate}
             >
               <DownloadIcon className="h-4 w-4" />
               Download Template
@@ -392,7 +444,9 @@ export default function Contact() {
               </div>
 
               <div className="ml-6">
-                <button className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
+                <button 
+                  onClick={handleExport}
+                  className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
                   <DownloadIcon className="h-5 w-5" />
                   Download Contacts
                 </button>
@@ -478,36 +532,16 @@ export default function Contact() {
         title="Upload Contacts"
       >
             <form onSubmit={handleUploadSubmit} className="space-y-5">
-              <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
-                  <input
-                    type="radio"
-                    name="uploadMode"
-                    value="binary"
-                    checked={uploadMode === "binary"}
-                    onChange={() => setUploadMode("binary")}
-                  />
-                  Binary
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
-                  <input
-                    type="radio"
-                    name="uploadMode"
-                    value="multipart"
-                    checked={uploadMode === "multipart"}
-                    onChange={() => setUploadMode("multipart")}
-                  />
-                  Multipart
-                </label>
-              </div>
+
               <div className="relative">
-                <input
-                  type="file"
-                  id="file-upload"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                  accept=".csv,.xlsx,.xls"
-                />
+                  <input
+                    key={fileInputKey}
+                    type="file"
+                    id="file-upload"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    accept=".csv,.xlsx,.xls"
+                  />
                 <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition hover:border-brand-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800">
                   <svg
                     className="mb-4 h-12 w-12 text-gray-400"
@@ -551,15 +585,41 @@ export default function Contact() {
                 <div className="flex justify-center gap-4">
                   <button
                     type="submit"
-                    disabled={isUploadingBinary || isUploadingMultipart}
+                    disabled={isUploadingMultipart}
                     className="w-full rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
                   >
-                    {isUploadingBinary || isUploadingMultipart
+                    {isUploadingMultipart
                       ? "Uploading..."
                       : "Upload"}
                   </button>
                 </div>
             </form>
+      </Modal>
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Deletion"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-300">
+            Are you sure you want to delete this contact?
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="px-4 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

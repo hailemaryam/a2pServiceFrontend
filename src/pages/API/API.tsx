@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import Modal from "../../components/ui/modal/Modal";
 
 export default function API() {
-  const { data: tokens = [], isLoading } = useGetApiKeysQuery();
+  const { data: tokens = [], isLoading, refetch } = useGetApiKeysQuery();
   const { data: senders = [] } = useGetSendersQuery();
   const [createApiKey, { isLoading: isCreating }] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
@@ -166,13 +166,34 @@ export default function API() {
             </div>
 
             {/* Create API Button */}
-            <button
-              onClick={handleCreateApi}
-              className="flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Generate API Key
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => refetch()}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                 <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh
+              </button>
+              <button
+                onClick={handleCreateApi}
+                className="flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Generate API Key
+              </button>
+            </div>
           </div>
 
           {/* 3. API Token Table */}
@@ -332,8 +353,7 @@ export default function API() {
       >
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-300">
-            Are you sure you want to revoke this API key? This action cannot be
-            undone.
+            Are you sure you want to revoke this API key?
           </p>
           <div className="flex gap-3 justify-end">
             <button

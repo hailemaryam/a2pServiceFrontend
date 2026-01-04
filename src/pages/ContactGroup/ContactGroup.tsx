@@ -22,7 +22,7 @@ export default function ContactGroup() {
   const [groupSearch, setGroupSearch] = useState("");
 
   // RTK Query hooks
-  const { data: groups = [], isLoading } = useGetContactGroupsQuery();
+  const { data: groups = [], isLoading, refetch } = useGetContactGroupsQuery();
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
   const [deleteGroup] = useDeleteContactGroupMutation();
@@ -184,6 +184,25 @@ export default function ContactGroup() {
                  <GroupIcon className="h-4 w-4" />
                  Create Group
                </button>
+               <button
+                  onClick={() => refetch()}
+                  className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+                >
+                   <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  Refresh
+                </button>
             </div>
 
             {/* Groups Table */}
@@ -391,9 +410,7 @@ export default function ContactGroup() {
         title="Confirm Deletion"
       >
         <div className="space-y-4">
-          <p className="text-gray-600 dark:text-gray-300">
-            Are you sure you want to delete this contact group? This action cannot be undone.
-          </p>
+            Are you sure you want to delete this contact group?
           <div className="flex gap-3 justify-end">
             <button
               onClick={() => setIsDeleteModalOpen(false)}

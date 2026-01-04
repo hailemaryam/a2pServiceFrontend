@@ -19,7 +19,7 @@ export default function Billings() {
   const [smsCount, setSmsCount] = useState<number | "">(1000);
   
   // Fetch packages from Backend
-  const { data: packages = [], isLoading, error } = useGetTenantSmsPackagesQuery();
+  const { data: packages = [], isLoading, error, refetch } = useGetTenantSmsPackagesQuery();
 
   const minSms = 1000;
   const maxSms = 100000;
@@ -131,12 +131,33 @@ export default function Billings() {
         
         {/* Header */}
         <div className="text-center mb-10 max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Flexible SMS Pricing
-          </h2>
-          <p className="text-lg text-gray-500 dark:text-gray-400">
-            Slide to choose the volume that fits your needs. The more you send, the less you pay per SMS.
-          </p>
+          <div className="flex flex-col items-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Flexible SMS Pricing
+            </h2>
+            <p className="text-lg text-gray-500 dark:text-gray-400 mb-4">
+              Slide to choose the volume that fits your needs. The more you send, the less you pay per SMS.
+            </p>
+            <button
+                onClick={() => refetch()}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                 <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh Packages
+              </button>
+          </div>
         </div>
 
         {/* Pricing Configurator Section */}

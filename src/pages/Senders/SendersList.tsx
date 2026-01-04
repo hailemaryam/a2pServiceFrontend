@@ -17,7 +17,7 @@ export default function SendersList() {
   const [statusFilter, setStatusFilter] = useState("");
 
   // RTK Query hooks
-  const { data: senders = [], isLoading } = useGetSendersQuery();
+  const { data: senders = [], isLoading, refetch } = useGetSendersQuery();
   const [createSender, { isLoading: isCreating }] = useCreateSenderMutation();
   const [updateSender, { isLoading: isUpdating }] = useUpdateSenderMutation();
   const [deleteSender] = useDeleteSenderMutation();
@@ -144,6 +144,25 @@ export default function SendersList() {
             >
               <PlusIcon className="h-5 w-5" />
               Request Sender ID
+            </button>
+            <button
+              onClick={() => refetch()}
+              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+            >
+               <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Refresh
             </button>
           </div>
 
@@ -319,8 +338,7 @@ export default function SendersList() {
       >
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-300">
-            Are you sure you want to delete this sender? This action cannot be
-            undone.
+            Are you sure you want to delete this sender?
           </p>
           <div className="flex gap-3 justify-end">
             <button

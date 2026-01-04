@@ -71,12 +71,12 @@ export const smsApi = baseApi.injectEndpoints({
     sendBulkSms: builder.mutation<SmsJobResponse, BulkSmsPayload>({
       query: ({ file, senderId, message, scheduledAt }) => {
         const formData = new FormData();
-        formData.append("file", file);
         formData.append("senderId", senderId);
         formData.append("message", message);
         if (scheduledAt) {
           formData.append("scheduledAt", scheduledAt);
         }
+        formData.append("file", file, file.name);
         return {
           url: "/api/sms/bulk",
           method: "POST",
