@@ -114,9 +114,72 @@ export default function SendSMS() {
 
 
 
+  const [fileError, setFileError] = useState<string | null>(null);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setSmsData((prev) => ({ ...prev, uploadedFile: file }));
+    setFileError(null); // Reset error on new file selection
+
+    if (!file) {
+      setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+      return;
+    }
+
+    // 1. Validate File Type
+    const validTypes = [
+      "text/csv",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
+    // Some browsers might not detect CSV type correctly, so check extension too
+    const isCsv = file.name.toLowerCase().endsWith(".csv");
+    const isExceL = file.name.toLowerCase().endsWith(".xlsx") || file.name.toLowerCase().endsWith(".xls");
+
+    if (!validTypes.includes(file.type) && !isCsv && !isExceL) {
+      setFileError("Invalid file type. Please upload a CSV or Excel file.");
+      setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+      return;
+    }
+
+    // 2. Client-side CSV Validation (Lightweight)
+    if (isCsv) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        if (!text || text.trim().length === 0) {
+           setFileError("The file is empty. Please upload a file with data.");
+           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+           return;
+        }
+
+        const lines = text.split(/\r\n|\n/);
+        const header = lines[0]?.toLowerCase();
+        
+        if (!header || !header.includes("phonenumber")) {
+           setFileError("Missing 'phoneNumber' column in the header. Please check your CSV file.");
+           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+           return;
+        }
+
+        // Basic check: at least one row of data
+        if (lines.length < 2 || lines.every((line, idx) => idx === 0 || !line.trim())) {
+           setFileError("The file contains no data rows. Please add contacts.");
+           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+           return;
+        }
+
+        // If all checks pass
+        setSmsData((prev) => ({ ...prev, uploadedFile: file }));
+      };
+      reader.onerror = () => {
+        setFileError("Failed to read file.");
+        setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+      };
+      reader.readAsText(file);
+    } else {
+      // Excel files - accept for now (server-side validation)
+      setSmsData((prev) => ({ ...prev, uploadedFile: file }));
+    }
   };
 
   const handleScheduleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -335,6 +398,11 @@ export default function SendSMS() {
                           <p className="mt-1 text-xs text-cool-gray-500">
                             File should contain 'phoneNumber' column.
                           </p>
+                          {fileError && (
+                            <p className="mt-2 text-sm text-error-500 font-medium animate-pulse">
+                              ⚠️ {fileError}
+                            </p>
+                          )}
                         </label>
                       </div>
                     )}
