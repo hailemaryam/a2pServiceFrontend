@@ -40,19 +40,11 @@ export type SmsJobResponse = {
 export const smsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Send single SMS
-    sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload & { apiKey: string }>({
-      query: ({ apiKey, phoneNumber, message, scheduledAt }) => ({
-        url: "/api/p/sms/send",
+    sendSingleSms: builder.mutation<SmsJobResponse, SingleSmsPayload>({
+      query: (payload) => ({
+        url: "/api/sms/single",
         method: "POST",
-        headers: {
-          "API-Key": apiKey,
-        },
-        body: {
-          to: phoneNumber,
-          message,
-          scheduledAt,
-          // senderId is inferred from API Key by backend, or ignored
-        },
+        body: payload,
       }),
       invalidatesTags: [{ type: "SmsJob", id: "LIST" }],
     }),
@@ -93,15 +85,15 @@ export const smsApi = baseApi.injectEndpoints({
       { page?: number; size?: number; status?: string }
     >({
       query: ({ page = 0, size = 20, status }) => ({
-          url: "/api/sms",
-          params: { page, size, status },
+        url: "/api/sms",
+        params: { page, size, status },
       }),
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "SmsJob" as const, id })),
-              { type: "SmsJob", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "SmsJob" as const, id })),
+            { type: "SmsJob", id: "LIST" },
+          ]
           : [{ type: "SmsJob", id: "LIST" }],
     }),
   }),

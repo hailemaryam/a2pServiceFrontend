@@ -9,7 +9,6 @@ import {
 import { toast } from "react-toastify";
 import { useGetSendersQuery } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
-import { useGetApiKeysQuery } from "../../api/apiKeyApi";
 
 // Type definitions for component state
 interface SmsState {
@@ -52,7 +51,6 @@ export default function SendSMS() {
   // RTK Query hooks
   const { data: senders = [] } = useGetSendersQuery();
   const { data: contactGroups = [] } = useGetContactGroupsQuery();
-  const { data: apiKeys = [] } = useGetApiKeysQuery(); // Fetch API Keys
 
   const [sendSingleSms, { isLoading: isSendingSingle }] =
     useSendSingleSmsMutation();
@@ -147,25 +145,25 @@ export default function SendSMS() {
       reader.onload = (event) => {
         const text = event.target?.result as string;
         if (!text || text.trim().length === 0) {
-           setFileError("The file is empty. Please upload a file with data.");
-           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
-           return;
+          setFileError("The file is empty. Please upload a file with data.");
+          setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+          return;
         }
 
         const lines = text.split(/\r\n|\n/);
         const header = lines[0]?.toLowerCase();
-        
+
         if (!header || !header.includes("phonenumber")) {
-           setFileError("Missing 'phoneNumber' column in the header. Please check your CSV file.");
-           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
-           return;
+          setFileError("Missing 'phoneNumber' column in the header. Please check your CSV file.");
+          setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+          return;
         }
 
         // Basic check: at least one row of data
         if (lines.length < 2 || lines.every((line, idx) => idx === 0 || !line.trim())) {
-           setFileError("The file contains no data rows. Please add contacts.");
-           setSmsData((prev) => ({ ...prev, uploadedFile: null }));
-           return;
+          setFileError("The file contains no data rows. Please add contacts.");
+          setSmsData((prev) => ({ ...prev, uploadedFile: null }));
+          return;
         }
 
         // If all checks pass
@@ -199,22 +197,11 @@ export default function SendSMS() {
           toast.error("Please fill in all required fields");
           return;
         }
-
-        // FIND API KEY FOR SELECTED SENDER
-        const validKey = apiKeys.find((k) => k.senderId === smsData.senderId);
-        if (!validKey) {
-          toast.error(
-            "No API Key found for this Sender ID. Please generate an API Key in the API Keys section first."
-          );
-          return;
-        }
-
         await sendSingleSms({
-          apiKey: validKey.apiKey,
           senderId: smsData.senderId,
           phoneNumber: smsData.phoneNumber,
           message: smsData.message,
-          scheduledAt: smsData.scheduledAt,
+          scheduledAt: smsData.scheduledAt
         }).unwrap();
         toast.success("Single SMS sent successfully!");
         setSmsData((prev) => ({
@@ -291,11 +278,10 @@ export default function SendSMS() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                      activeTab === tab
-                        ? "border-brand-500 text-brand-600 dark:text-brand-400"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
-                    }`}
+                    className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === tab
+                      ? "border-brand-500 text-brand-600 dark:text-brand-400"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                      }`}
                   >
                     {tab === "Bulk" ? "Bulk (File)" : tab} SMS
                   </button>
@@ -453,11 +439,11 @@ export default function SendSMS() {
                       <span className="font-semibold">{charsUsed}</span> /{" "}
                       {smsParts > 1
                         ? (encoding === "GSM"
-                            ? GSM_CONCAT_CHAR_LIMIT
-                            : UNICODE_CONCAT_CHAR_LIMIT) * smsParts
+                          ? GSM_CONCAT_CHAR_LIMIT
+                          : UNICODE_CONCAT_CHAR_LIMIT) * smsParts
                         : encoding === "GSM"
-                        ? GSM_CHAR_LIMIT
-                        : UNICODE_CHAR_LIMIT}
+                          ? GSM_CHAR_LIMIT
+                          : UNICODE_CHAR_LIMIT}
                     </p>
                   </div>
                   <label className="block mt-4">
