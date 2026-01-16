@@ -53,6 +53,7 @@ export default function App() {
           draggable
           pauseOnHover
           theme="colored"
+          style={{ zIndex: 99999 }}
         />
         <Routes>
           {/* Landing page for unauthenticated users */}
