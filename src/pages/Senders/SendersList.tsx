@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useMemo } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { PencilIcon, TrashBinIcon, PlusIcon } from "../../icons";
@@ -15,12 +15,27 @@ import Modal from "../../components/ui/modal/Modal";
 export default function SendersList() {
   const [senderSearch, setSenderSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(0);
+  const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: senders = [], isLoading, refetch } = useGetSendersQuery();
+  const { data: sendersData, isLoading, refetch } = useGetSendersQuery({ page, size });
   const [createSender, { isLoading: isCreating }] = useCreateSenderMutation();
   const [updateSender, { isLoading: isUpdating }] = useUpdateSenderMutation();
   const [deleteSender] = useDeleteSenderMutation();
+
+  const senders = sendersData?.items ?? [];
+  const total = sendersData?.total ?? 0;
+
+  const totalPages = useMemo(() => {
+    if (!size) return 1;
+    return Math.max(1, Math.ceil(total / size));
+  }, [size, total]);
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage < 0 || nextPage > totalPages - 1) return;
+    setPage(nextPage);
+  };
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -118,7 +133,7 @@ export default function SendersList() {
     );
   };
 
-  // Filter local
+  // Filter local (still useful for quick filtering on current page)
   const filteredSenders = senders.filter((s) => {
     const matchesSearch = s.name
       .toLowerCase()
@@ -149,7 +164,7 @@ export default function SendersList() {
               onClick={() => refetch()}
               className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
             >
-               <svg
+              <svg
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
@@ -267,6 +282,27 @@ export default function SendersList() {
                 )}
               </tbody>
             </table>
+            <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-200">
+              <div>
+                Page {page + 1} of {totalPages} · {total} total
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page <= 0}
+                >
+                  Previous
+                </button>
+                <button
+                  className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page >= totalPages - 1}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

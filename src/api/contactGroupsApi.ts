@@ -16,21 +16,57 @@ export type CreateContactGroupPayload = {
   description?: string;
 };
 
+export type PaginatedContactGroups = {
+  items: ContactGroupResponse[];
+  total: number;
+  page: number;
+  size: number;
+};
+
 // Contact Groups API using RTK Query
 export const contactGroupsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get all contact groups
-    getContactGroups: builder.query<ContactGroupResponse[], void>({
-      query: () => "/api/contact-groups",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+    // Get paginated contact groups
+    getContactGroups: builder.query<
+      PaginatedContactGroups,
+      { page?: number; size?: number } | void
+    >({
+      query: (params) => ({
+        url: "/api/contact-groups",
+        params: params || { page: 0, size: 20 },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        const items = Array.isArray(response)
+          ? response
+          : response?.items ?? response?.content ?? [];
+        const total = response?.total ?? response?.totalElements ?? items.length;
+        const page =
+          response?.page ??
+          response?.pageNumber ??
+          (typeof arg === "object" ? arg?.page : 0) ??
+          0;
+        const size =
+          response?.size ??
+          response?.pageSize ??
+          (typeof arg === "object" ? arg?.size : 20) ??
+          20;
+
+        return {
+          items,
+          total,
+          page,
+          size,
+        };
       },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "ContactGroup" as const, id })),
-              { type: "ContactGroup", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({
+              type: "ContactGroup" as const,
+              id,
+            })),
+            { type: "ContactGroup", id: "LIST" },
+          ]
           : [{ type: "ContactGroup", id: "LIST" }],
     }),
 

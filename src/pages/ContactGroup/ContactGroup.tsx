@@ -1,4 +1,4 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
@@ -20,12 +20,27 @@ import { TrashBinIcon } from "../../icons";
 export default function ContactGroup() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [groupSearch, setGroupSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: groups = [], isLoading, refetch } = useGetContactGroupsQuery();
+  const { data: groupsData, isLoading, refetch } = useGetContactGroupsQuery({ page, size });
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
   const [deleteGroup] = useDeleteContactGroupMutation();
+
+  const groups = groupsData?.items ?? [];
+  const total = groupsData?.total ?? 0;
+
+  const totalPages = useMemo(() => {
+    if (!size) return 1;
+    return Math.max(1, Math.ceil(total / size));
+  }, [size, total]);
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage < 0 || nextPage > totalPages - 1) return;
+    setPage(nextPage);
+  };
 
   // Modal states
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -48,7 +63,7 @@ export default function ContactGroup() {
   // Create form states
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
-  
+
   // Edit form states
   const [editGroupName, setEditGroupName] = useState("");
   const [editGroupDescription, setEditGroupDescription] = useState("");
@@ -87,9 +102,9 @@ export default function ContactGroup() {
       return;
     }
     try {
-      await updateGroup({ 
-        id: editingGroup.id, 
-        payload: { name: editGroupName, description: editGroupDescription } 
+      await updateGroup({
+        id: editingGroup.id,
+        payload: { name: editGroupName, description: editGroupDescription }
       }).unwrap();
       // Reset form
       closeEditModal();
@@ -126,7 +141,7 @@ export default function ContactGroup() {
     }
   };
 
-  // Filter groups locally
+  // Filter groups locally (search might still be useful on the current page)
   const filteredGroups = groups.filter((group) =>
     group.name.toLowerCase().includes(groupSearch.toLowerCase())
   );
@@ -140,16 +155,10 @@ export default function ContactGroup() {
       <PageBreadcrumb pageTitle="Contact Group" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-5xl">
-          {/* Top Header Section */}
           <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-            {/* <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Contact Group
-            </h2> */}
           </div>
 
-          {/* Main Content Card */}
           <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
-            {/* Search Bar for Groups */}
             <div className="relative mb-4">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg
@@ -175,37 +184,35 @@ export default function ContactGroup() {
               />
             </div>
 
-            {/* Action Toolbar for Groups */}
             <div className="mb-6 flex flex-wrap gap-3">
               <button
-                 onClick={() => setIsGroupModalOpen(true)}
-                 className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
-               >
-                 <GroupIcon className="h-4 w-4" />
-                 Create Group
-               </button>
-               <button
-                  onClick={() => refetch()}
-                  className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+                onClick={() => setIsGroupModalOpen(true)}
+                className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600"
+              >
+                <GroupIcon className="h-4 w-4" />
+                Create Group
+              </button>
+              <button
+                onClick={() => refetch()}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                   <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  Refresh
-                </button>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh
+              </button>
             </div>
 
-            {/* Groups Table */}
             <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-800/50">
@@ -232,14 +239,14 @@ export default function ContactGroup() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
                   {isLoading ? (
-                     <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    <tr>
+                      <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
                         Loading groups...
                       </td>
                     </tr>
                   ) : filteredGroups.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                      <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
                         No groups found.
                       </td>
                     </tr>
@@ -289,6 +296,27 @@ export default function ContactGroup() {
                   )}
                 </tbody>
               </table>
+              <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-200">
+                <div>
+                  Page {page + 1} of {totalPages} · {total} total
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page <= 0}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= totalPages - 1}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -373,9 +401,9 @@ export default function ContactGroup() {
               htmlFor="editGroupDescription"
               className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-                Description (Optional)
+              Description (Optional)
             </label>
-              <textarea
+            <textarea
               id="editGroupDescription"
               value={editGroupDescription}
               onChange={(e) => setEditGroupDescription(e.target.value)}
@@ -410,7 +438,7 @@ export default function ContactGroup() {
         title="Confirm Deletion"
       >
         <div className="space-y-4">
-            Are you sure you want to delete this contact group?
+          Are you sure you want to delete this contact group?
           <div className="flex gap-3 justify-end">
             <button
               onClick={() => setIsDeleteModalOpen(false)}

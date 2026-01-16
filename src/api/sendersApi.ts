@@ -16,21 +16,54 @@ export type CreateSenderPayload = {
   name: string;
 };
 
+export type PaginatedSenders = {
+  items: SenderResponse[];
+  total: number;
+  page: number;
+  size: number;
+};
+
 // Senders API using RTK Query
 export const sendersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get all sender IDs for current tenant
-    getSenders: builder.query<SenderResponse[], void>({
-      query: () => "/api/senders",
-      transformResponse: (response: any) => {
-        return Array.isArray(response) ? response : response?.items ?? response?.content ?? [];
+    // Get paginated sender IDs for current tenant
+    getSenders: builder.query<
+      PaginatedSenders,
+      { page?: number; size?: number } | void
+    >({
+      query: (params) => ({
+        url: "/api/senders",
+        params: params || { page: 0, size: 20 },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        const items = Array.isArray(response)
+          ? response
+          : response?.items ?? response?.content ?? [];
+        const total = response?.total ?? response?.totalElements ?? items.length;
+        const page =
+          response?.page ??
+          response?.pageNumber ??
+          (typeof arg === "object" ? arg?.page : 0) ??
+          0;
+        const size =
+          response?.size ??
+          response?.pageSize ??
+          (typeof arg === "object" ? arg?.size : 20) ??
+          20;
+
+        return {
+          items,
+          total,
+          page,
+          size,
+        };
       },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Sender" as const, id })),
-              { type: "Sender", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "Sender" as const, id })),
+            { type: "Sender", id: "LIST" },
+          ]
           : [{ type: "Sender", id: "LIST" }],
     }),
 
