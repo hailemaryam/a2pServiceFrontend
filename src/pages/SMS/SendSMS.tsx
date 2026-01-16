@@ -395,21 +395,6 @@ export default function SendSMS() {
                   </div>
                 </div>
 
-                {/* Right Column (Single Only): Search Contacts? */}
-                {activeTab === "Single" && (
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-white mb-3 sm:mb-4">
-                      Search Contacts
-                    </h3>
-                    {/* Placeholder for contact search */}
-                    <input
-                      type="text"
-                      className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
-                      placeholder="Search to autofill phone..."
-                    />
-                  </div>
-                )}
-
                 {/* Full Width Message Block */}
                 <div className="md:col-span-2">
                   <label className="block">
