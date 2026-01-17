@@ -13,7 +13,8 @@ import Modal from "../../components/ui/modal/Modal";
 
 export default function API() {
   const { data: tokens = [], isLoading, refetch } = useGetApiKeysQuery();
-  const { data: senders = [] } = useGetSendersQuery();
+  const { data: sendersData } = useGetSendersQuery();
+  const senders = sendersData?.items ?? [];
   const [createApiKey, { isLoading: isCreating }] = useCreateApiKeyMutation();
   const [revokeApiKey] = useRevokeApiKeyMutation();
 
@@ -171,7 +172,7 @@ export default function API() {
                 onClick={() => refetch()}
                 className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
               >
-                 <svg
+                <svg
                   className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
