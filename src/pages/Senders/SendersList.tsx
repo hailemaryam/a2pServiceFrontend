@@ -19,7 +19,7 @@ export default function SendersList() {
   const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: sendersData, isLoading, refetch } = useGetSendersQuery({ page, size });
+  const { data: sendersData, isLoading, refetch } = useGetSendersQuery({ page, size, query: senderSearch });
   const [createSender, { isLoading: isCreating }] = useCreateSenderMutation();
   const [updateSender, { isLoading: isUpdating }] = useUpdateSenderMutation();
   const [deleteSender] = useDeleteSenderMutation();
@@ -133,13 +133,10 @@ export default function SendersList() {
     );
   };
 
-  // Filter local (still useful for quick filtering on current page)
+  // Matches status filter locally (or could be moved to server-side if backend supports it)
   const filteredSenders = senders.filter((s) => {
-    const matchesSearch = s.name
-      .toLowerCase()
-      .includes(senderSearch.toLowerCase());
     const matchesStatus = statusFilter ? s.status === statusFilter : true;
-    return matchesSearch && matchesStatus;
+    return matchesStatus;
   });
 
   return (

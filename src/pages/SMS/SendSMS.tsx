@@ -49,8 +49,10 @@ export default function SendSMS() {
   // const [newSenderName, setNewSenderName] = useState("");
 
   // RTK Query hooks
-  const { data: senders = [] } = useGetSendersQuery();
-  const { data: contactGroups = [] } = useGetContactGroupsQuery();
+  const { data: sendersData } = useGetSendersQuery();
+  const senders = sendersData?.items ?? [];
+  const { data: groupsData } = useGetContactGroupsQuery();
+  const contactGroups = groupsData?.items ?? [];
 
   const [sendSingleSms, { isLoading: isSendingSingle }] =
     useSendSingleSmsMutation();

@@ -29,7 +29,7 @@ export const sendersApi = baseApi.injectEndpoints({
     // Get paginated sender IDs for current tenant
     getSenders: builder.query<
       PaginatedSenders,
-      { page?: number; size?: number } | void
+      { page?: number; size?: number; query?: string } | void
     >({
       query: (params) => ({
         url: "/api/senders",

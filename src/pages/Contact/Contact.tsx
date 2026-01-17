@@ -19,6 +19,7 @@ import Modal from "../../components/ui/modal/Modal";
 export default function Contact() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // RTK Query hooks
   const {
@@ -26,7 +27,7 @@ export default function Contact() {
     isLoading: loading,
     error: queryError,
     refetch,
-  } = useFetchContactsQuery({ page, size });
+  } = useFetchContactsQuery({ page, size, query: searchTerm });
 
   const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
   const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
@@ -43,7 +44,8 @@ export default function Contact() {
     : null;
 
   // Fetch groups for dropdown
-  const { data: groups = [] } = useGetContactGroupsQuery();
+  const { data: groupsData } = useGetContactGroupsQuery();
+  const groups = groupsData?.items ?? [];
 
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -56,9 +58,8 @@ export default function Contact() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
-  
+
   // File input ref reset key
   const [fileInputKey, setFileInputKey] = useState(Date.now());
 
@@ -228,18 +229,15 @@ export default function Contact() {
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
     setPage(0);
-    // API search-by-phone exists, but paginated fetch keeps UI consistent; keep search as client-side filter for now.
+    // Resetting page will trigger a re-fetch with current searchTerm
   };
 
-  const filteredContacts = useMemo(() => {
-    if (!searchTerm.trim()) return contacts;
-    const term = searchTerm.toLowerCase();
-    return contacts.filter(
-      (c) =>
-        c.phone?.toLowerCase().includes(term) ||
-        (c.name ?? "").toLowerCase().includes(term)
-    );
-  }, [contacts, searchTerm]);
+  const handleSearchChange = (val: string) => {
+    setSearchTerm(val);
+    setPage(0); // Reset to first page on new search
+  };
+
+  const filteredContacts = contacts;
 
   return (
     <div>
@@ -279,7 +277,7 @@ export default function Contact() {
                   <input
                     type="text"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                     placeholder="Phone Number / Contact Name"
                     className="h-11 w-full max-w-md rounded-lg border border-gray-300 bg-transparent pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   />
@@ -444,7 +442,7 @@ export default function Contact() {
               </div>
 
               <div className="ml-6">
-                <button 
+                <button
                   onClick={handleExport}
                   className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
                   <DownloadIcon className="h-5 w-5" />
@@ -461,69 +459,69 @@ export default function Contact() {
         onClose={() => setIsContactModalOpen(false)}
         title={editingId ? "Update Contact" : "Contact Information"}
       >
-            <form onSubmit={handleContactSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="contactName"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Name
-                </label>
-                <input
-                  id="contactName"
-                  type="text"
-                  value={contactName}
-                  onChange={(e) => setContactName(e.target.value)}
-                  placeholder="John Doe"
-                  required
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="phoneNumber"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Phone
-                </label>
-                <input
-                  id="phoneNumber"
-                  type="text"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="0912345678"
-                  required
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="john@example.com"
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isCreating || isUpdating}
-                className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
-              >
-                {isCreating || isUpdating
-                  ? "Saving..."
-                  : editingId
-                  ? "Update"
-                  : "Submit"}
-              </button>
-            </form>
+        <form onSubmit={handleContactSubmit} className="space-y-5">
+          <div>
+            <label
+              htmlFor="contactName"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Name
+            </label>
+            <input
+              id="contactName"
+              type="text"
+              value={contactName}
+              onChange={(e) => setContactName(e.target.value)}
+              placeholder="John Doe"
+              required
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="phoneNumber"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Phone
+            </label>
+            <input
+              id="phoneNumber"
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="0912345678"
+              required
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="john@example.com"
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isCreating || isUpdating}
+            className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
+          >
+            {isCreating || isUpdating
+              ? "Saving..."
+              : editingId
+                ? "Update"
+                : "Submit"}
+          </button>
+        </form>
       </Modal>
 
       <Modal
@@ -531,69 +529,69 @@ export default function Contact() {
         onClose={() => setIsUploadModalOpen(false)}
         title="Upload Contacts"
       >
-            <form onSubmit={handleUploadSubmit} className="space-y-5">
+        <form onSubmit={handleUploadSubmit} className="space-y-5">
 
-              <div className="relative">
-                  <input
-                    key={fileInputKey}
-                    type="file"
-                    id="file-upload"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                    accept=".csv,.xlsx,.xls"
-                  />
-                <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition hover:border-brand-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800">
-                  <svg
-                    className="mb-4 h-12 w-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {uploadedFile ? uploadedFile.name : "Drop or click to upload a file"}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="uploadGroup"
-                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Select Group
-                </label>
-                  <select
-                    id="uploadGroup"
-                    value={selectedGroup}
-                    onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
-                  >
-                    <option value="">Select Group</option>
-                    {groups.map((group) => (
-                      <option key={group.id} value={group.id}>
-                        {group.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex justify-center gap-4">
-                  <button
-                    type="submit"
-                    disabled={isUploadingMultipart}
-                    className="w-full rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
-                  >
-                    {isUploadingMultipart
-                      ? "Uploading..."
-                      : "Upload"}
-                  </button>
-                </div>
-            </form>
+          <div className="relative">
+            <input
+              key={fileInputKey}
+              type="file"
+              id="file-upload"
+              onChange={handleFileChange}
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              accept=".csv,.xlsx,.xls"
+            />
+            <div className="flex min-h-[100px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition hover:border-brand-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-brand-800">
+              <svg
+                className="mb-4 h-12 w-12 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {uploadedFile ? uploadedFile.name : "Drop or click to upload a file"}
+              </p>
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="uploadGroup"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Select Group
+            </label>
+            <select
+              id="uploadGroup"
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+            >
+              <option value="">Select Group</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex justify-center gap-4">
+            <button
+              type="submit"
+              disabled={isUploadingMultipart}
+              className="w-full rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
+            >
+              {isUploadingMultipart
+                ? "Uploading..."
+                : "Upload"}
+            </button>
+          </div>
+        </form>
       </Modal>
 
       <Modal

@@ -24,7 +24,7 @@ export default function ContactGroup() {
   const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: groupsData, isLoading, refetch } = useGetContactGroupsQuery({ page, size });
+  const { data: groupsData, isLoading, refetch } = useGetContactGroupsQuery({ page, size, query: groupSearch });
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
   const [deleteGroup] = useDeleteContactGroupMutation();
@@ -141,10 +141,8 @@ export default function ContactGroup() {
     }
   };
 
-  // Filter groups locally (search might still be useful on the current page)
-  const filteredGroups = groups.filter((group) =>
-    group.name.toLowerCase().includes(groupSearch.toLowerCase())
-  );
+  // No local filtering, using server-side search results directly
+  const filteredGroups = groups;
 
   return (
     <div>

@@ -40,26 +40,34 @@ export const contactsApi = baseApi.injectEndpoints({
     // Fetch paginated contacts
     fetchContacts: builder.query<
       PaginatedContacts,
-      { page?: number; size?: number }
+      { page?: number; size?: number; query?: string } | void
     >({
-      query: ({ page = 0, size = 20 }) => ({
+      query: (params) => ({
         url: "/api/contacts",
-        params: { page, size },
+        params: params || { page: 0, size: 20 },
       }),
       transformResponse: (response: any, _meta, arg) => {
         return {
           items: response?.items ?? response?.content ?? [],
           total: response?.total ?? response?.totalElements ?? 0,
-          page: response?.page ?? response?.pageNumber ?? arg.page ?? 0,
-          size: response?.size ?? response?.pageSize ?? arg.size ?? 20,
+          page:
+            response?.page ??
+            response?.pageNumber ??
+            (typeof arg === "object" ? arg?.page : 0) ??
+            0,
+          size:
+            response?.size ??
+            response?.pageSize ??
+            (typeof arg === "object" ? arg?.size : 20) ??
+            20,
         };
       },
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "Contact" as const, id })),
-              { type: "Contact", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "Contact" as const, id })),
+            { type: "Contact", id: "LIST" },
+          ]
           : [{ type: "Contact", id: "LIST" }],
     }),
 

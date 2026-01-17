@@ -29,7 +29,7 @@ export const contactGroupsApi = baseApi.injectEndpoints({
     // Get paginated contact groups
     getContactGroups: builder.query<
       PaginatedContactGroups,
-      { page?: number; size?: number } | void
+      { page?: number; size?: number; query?: string } | void
     >({
       query: (params) => ({
         url: "/api/contact-groups",
