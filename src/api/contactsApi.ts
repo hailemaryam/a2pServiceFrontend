@@ -144,6 +144,40 @@ export const contactsApi = baseApi.injectEndpoints({
     }),
 
 
+    // Fetch contacts by group ID
+    fetchContactsByGroupId: builder.query<
+      PaginatedContacts,
+      { groupId: string; page?: number; size?: number; query?: string }
+    >({
+      query: ({ groupId, ...params }) => ({
+        url: `/api/contacts/group/${groupId}`,
+        params: params || { page: 0, size: 20 },
+      }),
+      transformResponse: (response: any, _meta, arg) => {
+        return {
+          items: response?.items ?? response?.content ?? [],
+          total: response?.total ?? response?.totalElements ?? 0,
+          page:
+            response?.page ??
+            response?.pageNumber ??
+            arg?.page ??
+            0,
+          size:
+            response?.size ??
+            response?.pageSize ??
+            arg?.size ??
+            20,
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+            ...result.items.map(({ id }) => ({ type: "Contact" as const, id })),
+            { type: "Contact", id: "GRP_LIST" },
+          ]
+          : [{ type: "Contact", id: "GRP_LIST" }],
+    }),
+
     // Delete contact
     deleteContact: builder.mutation<void, string>({
       query: (id) => ({
@@ -167,6 +201,7 @@ export const {
   useDeleteContactMutation,
   useSearchContactByPhoneQuery,
   useUploadContactsMultipartMutation,
+  useFetchContactsByGroupIdQuery,
   useLazyFetchContactsQuery,
   useLazySearchContactByPhoneQuery,
 } = contactsApi;

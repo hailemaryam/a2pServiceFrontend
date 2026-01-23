@@ -5,7 +5,9 @@ import PageMeta from "../../components/common/PageMeta";
 import {
   GroupIcon,
   PencilIcon,
+  EyeIcon,
 } from "../../icons";
+import ViewGroupContactsModal from "./ViewGroupContactsModal";
 import {
   useGetContactGroupsQuery,
   useCreateContactGroupMutation,
@@ -50,6 +52,9 @@ export default function ContactGroup() {
   // Delete Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
+
+  // View Group Contacts state
+  const [viewingGroup, setViewingGroup] = useState<{ id: string; name: string } | null>(null);
 
   // Check if we should open the group modal from URL
   useEffect(() => {
@@ -274,6 +279,13 @@ export default function ContactGroup() {
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="flex items-center gap-2">
                             <button
+                              onClick={() => setViewingGroup({ id: group.id, name: group.name })}
+                              className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                              title="View Contacts"
+                            >
+                              <EyeIcon className="h-4 w-4" />
+                            </button>
+                            <button
                               onClick={() => handleEditClick(group)}
                               className="text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                               title="Edit Group"
@@ -453,6 +465,16 @@ export default function ContactGroup() {
           </div>
         </div>
       </Modal>
+
+      {/* View Group Contacts Modal */}
+      {viewingGroup && (
+        <ViewGroupContactsModal
+          isOpen={!!viewingGroup}
+          onClose={() => setViewingGroup(null)}
+          groupId={viewingGroup.id}
+          groupName={viewingGroup.name}
+        />
+      )}
     </div>
   );
 }
