@@ -8,6 +8,7 @@ import {
   useUpdateContactMutation,
   useDeleteContactMutation,
   useUploadContactsMultipartMutation,
+  useAddContactsToGroupMutation,
   ContactResponse,
 } from "../../api/contactsApi";
 
@@ -43,6 +44,7 @@ export default function Contact() {
   const [deleteContact] = useDeleteContactMutation();
   const [uploadContactsMultipart, { isLoading: isUploadingMultipart }] =
     useUploadContactsMultipartMutation();
+  const [addContactsToGroup, { isLoading: isAddingToGroup }] = useAddContactsToGroupMutation();
 
   const contacts = contactsData?.items ?? [];
   const total = contactsData?.total ?? 0;
@@ -75,6 +77,9 @@ export default function Contact() {
   // Delete Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [contactToDelete, setContactToDelete] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isAddToGroupModalOpen, setIsAddToGroupModalOpen] = useState(false);
+  const [targetGroupId, setTargetGroupId] = useState("");
 
   const totalPages = useMemo(() => {
     if (!size) return 1;
@@ -137,6 +142,39 @@ export default function Contact() {
       refetch();
     } catch (err: any) {
       setLocalError(err?.data?.message || err?.message || "Upload failed");
+    }
+  };
+  const handleAddToGroupSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLocalError(null);
+    if (!targetGroupId) {
+      setLocalError("Please select a group.");
+      return;
+    }
+    try {
+      await addContactsToGroup({
+        groupId: targetGroupId,
+        contactIds: selectedIds,
+      }).unwrap();
+      setTargetGroupId("");
+      setSelectedIds([]);
+      setIsAddToGroupModalOpen(false);
+    } catch (err: any) {
+      setLocalError(err?.data?.message || err?.message || "Failed to add to group");
+    }
+  };
+
+  const toggleSelectContact = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === contacts.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(contacts.map(c => c.id));
     }
   };
 
@@ -337,6 +375,14 @@ export default function Contact() {
                     <PlusIcon className="h-4 w-4" />
                     Create Contact
                   </button>
+                  {selectedIds.length > 0 && (
+                    <button
+                      onClick={() => setIsAddToGroupModalOpen(true)}
+                      className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                    >
+                      Add to Group ({selectedIds.length})
+                    </button>
+                  )}
                 </div>
 
                 {loading && (
@@ -380,6 +426,14 @@ export default function Contact() {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                       <thead className="bg-gray-50 dark:bg-gray-800/50">
                         <tr>
+                          <th className="px-4 py-3 text-left">
+                            <input
+                              type="checkbox"
+                              checked={contacts.length > 0 && selectedIds.length === contacts.length}
+                              onChange={toggleSelectAll}
+                              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                            />
+                          </th>
                           <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                             Name
                           </th>
@@ -400,6 +454,14 @@ export default function Contact() {
                       <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-transparent">
                         {filteredContacts.map((contact) => (
                           <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40">
+                            <td className="px-4 py-3">
+                              <input
+                                type="checkbox"
+                                checked={selectedIds.includes(contact.id)}
+                                onChange={() => toggleSelectContact(contact.id)}
+                                className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                              />
+                            </td>
                             <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                               {contact.name || "—"}
                             </td>
@@ -638,6 +700,46 @@ export default function Contact() {
             </button>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={isAddToGroupModalOpen}
+        onClose={() => setIsAddToGroupModalOpen(false)}
+        title="Add to Group"
+      >
+        <form onSubmit={handleAddToGroupSubmit} className="space-y-5">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Adding {selectedIds.length} contact(s) to a group.
+          </p>
+          <div>
+            <label
+              htmlFor="targetGroup"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Select Group
+            </label>
+            <select
+              id="targetGroup"
+              value={targetGroupId}
+              onChange={(e) => setTargetGroupId(e.target.value)}
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+            >
+              <option value="">Select Group</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="submit"
+            disabled={isAddingToGroup}
+            className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isAddingToGroup ? "Adding..." : "Add to Group"}
+          </button>
+        </form>
       </Modal>
     </div>
   );

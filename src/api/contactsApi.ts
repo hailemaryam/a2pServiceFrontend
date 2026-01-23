@@ -190,6 +190,17 @@ export const contactsApi = baseApi.injectEndpoints({
         { type: "Contact", id: "LIST" },
       ],
     }),
+
+    // Add contacts to group
+    addContactsToGroup: builder.mutation<void, { groupId: string; contactIds: string[] }>({
+      query: (body) => ({
+        url: "/api/contacts/add-to-group",
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      }),
+      invalidatesTags: [{ type: "Contact", id: "LIST" }, { type: "Contact", id: "GRP_LIST" }],
+    }),
   }),
 });
 
@@ -203,6 +214,7 @@ export const {
   useSearchContactByPhoneQuery,
   useUploadContactsMultipartMutation,
   useFetchContactsByGroupIdQuery,
+  useAddContactsToGroupMutation,
   useLazyFetchContactsQuery,
   useLazySearchContactByPhoneQuery,
 } = contactsApi;
