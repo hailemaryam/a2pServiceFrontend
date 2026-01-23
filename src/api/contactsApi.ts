@@ -15,6 +15,7 @@ export type ContactResponse = {
   phone: string;
   name?: string | null;
   email?: string | null;
+  groupNames?: string[];
 };
 
 export type PaginatedContacts = {

@@ -14,6 +14,7 @@ import {
 
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import Modal from "../../components/ui/modal/Modal";
+import Badge from "../../components/ui/badge/Badge";
 import { useDebounce } from "../../hooks/useDebounce";
 
 
@@ -210,9 +211,9 @@ export default function Contact() {
       setLocalError("No contacts to export");
       return;
     }
-    const headers = ["Name", "Phone", "Email"];
+    const headers = ["Name", "Phone", "Email", "Groups"];
     const rows = contacts.map((c) =>
-      [c.name || "", c.phone, c.email || ""].join(",")
+      [c.name || "", c.phone, c.email || "", (c.groupNames || []).join(";")].join(",")
     );
 
     const csvContent =
@@ -388,6 +389,9 @@ export default function Contact() {
                           <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                             Email
                           </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
+                            Groups
+                          </th>
                           <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                             Actions
                           </th>
@@ -404,6 +408,15 @@ export default function Contact() {
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
                               {contact.email || "—"}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
+                              <div className="flex flex-wrap gap-1">
+                                {contact.groupNames?.map((group) => (
+                                  <Badge key={group} color="primary" size="sm">
+                                    {group}
+                                  </Badge>
+                                ))}
+                              </div>
                             </td>
                             <td className="px-4 py-3 text-right">
                               <button

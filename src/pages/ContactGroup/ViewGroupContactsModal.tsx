@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "../../components/ui/modal/Modal";
 import { useFetchContactsByGroupIdQuery } from "../../api/contactsApi";
+import Badge from "../../components/ui/badge/Badge";
 import { useDebounce } from "../../hooks/useDebounce";
 
 interface ViewGroupContactsModalProps {
@@ -89,6 +90,9 @@ export default function ViewGroupContactsModal({
                                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                     Email
                                 </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                    Groups
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
@@ -121,6 +125,15 @@ export default function ViewGroupContactsModal({
                                         </td>
                                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                                             {contact.email || "-"}
+                                        </td>
+                                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                            <div className="flex flex-wrap gap-1">
+                                                {contact.groupNames?.map((group) => (
+                                                    <Badge key={group} color="primary" size="sm">
+                                                        {group}
+                                                    </Badge>
+                                                ))}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
