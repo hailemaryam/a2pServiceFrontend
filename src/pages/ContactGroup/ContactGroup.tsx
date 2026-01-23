@@ -18,15 +18,22 @@ import {
 import { toast } from "react-toastify";
 import Modal from "../../components/ui/modal/Modal";
 import { TrashBinIcon } from "../../icons";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function ContactGroup() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [groupSearch, setGroupSearch] = useState("");
+  const debouncedGroupSearch = useDebounce(groupSearch, 500);
   const [page, setPage] = useState(0);
   const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: groupsData, isLoading, refetch } = useGetContactGroupsQuery({ page, size, query: groupSearch });
+  const { data: groupsData, isLoading, refetch } = useGetContactGroupsQuery({ page, size, query: debouncedGroupSearch });
+
+  // Reset page when debounced search term changes
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedGroupSearch]);
   const [createGroup, { isLoading: isCreating }] = useCreateContactGroupMutation();
   const [updateGroup, { isLoading: isUpdating }] = useUpdateContactGroupMutation();
   const [deleteGroup] = useDeleteContactGroupMutation();

@@ -1,4 +1,4 @@
-import React, { FormEvent, useMemo, useState } from "react";
+import React, { FormEvent, useMemo, useState, useEffect } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { DownloadIcon, PlusIcon } from "../../icons";
@@ -14,6 +14,7 @@ import {
 
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import Modal from "../../components/ui/modal/Modal";
+import { useDebounce } from "../../hooks/useDebounce";
 
 
 export default function Contact() {
@@ -21,13 +22,20 @@ export default function Contact() {
   const [size] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   // RTK Query hooks
   const {
     data: contactsData,
     isLoading: loading,
     error: queryError,
     refetch,
-  } = useFetchContactsQuery({ page, size, query: searchTerm });
+  } = useFetchContactsQuery({ page, size, query: debouncedSearchTerm });
+
+  // Reset page when debounced search term changes
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearchTerm]);
 
   const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
   const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
@@ -234,7 +242,6 @@ export default function Contact() {
 
   const handleSearchChange = (val: string) => {
     setSearchTerm(val);
-    setPage(0); // Reset to first page on new search
   };
 
   const filteredContacts = contacts;

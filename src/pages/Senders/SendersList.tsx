@@ -1,4 +1,4 @@
-import { useState, FormEvent, useMemo } from "react";
+import { useState, FormEvent, useMemo, useEffect } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { PencilIcon, TrashBinIcon, PlusIcon } from "../../icons";
@@ -11,15 +11,22 @@ import {
 } from "../../api/sendersApi";
 import { toast } from "react-toastify";
 import Modal from "../../components/ui/modal/Modal";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function SendersList() {
   const [senderSearch, setSenderSearch] = useState("");
+  const debouncedSenderSearch = useDebounce(senderSearch, 500);
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(0);
   const [size] = useState(20);
 
   // RTK Query hooks
-  const { data: sendersData, isLoading, refetch } = useGetSendersQuery({ page, size, query: senderSearch });
+  const { data: sendersData, isLoading, refetch } = useGetSendersQuery({ page, size, query: debouncedSenderSearch });
+
+  // Reset page when debounced search term changes
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSenderSearch]);
   const [createSender, { isLoading: isCreating }] = useCreateSenderMutation();
   const [updateSender, { isLoading: isUpdating }] = useUpdateSenderMutation();
   const [deleteSender] = useDeleteSenderMutation();

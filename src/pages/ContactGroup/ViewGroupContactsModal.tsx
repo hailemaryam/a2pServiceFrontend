@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../../components/ui/modal/Modal";
 import { useFetchContactsByGroupIdQuery } from "../../api/contactsApi";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface ViewGroupContactsModalProps {
     isOpen: boolean;
@@ -18,11 +19,17 @@ export default function ViewGroupContactsModal({
     const [page, setPage] = useState(0);
     const [size] = useState(10);
     const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 500);
 
     const { data, isLoading, error } = useFetchContactsByGroupIdQuery(
-        { groupId, page, size, query: search },
+        { groupId, page, size, query: debouncedSearch },
         { skip: !isOpen }
     );
+
+    // Reset page when debounced search term changes
+    useEffect(() => {
+        setPage(0);
+    }, [debouncedSearch]);
 
     const contacts = data?.items ?? [];
     const total = data?.total ?? 0;
@@ -35,7 +42,6 @@ export default function ViewGroupContactsModal({
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
-        setPage(0);
     };
 
     return (
