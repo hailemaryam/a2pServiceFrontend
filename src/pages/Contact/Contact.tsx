@@ -291,247 +291,239 @@ export default function Contact() {
       <PageBreadcrumb pageTitle="Contact" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-            <button
-              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-              onClick={handleDownloadTemplate}
-            >
-              <DownloadIcon className="h-4 w-4" />
-              Download Template
-            </button>
-          </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
-            <div className="mb-6 flex items-start justify-between">
-              <div className="flex-1">
-                <form className="relative mb-4" onSubmit={handleSearchSubmit}>
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Phone Number / Contact Name"
-                    className="h-11 w-full max-w-md rounded-lg border border-gray-300 bg-transparent pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            <form className="relative mb-4" onSubmit={handleSearchSubmit}>
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
-                </form>
-
-                <div className="mb-6 flex flex-wrap gap-3">
-                  <button
-                    onClick={handleRefresh}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                    Refresh
-                  </button>
-                  <button
-                    onClick={() => setIsUploadModalOpen(true)}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    Upload Contacts
-                  </button>
-                  <button
-                    onClick={handleOpenCreateModal}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Create Contact
-                  </button>
-                  {selectedIds.length > 0 && (
-                    <button
-                      onClick={() => setIsAddToGroupModalOpen(true)}
-                      className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
-                    >
-                      Add to Group ({selectedIds.length})
-                    </button>
-                  )}
-                </div>
-
-                {loading && (
-                  <div className="mb-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800/40 dark:text-gray-200">
-                    Loading contacts...
-                  </div>
-                )}
-
-                {(error || localError) && (
-                  <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-100">
-                    {localError || error}
-                  </div>
-                )}
-
-                {!loading && filteredContacts.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 py-16 dark:border-gray-800 dark:bg-gray-800/50">
-                    <div className="mb-4">
-                      <svg
-                        width="48"
-                        height="48"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-gray-400 dark:text-gray-500"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="9" y1="9" x2="15" y2="9"></line>
-                        <line x1="9" y1="13" x2="15" y2="13"></line>
-                        <line x1="9" y1="17" x2="15" y2="17"></line>
-                      </svg>
-                    </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No contacts found.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="overflow-hidden rounded-lg border border-gray-200 shadow-sm dark:border-gray-800">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-                      <thead className="bg-gray-50 dark:bg-gray-800/50">
-                        <tr>
-                          <th className="px-4 py-3 text-left">
-                            <input
-                              type="checkbox"
-                              checked={contacts.length > 0 && selectedIds.length === contacts.length}
-                              onChange={toggleSelectAll}
-                              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
-                            />
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                            Name
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                            Phone
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                            Email
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                            Groups
-                          </th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-transparent">
-                        {filteredContacts.map((contact) => (
-                          <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40">
-                            <td className="px-4 py-3">
-                              <input
-                                type="checkbox"
-                                checked={selectedIds.includes(contact.id)}
-                                onChange={() => toggleSelectContact(contact.id)}
-                                className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
-                              />
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                              {contact.name || "—"}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                              {contact.phone}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
-                              {contact.email || "—"}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
-                              <div className="flex flex-wrap gap-1">
-                                {contact.groupNames?.map((group) => (
-                                  <Badge key={group} color="primary" size="sm">
-                                    {group}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <button
-                                onClick={() => handleEditContact(contact)}
-                                className="rounded-md px-3 py-1 text-xs font-medium text-brand-600 transition hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/30"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteContact(contact.id)}
-                                className="ml-2 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition hover:bg-red-200 dark:bg-red-900/50 dark:text-red-200 dark:hover:bg-red-900"
-                              >
-                                Delete
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-200">
-                      <div>
-                        Page {page + 1} of {totalPages} · {total} total
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                          onClick={() => handlePageChange(page - 1)}
-                          disabled={page <= 0}
-                        >
-                          Previous
-                        </button>
-                        <button
-                          className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                          onClick={() => handlePageChange(page + 1)}
-                          disabled={page >= totalPages - 1}
-                        >
-                          Next
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </svg>
               </div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Phone Number / Contact Name"
+                className="h-11 w-full max-w-md rounded-lg border border-gray-300 bg-transparent pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />
+            </form>
 
-              <div className="ml-6">
+            <div className="mb-6 flex flex-wrap gap-3">
+              <button
+                onClick={handleRefresh}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh
+              </button>
+              <button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                Upload Contacts
+              </button>
+              <button
+                onClick={handleExport}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <DownloadIcon className="h-4 w-4" />
+                Export Contacts
+              </button>
+              <button
+                onClick={handleDownloadTemplate}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <DownloadIcon className="h-4 w-4" />
+                Download Template
+              </button>
+              <button
+                onClick={handleOpenCreateModal}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Create Contact
+              </button>
+              {selectedIds.length > 0 && (
                 <button
-                  onClick={handleExport}
-                  className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 dark:bg-brand-500 dark:hover:bg-brand-600">
-                  <DownloadIcon className="h-5 w-5" />
-                  Download Contacts
+                  onClick={() => setIsAddToGroupModalOpen(true)}
+                  className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                >
+                  Add to Group ({selectedIds.length})
                 </button>
-              </div>
+              )}
             </div>
+
+            {loading && (
+              <div className="mb-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800/40 dark:text-gray-200">
+                Loading contacts...
+              </div>
+            )}
+
+            {(error || localError) && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-100">
+                {localError || error}
+              </div>
+            )}
+
+            {!loading && filteredContacts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-gray-50 py-16 dark:border-gray-800 dark:bg-gray-800/50">
+                <div className="mb-4">
+                  <svg
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-gray-400 dark:text-gray-500"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                    <line x1="9" y1="13" x2="15" y2="13"></line>
+                    <line x1="9" y1="17" x2="15" y2="17"></line>
+                  </svg>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No contacts found.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800/50">
+                    <tr>
+                      <th className="px-6 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          checked={contacts.length > 0 && selectedIds.length === contacts.length}
+                          onChange={toggleSelectAll}
+                          className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                        />
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Name
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Phone
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Groups
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/[0.03]">
+                    {filteredContacts.map((contact) => (
+                      <tr key={contact.id} className="transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.includes(contact.id)}
+                            onChange={() => toggleSelectContact(contact.id)}
+                            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                          />
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                          {contact.name || "—"}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                          {contact.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                          {contact.email || "—"}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex flex-wrap gap-1">
+                            {contact.groupNames?.map((group) => (
+                              <Badge key={group} color="primary" size="sm">
+                                {group}
+                              </Badge>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <button
+                            onClick={() => handleEditContact(contact)}
+                            className="rounded-md px-3 py-1 text-xs font-medium text-brand-600 transition hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/30"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteContact(contact.id)}
+                            className="ml-2 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition hover:bg-red-200 dark:bg-red-900/50 dark:text-red-200 dark:hover:bg-red-900"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-200">
+                  <div>
+                    Page {page + 1} of {totalPages} · {total} total
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                      onClick={() => handlePageChange(page - 1)}
+                      disabled={page <= 0}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                      onClick={() => handlePageChange(page + 1)}
+                      disabled={page >= totalPages - 1}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -741,6 +733,6 @@ export default function Contact() {
           </button>
         </form>
       </Modal>
-    </div>
+    </div >
   );
 }
