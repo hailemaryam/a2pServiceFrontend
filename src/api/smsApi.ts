@@ -31,7 +31,7 @@ export type SmsJobResponse = {
   totalSmsCount: number;
   scheduledAt?: string;
   createdAt: string;
-  message: string;
+  messageContent: string;
 };
 
 

@@ -146,9 +146,9 @@ export default function SmsJobs() {
                         </td>
                         <td
                           className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate"
-                          title={job.message}
+                          title={job.messageContent}
                         >
-                          {job.message}
+                          {job.messageContent}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm">
                           <span
@@ -161,13 +161,12 @@ export default function SmsJobs() {
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm">
                           <span
-                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                              job.approvalStatus === "APPROVED"
-                                ? "text-green-600 bg-green-50"
-                                : job.approvalStatus === "REJECTED"
+                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${job.approvalStatus === "APPROVED"
+                              ? "text-green-600 bg-green-50"
+                              : job.approvalStatus === "REJECTED"
                                 ? "text-red-600 bg-red-50"
                                 : "text-yellow-600 bg-yellow-50"
-                            }`}
+                              }`}
                           >
                             {job.approvalStatus}
                           </span>
