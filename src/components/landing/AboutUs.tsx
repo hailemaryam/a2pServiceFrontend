@@ -26,15 +26,93 @@ export default function AboutUs() {
                             </div>
                         </div>
                     </div>
-                    <div className="mt-12 lg:mt-0 relative">
-                        <div className="relative rounded-3xl overflow-hidden shadow-2xl skew-y-3 transform hover:skew-y-0 transition-transform duration-500">
-                            <div className="bg-gradient-to-br from-brand-500 to-brand-700 aspect-video flex items-center justify-center">
-                                <span className="text-white text-6xl font-black opacity-20">A2P SYSTEM</span>
+                    <div className="mt-12 lg:mt-0 relative group">
+                        {/* Messaging Ecosystem Visualization */}
+                        <div className="relative h-[450px] bg-white dark:bg-gray-800/50 rounded-[3rem] border border-gray-100 dark:border-gray-700 shadow-2xl overflow-hidden p-8 flex items-center justify-center">
+
+                            {/* Central Hub */}
+                            <div className="relative z-20 w-32 h-32 bg-brand-500 rounded-3xl flex flex-col items-center justify-center text-white shadow-2xl shadow-brand-500/40 animate-pulse-slow">
+                                <svg className="w-12 h-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span className="text-xs font-black tracking-widest uppercase">A2P HUB</span>
                             </div>
+
+                            {/* Connections Layer */}
+                            <div className="absolute inset-0 z-10">
+                                <svg className="w-full h-full" viewBox="0 0 400 400">
+                                    {/* Lines to Clients */}
+                                    <line x1="200" y1="200" x2="80" y2="100" className="stroke-gray-200 dark:stroke-gray-700 stroke-2" />
+                                    <line x1="200" y1="200" x2="80" y2="300" className="stroke-gray-200 dark:stroke-gray-700 stroke-2" />
+
+                                    {/* Lines to Networks */}
+                                    <line x1="200" y1="200" x2="320" y2="100" className="stroke-gray-200 dark:stroke-gray-700 stroke-2" />
+                                    <line x1="200" y1="200" x2="320" y2="300" className="stroke-gray-200 dark:stroke-gray-700 stroke-2" />
+
+                                    {/* Animated Pulses */}
+                                    <circle r="4" fill="#E57A38">
+                                        <animateMotion dur="2s" repeatCount="indefinite" path="M 80,100 L 200,200" />
+                                    </circle>
+                                    <circle r="4" fill="#E57A38">
+                                        <animateMotion dur="2.5s" repeatCount="indefinite" path="M 80,300 L 200,200" />
+                                    </circle>
+                                    <circle r="4" fill="#10B981">
+                                        <animateMotion dur="1.8s" repeatCount="indefinite" path="M 200,200 L 320,100" />
+                                    </circle>
+                                    <circle r="4" fill="#10B981">
+                                        <animateMotion dur="2.2s" repeatCount="indefinite" path="M 200,200 L 320,300" />
+                                    </circle>
+                                </svg>
+                            </div>
+
+                            {/* Node Icons */}
+                            <div className="absolute top-16 left-12 z-20 flex flex-col items-center">
+                                <div className="p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-gray-400 group-hover:text-brand-500 transition-colors">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                    </svg>
+                                </div>
+                                <span className="mt-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">API Clients</span>
+                            </div>
+
+                            <div className="absolute bottom-16 left-12 z-20 flex flex-col items-center">
+                                <div className="p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-gray-400 group-hover:text-brand-500 transition-colors">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <span className="mt-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Web Dashboard</span>
+                            </div>
+
+                            <div className="absolute top-16 right-12 z-20 flex flex-col items-center">
+                                <div className="p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-gray-400 group-hover:text-emerald-500 transition-colors">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <span className="mt-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ethio Telecom</span>
+                            </div>
+
+                            <div className="absolute bottom-16 right-12 z-20 flex flex-col items-center">
+                                <div className="p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 text-gray-400 group-hover:text-emerald-500 transition-colors">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <span className="mt-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Safaricom</span>
+                            </div>
+
+                            {/* Decorative Glow */}
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-500/10 blur-[80px] rounded-full pointer-events-none"></div>
                         </div>
-                        {/* Subtle decorative elements */}
-                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl"></div>
-                        <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-brand-500/5 rounded-full blur-3xl"></div>
+
+                        <style>{`
+                            @keyframes pulse-slow {
+                                0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 122, 56, 0.4); }
+                                50% { transform: scale(1.05); box-shadow: 0 0 40px 10px rgba(229, 122, 56, 0.2); }
+                            }
+                            .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+                        `}</style>
                     </div>
                 </div>
             </div>

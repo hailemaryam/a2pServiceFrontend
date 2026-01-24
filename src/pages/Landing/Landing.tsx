@@ -150,21 +150,112 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="mt-16 lg:mt-0 relative">
-              <div className="p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-xl rounded-[2.5rem] border border-white/20 dark:border-white/5 shadow-2xl skew-y-1 transform hover:skew-y-0 transition-transform duration-700">
-                <div className="bg-gray-900 rounded-3xl overflow-hidden aspect-[4/3] flex items-center justify-center relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 to-transparent"></div>
-                  <div className="z-10 text-center">
-                    <div className="w-20 h-20 bg-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-12 transition-transform">
-                      <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            <div className="mt-16 lg:mt-0 relative group">
+              {/* Dynamic UI Visualization */}
+              <div className="relative z-10 p-4 sm:p-8 bg-white/40 dark:bg-gray-800/40 backdrop-blur-2xl rounded-[3rem] border border-white/20 dark:border-white/5 shadow-2xl transition-all duration-700 hover:rotate-1">
+
+                {/* Main "App" Window */}
+                <div className="bg-white dark:bg-gray-900 rounded-[2rem] overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800">
+                  {/* Mock Toolbar */}
+                  <div className="h-12 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 flex items-center px-6 gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+                    </div>
+                    <div className="ml-4 h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                  </div>
+
+                  {/* Mock Content */}
+                  <div className="p-6 space-y-6">
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-2xl border border-brand-100 dark:border-brand-800/30">
+                        <div className="text-xs font-bold text-brand-500 uppercase tracking-wider mb-1">Delivered</div>
+                        <div className="text-2xl font-black text-gray-900 dark:text-white">99.8%</div>
+                      </div>
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Queue</div>
+                        <div className="text-2xl font-black text-gray-900 dark:text-white">Active</div>
+                      </div>
+                    </div>
+
+                    {/* Chat Bubbles Mock */}
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-brand-500 flex-shrink-0"></div>
+                        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-tl-none text-sm text-gray-700 dark:text-gray-300 max-w-[80%] animate-slide-in-left">
+                          Hello! Reach your customers in Ethiopia with Fast SMS.
+                        </div>
+                      </div>
+                      <div className="flex gap-3 flex-row-reverse">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                        <div className="bg-brand-500 p-4 rounded-2xl rounded-tr-none text-sm text-white font-medium max-w-[80%] shadow-lg shadow-brand-500/20 animate-slide-in-right">
+                          Bulk campaign started: 10,000 messages sent! 🚀
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute -top-6 -right-6 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 animate-bounce-slow z-20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <span className="text-gray-400 font-mono text-sm tracking-widest uppercase">System Dashboard Beta</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Success</div>
+                      <div className="text-sm font-bold text-gray-900 dark:text-white">2.4ms Latency</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-10 -left-10 p-6 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 animate-float z-20">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-brand-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30">
+                      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-black text-gray-900 dark:text-white">+124%</div>
+                      <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Growth in 30d</div>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Decorative blobs */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-brand-500/10 blur-[100px] -z-10 rounded-full animate-pulse"></div>
             </div>
+
+            {/* Custom Animations */}
+            <style>{`
+              @keyframes slide-in-left {
+                from { opacity: 0; transform: translateX(-20px); }
+                to { opacity: 1; transform: translateX(0); }
+              }
+              @keyframes slide-in-right {
+                from { opacity: 0; transform: translateX(20px); }
+                to { opacity: 1; transform: translateX(0); }
+              }
+              @keyframes bounce-slow {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+              }
+              @keyframes float {
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                33% { transform: translateY(-15px) rotate(2deg); }
+                66% { transform: translateY(5px) rotate(-1deg); }
+              }
+              .animate-slide-in-left { animation: slide-in-left 0.8s ease-out forwards; }
+              .animate-slide-in-right { animation: slide-in-right 0.8s ease-out 0.2s forwards; opacity: 0; }
+              .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+              .animate-float { animation: float 6s ease-in-out infinite; }
+            `}</style>
           </div>
         </div>
       </section>
