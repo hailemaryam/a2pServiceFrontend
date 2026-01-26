@@ -34,7 +34,18 @@ export type SmsJobResponse = {
   messageContent: string;
 };
 
-
+export type SmsRecipientResponse = {
+  id: string;
+  senderId: string;
+  job: SmsJobResponse;
+  phoneNumber: string;
+  message: string;
+  webhookUrl?: string;
+  messageType: "ENGLISH" | "UNICODE";
+  status: "PENDING" | "SENT" | "DELIVERED" | "FAILED" | "QUEUED";
+  retryCount: number;
+  sentAt?: string;
+};
 
 // SMS API using RTK Query
 export const smsApi = baseApi.injectEndpoints({
@@ -96,6 +107,17 @@ export const smsApi = baseApi.injectEndpoints({
           ]
           : [{ type: "SmsJob", id: "LIST" }],
     }),
+
+    // Get SMS Job Recipients
+    getSmsJobRecipients: builder.query<
+      { items: SmsRecipientResponse[]; total: number; page: number; size: number },
+      { jobId: string; page?: number; size?: number; search?: string }
+    >({
+      query: ({ jobId, page = 0, size = 20, search }) => ({
+        url: `/api/sms/${jobId}/recipients`,
+        params: { page, size, search },
+      }),
+    }),
   }),
 });
 
@@ -105,6 +127,6 @@ export const {
   useSendGroupSmsMutation,
   useSendBulkSmsMutation,
   useGetSmsJobsQuery,
-
+  useGetSmsJobRecipientsQuery,
 } = smsApi;
 

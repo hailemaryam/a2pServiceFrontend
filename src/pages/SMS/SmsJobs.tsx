@@ -2,12 +2,14 @@ import { useState, useMemo } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { useGetSmsJobsQuery } from "../../api/smsApi";
+import ViewSmsRecipientsModal from "./ViewSmsRecipientsModal";
 
 export default function SmsJobs() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
 
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [selectedJob, setSelectedJob] = useState<{ id: string; createdAt: string } | null>(null);
 
   const {
     data: smsJobsData,
@@ -122,6 +124,9 @@ export default function SmsJobs() {
                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                         Approval
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-800 dark:bg-transparent">
@@ -171,6 +176,18 @@ export default function SmsJobs() {
                             {job.approvalStatus}
                           </span>
                         </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm">
+                          <button
+                            onClick={() => setSelectedJob({ id: job.id, createdAt: job.createdAt })}
+                            className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            View
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -201,6 +218,15 @@ export default function SmsJobs() {
           )}
         </div>
       </div>
+      {/* View Recipients Modal */}
+      {selectedJob && (
+        <ViewSmsRecipientsModal
+          isOpen={!!selectedJob}
+          onClose={() => setSelectedJob(null)}
+          jobId={selectedJob.id}
+          jobCreatedAt={selectedJob.createdAt}
+        />
+      )}
     </div>
   );
 }
