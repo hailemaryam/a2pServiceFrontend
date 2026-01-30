@@ -29,7 +29,7 @@ export type SmsJobResponse = {
   approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
   totalRecipients: number;
   totalSmsCount: number;
-  scheduledAt?: string;
+  scheduledAt: string;
   createdAt: string;
   messageContent: string;
 };

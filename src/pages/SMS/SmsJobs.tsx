@@ -104,7 +104,7 @@ export default function SmsJobs() {
                   <thead className="bg-gray-50 dark:bg-gray-800/50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                        Created At
+                        Scheduled At
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                         Type
@@ -136,7 +136,7 @@ export default function SmsJobs() {
                         className="hover:bg-gray-50 dark:hover:bg-gray-800/40"
                       >
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(job.createdAt).toLocaleString()}
+                          {new Date(job.scheduledAt).toLocaleString()}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                           <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
