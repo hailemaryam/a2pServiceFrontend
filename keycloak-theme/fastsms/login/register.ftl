@@ -7,7 +7,7 @@
 
     <div class="form-wrap">
       <h1 class="title">Create Account</h1>
-      <p class="subtitle">Please fill in the details below to register.</p>
+      <p class="subtitle">Please fill in the details below to register. </p>
 
       <#if message?has_content>
         <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary}</div></#if>
