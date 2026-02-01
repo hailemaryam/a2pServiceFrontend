@@ -11,7 +11,11 @@
       <div id="kc-info-message">
         <p class="subtitle">${message.summary}<#if requiredActions??><#list requiredActions>: <b><#items as reqActionItem>${msg("requiredAction.${reqActionItem}")}<#sep>, </#items></b></#list><#else></#if></p>
         
-        <#if skipLink??>
+        <#if actionUri??>
+            <div class="submit-row" style="margin-top: 24px;">
+                <a href="${actionUri}" class="btn btn-primary">${msg("proceedWithAction")}</a>
+            </div>
+        <#elseif skipLink??>
         <#else>
             <#if (client.baseUrl)?has_content>
                 <div class="signup">
