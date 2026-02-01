@@ -35,6 +35,11 @@
           <input type="text" id="email" class="form-control" name="email" value="${(register.formData.email!'')}" autocomplete="email" />
         </div>
 
+        <div class="form-group">
+          <label for="user.attributes.phoneNumber">${msg("phoneNumber")}</label>
+          <input type="text" id="user.attributes.phoneNumber" class="form-control" name="user.attributes.phoneNumber" value="${(register.formData['user.attributes.phoneNumber']!'')}" />
+        </div>
+
         <#if !realm.registrationEmailAsUsername>
             <div class="form-group">
                 <label for="username">${msg("username")}</label>
