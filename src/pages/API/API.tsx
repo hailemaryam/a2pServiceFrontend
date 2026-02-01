@@ -95,52 +95,7 @@ export default function API() {
       <PageBreadcrumb pageTitle="API" />
       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-4 py-5 sm:px-5 sm:py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
         <div className="mx-auto max-w-6xl">
-          {/* 1. API Instructions */}
-          <div className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-800/50">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-              Integration Details
-            </h3>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Endpoint URL (POST)
-                </p>
-                <code className="text-brand-500 dark:text-brand-400 break-all">
-                  https://fastsms.dev/api/p/sms/send
-                </code>
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Headers
-                </p>
-                <div className="rounded border border-gray-200 bg-white p-2 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-mono">
-                  API-Key: &lt;Your_API_Key_Below&gt;
-                </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Request Body (JSON)
-                </p>
-                <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
-                  {`{
-  "to": "2519...",
-  "message": "Hello World",
-  "scheduledAt": "2030-03-10T16:15:50Z",      // Optional
-  "webhookUrl": "https://test.com/webhook"    // Optional
-}`}
-                </pre>
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  * <code>scheduledAt</code> and <code>webhookUrl</code> are
-                  optional fields.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Search and Action Section */}
+          {/* 1. Search and Action Section */}
           <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
             {/* Search Bar */}
             <div className="relative flex-1 sm:max-w-md">
@@ -197,8 +152,8 @@ export default function API() {
             </div>
           </div>
 
-          {/* 3. API Token Table */}
-          <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+          {/* 2. API Token Table */}
+          <div className="mb-6 sm:mb-8 overflow-x-auto -mx-4 sm:mx-0 rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
             <div className="inline-block min-w-full align-middle">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-800/50">
@@ -290,6 +245,142 @@ export default function API() {
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* 3. API Instructions */}
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-800/50">
+            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+              Integration Details
+            </h3>
+
+            <div className="space-y-6">
+              {/* Endpoint URL */}
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Endpoint URL (POST)
+                </p>
+                <code className="text-brand-500 dark:text-brand-400 break-all">
+                  https://fastsms.dev/api/p/sms/send
+                </code>
+              </div>
+
+              {/* Headers */}
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Headers
+                </p>
+                <div className="rounded border border-gray-200 bg-white p-2 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 font-mono">
+                  API-Key: &lt;Your_API_Key_Below&gt;
+                </div>
+              </div>
+
+              {/* Request Body */}
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  Request Body (JSON)
+                </p>
+                <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                  {`{
+  "to": "2519...",
+  "message": "Hello World",
+  "scheduledAt": "2030-03-10T16:15:50Z",      // Optional
+  "webhookUrl": "https://test.com/webhook"    // Optional
+}`}
+                </pre>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  * <code>scheduledAt</code> and <code>webhookUrl</code> are
+                  optional fields.
+                </p>
+              </div>
+
+              {/* Response */}
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  Response (JSON)
+                </p>
+                <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                  {`{
+  "id": "<uuid>",
+  "jobType": "SINGLE | BULK",
+  "status": "PENDING | PROCESSING | COMPLETED | FAILED",
+  "approvalStatus": "PENDING | APPROVED | REJECTED",
+  "totalRecipients": <number>,
+  "totalSmsCount": <number>,
+  "scheduledAt": "<ISO 8601 timestamp>",
+  "createdAt": "<ISO 8601 timestamp>",
+  "message": "<status message>"
+}`}
+                </pre>
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Response Fields:</p>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-4 list-disc">
+                    <li><code className="text-brand-500">id</code> - Unique identifier for the SMS job</li>
+                    <li><code className="text-brand-500">jobType</code> - Type of job: <code>SINGLE</code> for individual SMS, <code>BULK</code> for multiple recipients</li>
+                    <li><code className="text-brand-500">status</code> - Current status: <code>PENDING</code>, <code>PROCESSING</code>, <code>COMPLETED</code>, or <code>FAILED</code></li>
+                    <li><code className="text-brand-500">approvalStatus</code> - Approval state: <code>PENDING</code>, <code>APPROVED</code>, or <code>REJECTED</code></li>
+                    <li><code className="text-brand-500">totalRecipients</code> - Number of recipients for this SMS job</li>
+                    <li><code className="text-brand-500">totalSmsCount</code> - Total number of SMS segments sent</li>
+                    <li><code className="text-brand-500">scheduledAt</code> - When the SMS is/was scheduled to be sent (ISO 8601 format)</li>
+                    <li><code className="text-brand-500">createdAt</code> - When the job was created (ISO 8601 format)</li>
+                    <li><code className="text-brand-500">message</code> - Human-readable status message</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Webhook */}
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  Webhook Configuration
+                </p>
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                    You can make the webhook URL dynamic by including identifiers in the URL path or query parameters.
+                    This allows you to track and match webhook callbacks with your own records.
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    <strong>Example dynamic webhook URLs:</strong>
+                  </p>
+                  <pre className="overflow-x-auto rounded border border-blue-200 bg-white p-2 font-mono text-xs text-gray-800 dark:border-blue-700 dark:bg-gray-900 dark:text-gray-300">
+                    {`https://yoursite.com/webhook/user/12345
+https://yoursite.com/sms-callback?orderId=ORD-789&customerId=123
+https://yoursite.com/notifications/campaign/summer-sale`}
+                  </pre>
+                </div>
+                <p className="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  Webhook Request Body (POST)
+                </p>
+                <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                  {`{
+  "jobId": "<uuid>",
+  "recipientId": "<uuid>",
+  "phoneNumber": "<phone_number>",
+  "status": "PENDING | SENT | DELIVERED | FAILED",
+  "message": "<sms_content>",
+  "senderId": "<sender_id>",
+  "timestamp": <unix_timestamp>,
+  "retryCount": <number>,
+  "failureReason": "<reason>" | null
+}`}
+                </pre>
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Webhook Fields:</p>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1 ml-4 list-disc">
+                    <li><code className="text-brand-500">jobId</code> - Unique identifier for the SMS job</li>
+                    <li><code className="text-brand-500">recipientId</code> - Unique identifier for this specific recipient</li>
+                    <li><code className="text-brand-500">phoneNumber</code> - The recipient's phone number</li>
+                    <li><code className="text-brand-500">status</code> - Delivery status: <code>PENDING</code>, <code>SENT</code>, <code>DELIVERED</code>, or <code>FAILED</code></li>
+                    <li><code className="text-brand-500">message</code> - The SMS message content that was sent</li>
+                    <li><code className="text-brand-500">senderId</code> - The sender ID used for this message</li>
+                    <li><code className="text-brand-500">timestamp</code> - Unix timestamp of the status update</li>
+                    <li><code className="text-brand-500">retryCount</code> - Number of delivery retry attempts</li>
+                    <li><code className="text-brand-500">failureReason</code> - Reason for failure (null if successful)</li>
+                  </ul>
+                </div>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  The webhook will receive a POST request with the delivery status for each recipient when the status changes.
+                </p>
+              </div>
             </div>
           </div>
         </div>
