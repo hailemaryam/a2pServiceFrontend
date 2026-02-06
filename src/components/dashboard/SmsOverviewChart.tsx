@@ -4,7 +4,10 @@ import { ApexOptions } from "apexcharts";
 import { useGetSmsOverviewQuery } from "../../api/dashboardApi";
 
 const SmsOverviewChart: React.FC = () => {
-  const { data: overview, isLoading, error } = useGetSmsOverviewQuery();
+  const [granularity, setGranularity] = React.useState<string>("MONTH");
+  const { data: response, isLoading, error } = useGetSmsOverviewQuery({ granularity });
+
+  const overview = response?.points;
 
   if (isLoading) {
     return (
@@ -23,12 +26,11 @@ const SmsOverviewChart: React.FC = () => {
   }
 
   // Transform data for the chart
-  const categories = overview.map((item) => {
-    const date = new Date(item.date);
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const categories = (overview || []).map((item) => {
+    return item.label;
   });
-  
-  const seriesData = overview.map((item) => item.count);
+
+  const seriesData = (overview || []).map((item) => item.totalSms);
 
   const options: ApexOptions = {
     legend: {
@@ -134,7 +136,21 @@ const SmsOverviewChart: React.FC = () => {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">SMS Overview</h3>
-          <p className="text-sm text-gray-500">Daily message traffic summary</p>
+          <p className="text-sm text-gray-500">{granularity.charAt(0) + granularity.slice(1).toLowerCase()}ly message traffic summary</p>
+        </div>
+        <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
+          {(['MONTH', 'QUARTER', 'YEAR'] as const).map((g) => (
+            <button
+              key={g}
+              onClick={() => setGranularity(g)}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${granularity === g
+                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+            >
+              {g}
+            </button>
+          ))}
         </div>
       </div>
       <div id="sms-overview-chart">

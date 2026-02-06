@@ -17,11 +17,18 @@ export type AdminDashboardResponse = {
   activePackageCount: number;
 };
 
-// SMS Overview chart data: list of { date: string, count: number }
+// SMS Overview chart data
+export type SmsOverviewPoint = {
+  label: string;
+  periodStart: string;
+  periodEnd: string;
+  totalSms: number;
+};
+
 export type SmsOverviewResponse = {
-  date: string;
-  count: number;
-}[];
+  granularity: "MONTH" | "QUARTER" | "YEAR";
+  points: SmsOverviewPoint[];
+};
 
 export const dashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -33,8 +40,11 @@ export const dashboardApi = baseApi.injectEndpoints({
       query: () => "/api/dashboard/admin",
       providesTags: ["Tenant", "Sender", "SmsJob", "SmsPackage"],
     }),
-    getSmsOverview: builder.query<SmsOverviewResponse, void>({
-      query: () => "/api/dashboard/overview",
+    getSmsOverview: builder.query<SmsOverviewResponse, { granularity?: string } | void>({
+      query: (params) => ({
+        url: "/api/dashboard/overview",
+        params: { granularity: params && typeof params === 'object' ? params.granularity : "MONTH" },
+      }),
     }),
   }),
 });
