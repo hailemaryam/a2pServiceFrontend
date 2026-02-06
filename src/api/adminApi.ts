@@ -97,7 +97,8 @@ export type TransactionResponse = {
 };
 
 export type TransactionHistoryResponse = {
-  date: string;
+  date?: string;
+  timestamp?: string;
   totalAmount: number;
 }[];
 
