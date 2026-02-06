@@ -6,12 +6,21 @@ import { EyeIcon } from "../../icons";
 import { useGetTenantsQuery, useUpdateTenantStatusMutation } from "../../api/adminApi";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ManualPaymentModal from "../../components/admin/ManualPaymentModal";
 
 export default function TenantsPage() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
   const { data, isLoading, error, refetch } = useGetTenantsQuery({ page, size });
   const [updateStatus, { isLoading: isUpdating }] = useUpdateTenantStatusMutation();
+
+  const [isManualPaymentModalOpen, setIsManualPaymentModalOpen] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState<{ id: string; name: string } | null>(null);
+
+  const handleManualPayment = (id: string, name: string) => {
+    setSelectedTenant({ id, name });
+    setIsManualPaymentModalOpen(true);
+  };
 
   const tenants = data?.items || [];
   const total = data?.total || 0;
@@ -99,24 +108,24 @@ export default function TenantsPage() {
               </p>
             </div>
             <button
-                onClick={() => refetch()}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+              onClick={() => refetch()}
+              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                 <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                Refresh
-              </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Refresh
+            </button>
           </div>
 
           <div className="max-w-full overflow-x-auto">
@@ -133,10 +142,10 @@ export default function TenantsPage() {
                     Status
                   </TableCell>
                   {/* Package column removed as it's not in the API response */}
-                   <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     SMS Credit
                   </TableCell>
-                   <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Threshold
                   </TableCell>
                   <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -189,13 +198,18 @@ export default function TenantsPage() {
                           <button
                             onClick={() => handleToggleStatus(tenant.id, tenant.status)}
                             disabled={isUpdating}
-                            className={`px-3 py-1 text-xs font-medium rounded-lg text-white ${
-                              tenant.status === "ACTIVE" 
-                                ? "bg-error-500 hover:bg-error-600" 
-                                : "bg-success-500 hover:bg-success-600"
-                            }`}
+                            className={`px-3 py-1 text-xs font-medium rounded-lg text-white ${tenant.status === "ACTIVE"
+                              ? "bg-error-500 hover:bg-error-600"
+                              : "bg-success-500 hover:bg-success-600"
+                              }`}
                           >
-                             {tenant.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                            {tenant.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                          </button>
+                          <button
+                            onClick={() => handleManualPayment(tenant.id, tenant.name)}
+                            className="px-3 py-1 text-xs font-medium rounded-lg bg-brand-500 text-white hover:bg-brand-600"
+                          >
+                            Manual Payment
                           </button>
                         </div>
                       </TableCell>
@@ -230,6 +244,12 @@ export default function TenantsPage() {
           )}
         </div>
       </div>
+
+      <ManualPaymentModal
+        isOpen={isManualPaymentModalOpen}
+        onClose={() => setIsManualPaymentModalOpen(false)}
+        tenant={selectedTenant}
+      />
     </>
   );
 }

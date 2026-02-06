@@ -122,9 +122,9 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "Tenant" as const, id })),
-              { type: "Tenant", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "Tenant" as const, id })),
+            { type: "Tenant", id: "LIST" },
+          ]
           : [{ type: "Tenant", id: "LIST" }],
     }),
 
@@ -167,16 +167,16 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Sender" as const, id })),
-              { type: "Sender", id: "LIST_PENDING" },
-            ]
+            ...result.map(({ id }) => ({ type: "Sender" as const, id })),
+            { type: "Sender", id: "LIST_PENDING" },
+          ]
           : [{ type: "Sender", id: "LIST_PENDING" }],
     }),
 
     approveSender: builder.mutation<SenderResponse, string>({
       query: (id) => ({
         url: `/api/admin/senders/${id}/approve`,
-        method: "POST", 
+        method: "POST",
       }),
       invalidatesTags: (_result, _error, id) => [
         { type: "Sender", id },
@@ -206,9 +206,9 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SmsJob" as const, id })),
-              { type: "SmsJob", id: "LIST_PENDING" },
-            ]
+            ...result.map(({ id }) => ({ type: "SmsJob" as const, id })),
+            { type: "SmsJob", id: "LIST_PENDING" },
+          ]
           : [{ type: "SmsJob", id: "LIST_PENDING" }],
     }),
 
@@ -244,9 +244,9 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SmsPackage" as const, id })),
-              { type: "SmsPackage", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "SmsPackage" as const, id })),
+            { type: "SmsPackage", id: "LIST" },
+          ]
           : [{ type: "SmsPackage", id: "LIST" }],
     }),
 
@@ -276,7 +276,7 @@ export const adminApi = baseApi.injectEndpoints({
         url: `/api/admin/sms-packages/${id}`,
         method: "DELETE",
       }),
-    invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
+      invalidatesTags: [{ type: "SmsPackage", id: "LIST" }],
     }),
 
     // --- Transactions ---
@@ -299,9 +299,9 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "Payment" as const, id })),
-              { type: "Payment", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "Payment" as const, id })),
+            { type: "Payment", id: "LIST" },
+          ]
           : [{ type: "Payment", id: "LIST" }],
     }),
 
@@ -311,6 +311,14 @@ export const adminApi = baseApi.injectEndpoints({
         params: { days },
       }),
       providesTags: ["Payment"],
+    }),
+    processManualPayment: builder.mutation<void, { tenantId: string; amount: number }>({
+      query: (body) => ({
+        url: "/api/admin/payments/manual",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Payment", "Tenant"],
     }),
   }),
 });
@@ -333,4 +341,5 @@ export const {
   useDeleteSmsPackageMutation,
   useGetAllTransactionsQuery,
   useGetTransactionHistoryQuery,
+  useProcessManualPaymentMutation,
 } = adminApi;
