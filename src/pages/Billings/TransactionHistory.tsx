@@ -70,7 +70,8 @@ export default function TransactionHistory() {
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-800 text-xs uppercase text-gray-500 dark:text-gray-400">
                   <th className="px-4 py-3 font-medium">Date</th>
-                  <th className="px-4 py-3 font-medium">Transaction ID</th>
+                  <th className="px-4 py-3 font-medium">Type</th>
+                  <th className="px-4 py-3 font-medium">Ref/ID</th>
                   <th className="px-4 py-3 font-medium text-right">Amount</th>
                   <th className="px-4 py-3 font-medium text-right">Credits</th>
                   <th className="px-4 py-3 font-medium text-center">Status</th>
@@ -92,8 +93,16 @@ export default function TransactionHistory() {
                         })}
                       </span>
                     </td>
+                    <td className="px-4 py-4 text-sm font-medium">
+                      <span className={`px-2 py-1 rounded-md text-xs font-semibold ${tx.paymentType === 'CHAPA'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                        }`}>
+                        {tx.paymentType}
+                      </span>
+                    </td>
                     <td className="px-4 py-4 text-xs font-mono text-gray-500 dark:text-gray-400">
-                      {tx.id.substring(0, 18)}...
+                      {tx.transactionIdValue || tx.id.substring(0, 18) + "..."}
                     </td>
                     <td className="px-4 py-4 text-sm font-medium text-right text-gray-900 dark:text-white">
                       ETB {tx.amountPaid.toFixed(2)}
@@ -107,10 +116,10 @@ export default function TransactionHistory() {
                           tx.paymentStatus === "SUCCESSFUL"
                             ? "success"
                             : tx.paymentStatus === "FAILED"
-                            ? "error"
-                            : tx.paymentStatus === "IN_PROGRESS"
-                            ? "warning"
-                            : "default"
+                              ? "error"
+                              : tx.paymentStatus === "IN_PROGRESS"
+                                ? "warning"
+                                : "default"
                         }
                       >
                         {tx.paymentStatus}

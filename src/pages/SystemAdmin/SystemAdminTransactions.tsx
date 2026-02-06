@@ -54,8 +54,8 @@ export default function SystemAdminTransactions() {
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-rightsm:justify-between">
-           
-            
+
+
             <div className="flex flex-col gap-3 sm:flex-row">
               {/* Filter by Tenant ID */}
               <input
@@ -101,7 +101,9 @@ export default function SystemAdminTransactions() {
                 <thead className="bg-gray-100 dark:bg-white/[0.03]">
                   <tr>
                     <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">ID</th>
-                    <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Tenant ID</th>
+                    <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Tenant</th>
+                    <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Type</th>
+                    <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Ref/ID</th>
                     <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Amount</th>
                     <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Credits</th>
                     <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">Package</th>
@@ -117,6 +119,17 @@ export default function SystemAdminTransactions() {
                       </td>
                       <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                         {tx.tenantId.substring(0, 8)}...
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-md text-xs font-semibold ${tx.paymentType === 'CHAPA'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                            : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                          }`}>
+                          {tx.paymentType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs font-mono text-gray-500 dark:text-gray-400">
+                        {tx.transactionIdValue || "-"}
                       </td>
                       <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                         ${tx.amountPaid.toFixed(2)}

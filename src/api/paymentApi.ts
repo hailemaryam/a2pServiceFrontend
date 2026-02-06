@@ -19,6 +19,8 @@ export type PaymentTransaction = {
   amountPaid: number;
   smsCredited: number;
   paymentStatus: "SUCCESSFUL" | "FAILED" | "IN_PROGRESS" | "CANCELED";
+  paymentType: "CHAPA" | "MANUAL";
+  transactionIdValue?: string;
   smsPackage?: {
     id: string;
     minSmsCount: number;
@@ -64,9 +66,9 @@ export const paymentApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({ type: "Payment" as const, id })),
-              { type: "Payment", id: "LIST" },
-            ]
+            ...result.items.map(({ id }) => ({ type: "Payment" as const, id })),
+            { type: "Payment", id: "LIST" },
+          ]
           : [{ type: "Payment", id: "LIST" }],
     }),
 

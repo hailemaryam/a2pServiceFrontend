@@ -14,6 +14,7 @@ interface ManualPaymentModalProps {
 
 export default function ManualPaymentModal({ isOpen, onClose, tenant }: ManualPaymentModalProps) {
     const [amount, setAmount] = useState<string>("");
+    const [transactionIdValue, setTransactionIdValue] = useState<string>("");
     const [processManualPayment, { isLoading }] = useProcessManualPaymentMutation();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -30,9 +31,11 @@ export default function ManualPaymentModal({ isOpen, onClose, tenant }: ManualPa
             await processManualPayment({
                 tenantId: tenant.id,
                 amount: numAmount,
+                transactionIdentification: transactionIdValue || undefined,
             }).unwrap();
             toast.success(`Manual payment of ${numAmount} ETB processed for ${tenant.name}`);
             setAmount("");
+            setTransactionIdValue("");
             onClose();
         } catch (err: any) {
             console.error("Failed to process manual payment", err);
@@ -94,6 +97,18 @@ export default function ManualPaymentModal({ isOpen, onClose, tenant }: ManualPa
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         The system will automatically find the best SMS package for this amount.
                     </p>
+                </div>
+                <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Transaction Reference / ID (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        value={transactionIdValue}
+                        onChange={(e) => setTransactionIdValue(e.target.value)}
+                        placeholder="Enter reference or transaction ID"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:border-brand-500"
+                    />
                 </div>
             </form>
         </Modal>

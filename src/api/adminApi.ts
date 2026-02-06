@@ -81,6 +81,8 @@ export type TransactionResponse = {
   amountPaid: number;
   smsCredited: number;
   paymentStatus: "SUCCESSFUL" | "FAILED" | "IN_PROGRESS" | "CANCELED";
+  paymentType: "CHAPA" | "MANUAL";
+  transactionIdValue?: string;
   smsPackage: {
     id: string;
     minSmsCount: number;
@@ -312,7 +314,7 @@ export const adminApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Payment"],
     }),
-    processManualPayment: builder.mutation<void, { tenantId: string; amount: number }>({
+    processManualPayment: builder.mutation<void, { tenantId: string; amount: number; transactionIdentification?: string }>({
       query: (body) => ({
         url: "/api/admin/payments/manual",
         method: "POST",
