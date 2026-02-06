@@ -75,6 +75,9 @@ export default function App() {
             <Route path="/admin/senders" element={<SenderApprovalsPage />} />
             <Route path="/admin/sms-jobs" element={<SmsJobApprovalsPage />} />
             <Route path="/admin/sms-packages" element={<SmsPackagesPage />} />
+            {/* Profile */}
+            <Route path="/profile" element={<Profile />} />
+
             <Route
               path="/admin/transactions"
               element={<SystemAdminTransactions />}
