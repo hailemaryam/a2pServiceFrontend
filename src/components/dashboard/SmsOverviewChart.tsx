@@ -5,21 +5,20 @@ import { useGetSmsOverviewQuery } from "../../api/dashboardApi";
 
 const SmsOverviewChart: React.FC = () => {
   const [days, setDays] = useState(30);
-  const { data: response, isLoading, error } = useGetSmsOverviewQuery({ days });
+  const { data: points, isLoading, error } = useGetSmsOverviewQuery({ days });
 
   const chartData = useMemo(() => {
-    if (!response?.points) return { categories: [], seriesData: [] };
+    if (!points) return { categories: [], seriesData: [] };
 
-    // Since backend already provides zero-filled daily buckets, we can map directly
-    // but we can also follow the RevenueLineChart pattern of generating dates on frontend
-    // if we want to be absolutely sure about consistency or handle client-side timezones.
-    // For now, let's use the backend's buckets as they are already aligned.
+    const categories = points.map((p) => {
+      const date = new Date(p.timestamp);
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    });
 
-    const categories = response.points.map((p) => p.label);
-    const seriesData = response.points.map((p) => p.totalSms);
+    const seriesData = points.map((p) => p.totalSms);
 
     return { categories, seriesData };
-  }, [response, days]);
+  }, [points]);
 
   if (isLoading) {
     return (

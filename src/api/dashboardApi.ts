@@ -19,15 +19,8 @@ export type AdminDashboardResponse = {
 
 // SMS Overview chart data
 export type SmsOverviewPoint = {
-  label: string;
-  periodStart: string;
-  periodEnd: string;
+  timestamp: string;
   totalSms: number;
-};
-
-export type SmsOverviewResponse = {
-  granularity: "MONTH" | "QUARTER" | "YEAR";
-  points: SmsOverviewPoint[];
 };
 
 export const dashboardApi = baseApi.injectEndpoints({
@@ -40,7 +33,7 @@ export const dashboardApi = baseApi.injectEndpoints({
       query: () => "/api/dashboard/admin",
       providesTags: ["Tenant", "Sender", "SmsJob", "SmsPackage"],
     }),
-    getSmsOverview: builder.query<SmsOverviewResponse, { days?: number } | void>({
+    getSmsOverview: builder.query<SmsOverviewPoint[], { days?: number } | void>({
       query: (params) => ({
         url: "/api/dashboard/overview",
         params: { days: params && typeof params === 'object' ? params.days : 30 },
