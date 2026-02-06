@@ -40,10 +40,10 @@ export const dashboardApi = baseApi.injectEndpoints({
       query: () => "/api/dashboard/admin",
       providesTags: ["Tenant", "Sender", "SmsJob", "SmsPackage"],
     }),
-    getSmsOverview: builder.query<SmsOverviewResponse, { granularity?: string } | void>({
+    getSmsOverview: builder.query<SmsOverviewResponse, { days?: number } | void>({
       query: (params) => ({
         url: "/api/dashboard/overview",
-        params: { granularity: params && typeof params === 'object' ? params.granularity : "MONTH" },
+        params: { days: params && typeof params === 'object' ? params.days : 30 },
       }),
     }),
   }),
