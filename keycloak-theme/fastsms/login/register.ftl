@@ -10,10 +10,10 @@
       <p class="subtitle">Please fill in the details below to register. </p>
 
       <#if message?has_content>
-        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary}</div></#if>
-        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary}</div></#if>
-        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary}</div></#if>
-        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary}</div></#if>
+        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
+        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary?no_esc}</div></#if>
+        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary?no_esc}</div></#if>
+        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary?no_esc}</div></#if>
       </#if>
 
       <form id="kc-register-form" action="${url.registrationAction}" method="post">

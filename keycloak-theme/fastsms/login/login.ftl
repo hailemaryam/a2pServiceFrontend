@@ -11,10 +11,10 @@
       <p class="subtitle">Enter your email and password to sign in!</p>
 
       <#if message?has_content>
-        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary}</div></#if>
-        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary}</div></#if>
-        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary}</div></#if>
-        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary}</div></#if>
+        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
+        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary?no_esc}</div></#if>
+        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary?no_esc}</div></#if>
+        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary?no_esc}</div></#if>
       </#if>
 
       <form id="kc-form-login" action="${url.loginAction}" method="post">
