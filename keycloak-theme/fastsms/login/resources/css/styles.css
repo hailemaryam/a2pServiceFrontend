@@ -297,12 +297,16 @@ label {
   border: 1px solid var(--fs-info-border);
 }
 
-.field-error {
-  color: var(--fs-error-text);
+.fastsms-root .field-error {
+  color: #c81e1e !important;
   font-size: 13px;
   margin-top: 6px;
   font-weight: 500;
   display: block;
+}
+
+.dark .fastsms-root .field-error {
+  color: #f97066 !important;
 }
 
 /* Mobile Responsiveness */
