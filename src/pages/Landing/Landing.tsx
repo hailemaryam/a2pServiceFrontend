@@ -90,7 +90,7 @@ export default function Landing() {
               <a href="#features" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">Features</a>
               <a href="#pricing" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">Pricing</a>
               <a href="#about" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">About</a>
-              <a href="#contact" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">Contact</a>
+              <a href="#contact-us" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">Contact</a>
             </div>
             <div className="flex items-center gap-4">
               <ThemeTogglerTwo />

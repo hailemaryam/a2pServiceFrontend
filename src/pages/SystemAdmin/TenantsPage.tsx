@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "../../components/ui/table";
@@ -13,6 +14,7 @@ export default function TenantsPage() {
   const [size] = useState(20);
   const { data, isLoading, error, refetch } = useGetTenantsQuery({ page, size });
   const [updateStatus, { isLoading: isUpdating }] = useUpdateTenantStatusMutation();
+  const navigate = useNavigate();
 
   const [isManualPaymentModalOpen, setIsManualPaymentModalOpen] = useState(false);
   const [selectedTenant, setSelectedTenant] = useState<{ id: string; name: string } | null>(null);
@@ -184,6 +186,7 @@ export default function TenantsPage() {
                       <TableCell className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            onClick={() => navigate(`/admin/tenants/${tenant.id}`)}
                             className="p-2 text-gray-600 transition-colors rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
                             title="View Details"
                           >

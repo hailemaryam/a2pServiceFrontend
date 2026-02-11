@@ -3,11 +3,13 @@ import { useNavigate } from "react-router";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { UserCircleIcon } from "../../icons";
+import { useAuth } from "../../hooks/useAuth";
 import { useKeycloak } from "@react-keycloak/web";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { keycloak } = useKeycloak();
+  const { isSysAdmin } = useAuth();
   const navigate = useNavigate();
 
   const userEmail = keycloak.tokenParsed?.email as string | undefined;
@@ -24,7 +26,8 @@ export default function UserDropdown() {
 
   const goToProfile = () => {
     closeDropdown();
-    navigate("/profile");
+    const path = isSysAdmin ? "/admin/profile" : "/profile";
+    navigate(path);
   };
 
   return (
