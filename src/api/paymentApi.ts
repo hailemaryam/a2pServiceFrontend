@@ -5,6 +5,7 @@ import { baseApi } from "./baseApi";
 export type InitializePaymentPayload = {
   amount: number;
   returnUrl?: string;
+  paymentType?: "CHAPA" | "BANK_TRANSFER";
 };
 
 export type PaymentResponse = {
@@ -19,7 +20,7 @@ export type PaymentTransaction = {
   amountPaid: number;
   smsCredited: number;
   paymentStatus: "SUCCESSFUL" | "FAILED" | "IN_PROGRESS" | "CANCELED";
-  paymentType: "CHAPA" | "MANUAL";
+  paymentType: "CHAPA" | "MANUAL" | "BANK_TRANSFER";
   transactionIdValue?: string;
   smsPackage?: {
     id: string;
