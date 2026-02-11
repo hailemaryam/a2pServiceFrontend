@@ -21,41 +21,41 @@
         <div class="form-row" style="gap: 20px; margin-bottom: 22px;">
           <div class="form-group" style="width: 100%; margin-bottom: 0;">
             <label for="firstName">${msg("firstName")}</label>
-            <input type="text" id="firstName" class="form-control" name="firstName" value="${(register.formData.firstName!'')}" />
+            <input type="text" id="firstName" class="form-control" name="firstName" value="${(register.formData.firstName!'')}" required />
           </div>
 
           <div class="form-group" style="width: 100%; margin-bottom: 0;">
             <label for="lastName">${msg("lastName")}</label>
-            <input type="text" id="lastName" class="form-control" name="lastName" value="${(register.formData.lastName!'')}" />
+            <input type="text" id="lastName" class="form-control" name="lastName" value="${(register.formData.lastName!'')}" required />
           </div>
         </div>
 
         <div class="form-group">
           <label for="email">${msg("email")}</label>
-          <input type="text" id="email" class="form-control" name="email" value="${(register.formData.email!'')}" autocomplete="email" />
+          <input type="text" id="email" class="form-control" name="email" value="${(register.formData.email!'')}" autocomplete="email" required />
         </div>
 
         <div class="form-group">
           <label for="user.attributes.phoneNumber">${msg("phoneNumber")}</label>
-          <input type="text" id="user.attributes.phoneNumber" class="form-control" name="user.attributes.phoneNumber" value="${(register.formData['user.attributes.phoneNumber']!'')}" />
+          <input type="text" id="user.attributes.phoneNumber" class="form-control" name="user.attributes.phoneNumber" value="${(register.formData['user.attributes.phoneNumber']!'')}" required />
         </div>
 
         <#if !realm.registrationEmailAsUsername>
             <div class="form-group">
                 <label for="username">${msg("username")}</label>
-                <input type="text" id="username" class="form-control" name="username" value="${(register.formData.username!'')}" autocomplete="username" />
+                <input type="text" id="username" class="form-control" name="username" value="${(register.formData.username!'')}" autocomplete="username" required />
             </div>
         </#if>
 
         <#if passwordRequired??>
             <div class="form-group">
                 <label for="password">${msg("password")}</label>
-                <input type="password" id="password" class="form-control" name="password" autocomplete="new-password" />
+                <input type="password" id="password" class="form-control" name="password" autocomplete="new-password" required />
             </div>
 
             <div class="form-group">
                 <label for="password-confirm">${msg("passwordConfirm")}</label>
-                <input type="password" id="password-confirm" class="form-control" name="password-confirm" />
+                <input type="password" id="password-confirm" class="form-control" name="password-confirm" required />
             </div>
         </#if>
 
