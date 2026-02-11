@@ -297,6 +297,14 @@ label {
   border: 1px solid var(--fs-info-border);
 }
 
+.field-error {
+  color: var(--fs-error-text);
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: block;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 900px) {
   .fastsms-root {
