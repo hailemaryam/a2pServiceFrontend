@@ -10,7 +10,7 @@
       <h1 class="title">Sign In</h1>
       <p class="subtitle">Enter your email and password to sign in!</p>
 
-      <#if message?has_content && (message.type != 'error' || !messagesPerField.exists('username', 'password'))>
+      <#if message?has_content && (message.type != 'error' || !(messagesPerField.exists('username') || messagesPerField.exists('password')))>
         <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
         <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary?no_esc}</div></#if>
         <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary?no_esc}</div></#if>

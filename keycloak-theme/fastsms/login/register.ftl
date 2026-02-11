@@ -9,7 +9,7 @@
       <h1 class="title">Create Account</h1>
       <p class="subtitle">Please fill in the details below to register. </p>
 
-      <#if message?has_content && (message.type != 'error' || !messagesPerField.exists('firstName', 'lastName', 'email', 'user.attributes.phoneNumber', 'username', 'password', 'password-confirm'))>
+      <#if message?has_content && (message.type != 'error' || !(messagesPerField.exists('firstName') || messagesPerField.exists('lastName') || messagesPerField.exists('email') || messagesPerField.exists('user.attributes.phoneNumber') || messagesPerField.exists('username') || messagesPerField.exists('password') || messagesPerField.exists('password-confirm')))>
         <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
         <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary?no_esc}</div></#if>
         <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary?no_esc}</div></#if>
