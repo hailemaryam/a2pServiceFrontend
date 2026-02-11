@@ -10,17 +10,12 @@ export type TenantResponse = {
   phone: string;
   status: "ACTIVE" | "INACTIVE";
   smsCredit: number; // int64
-  smsApprovalThreshold: number; // int32
   createdAt: string; // Instant
   updatedAt: string; // Instant
 };
 
 export type UpdateTenantStatusPayload = {
   status: "ACTIVE" | "INACTIVE";
-};
-
-export type UpdateTenantThresholdPayload = {
-  approvalThreshold: number;
 };
 
 // --- Senders ---

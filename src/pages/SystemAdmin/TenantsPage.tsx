@@ -146,9 +146,6 @@ export default function TenantsPage() {
                     SMS Credit
                   </TableCell>
                   <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Threshold
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Created At
                   </TableCell>
                   <TableCell isHeader className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -159,7 +156,7 @@ export default function TenantsPage() {
               <TableBody>
                 {tenants.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <TableCell colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                       No tenants found
                     </TableCell>
                   </TableRow>
@@ -180,9 +177,6 @@ export default function TenantsPage() {
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                         {tenant.smsCredit != null ? tenant.smsCredit.toLocaleString() : "0"}
-                      </TableCell>
-                      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                        {tenant.smsApprovalThreshold != null ? tenant.smsApprovalThreshold.toLocaleString() : "N/A"}
                       </TableCell>
                       <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                         {formatDate(tenant.createdAt)}

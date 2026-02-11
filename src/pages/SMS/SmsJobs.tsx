@@ -122,9 +122,6 @@ export default function SmsJobs() {
                         Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
-                        Approval
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
                         Actions
                       </th>
                     </tr>
@@ -162,18 +159,6 @@ export default function SmsJobs() {
                             )}`}
                           >
                             {job.status}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm">
-                          <span
-                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${job.approvalStatus === "APPROVED"
-                              ? "text-green-600 bg-green-50"
-                              : job.approvalStatus === "REJECTED"
-                                ? "text-red-600 bg-red-50"
-                                : "text-yellow-600 bg-yellow-50"
-                              }`}
-                          >
-                            {job.approvalStatus}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGetTenantSmsPackagesQuery, SmsPackageTier } from "../../api/tenantApi";
+import { useKeycloak } from "@react-keycloak/web";
 
 const STATIC_FEATURES = [
     "Custom Sender ID",
@@ -16,6 +17,12 @@ export default function Pricing() {
 
     const minSms = 1;
     const maxSms = 1000000;
+    const { keycloak } = useKeycloak();
+    const handleRegister = () => {
+        keycloak.register({
+            redirectUri: `${window.location.origin}/#/landing`,
+        });
+    };
 
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSmsCount(Number(event.target.value));
@@ -162,12 +169,12 @@ export default function Pricing() {
                                     </p>
                                 )}
                             </div>
-                            <a
-                                href="#/register"
+                            <button
+                                onClick={handleRegister}
                                 className="w-full md:w-auto px-10 py-4 bg-brand-500 hover:bg-brand-600 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all text-center"
                             >
                                 Get Started
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>

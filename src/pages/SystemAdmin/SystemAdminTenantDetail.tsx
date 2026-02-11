@@ -91,12 +91,6 @@ export default function SystemAdminTenantDetail() {
                     {tenant.smsCredit?.toLocaleString() ?? 0}
                   </p>
                 </div>
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Approval Threshold</p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {tenant.smsApprovalThreshold?.toLocaleString() ?? 0}
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -104,27 +98,27 @@ export default function SystemAdminTenantDetail() {
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Metadata</h3>
             <div className="flex flex-wrap gap-6 text-sm">
-                <div>
-                    <span className="text-gray-400 mr-2">Created At:</span>
-                    <span className="text-gray-700 dark:text-gray-300">{new Date(tenant.createdAt).toLocaleString()}</span>
-                </div>
-                <div>
-                    <span className="text-gray-400 mr-2">Last Updated:</span>
-                    <span className="text-gray-700 dark:text-gray-300">{new Date(tenant.updatedAt).toLocaleString()}</span>
-                </div>
+              <div>
+                <span className="text-gray-400 mr-2">Created At:</span>
+                <span className="text-gray-700 dark:text-gray-300">{new Date(tenant.createdAt).toLocaleString()}</span>
+              </div>
+              <div>
+                <span className="text-gray-400 mr-2">Last Updated:</span>
+                <span className="text-gray-700 dark:text-gray-300">{new Date(tenant.updatedAt).toLocaleString()}</span>
+              </div>
             </div>
           </div>
-          
-           <div className="mt-8 flex justify-end">
-             <Link
-               to="/admin/tenants"
-               className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-             >
-               Back to Tenants List
-             </Link>
-           </div>
+
+          <div className="mt-8 flex justify-end">
+            <Link
+              to="/admin/tenants"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              Back to Tenants List
+            </Link>
+          </div>
         </div>
-      </div>
+      </div >
     </>
   );
 }
