@@ -10,17 +10,17 @@
       <p class="subtitle">Enter your email or username to reset your password.</p>
 
       <#if message?has_content>
-        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary}</div></#if>
-        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary}</div></#if>
-        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary}</div></#if>
-        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary}</div></#if>
+        <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
+        <#if message.type == "warning"><div class="kc-feedback kc-warning">${message.summary?no_esc}</div></#if>
+        <#if message.type == "error"><div class="kc-feedback kc-error">${message.summary?no_esc}</div></#if>
+        <#if message.type == "info"><div class="kc-feedback kc-info">${message.summary?no_esc}</div></#if>
       </#if>
 
       <form id="kc-reset-password-form" action="${url.loginAction}" method="post">
         
         <div class="form-group">
           <label for="username">${msg("emailInstruction")}</label>
-          <input type="text" id="username" name="username" class="form-control" autofocus value="${(auth.attemptedUsername!'')}" />
+          <input type="text" id="username" name="username" class="form-control" autofocus value="${(auth.attemptedUsername!'')}" required />
         </div>
 
         <div class="submit-row" style="margin-top: 24px;">
