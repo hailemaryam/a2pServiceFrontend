@@ -31,6 +31,9 @@ import Contact from "./pages/Contact/Contact";
 import ContactGroup from "./pages/ContactGroup/ContactGroup";
 import API from "./pages/API/API";
 import Profile from "./pages/Profile/Profile";
+import PrivacyPolicy from "./pages/Legal/PrivacyPolicy";
+import TermsOfService from "./pages/Legal/TermsOfService";
+import CookiePolicy from "./pages/Legal/CookiePolicy";
 
 export default function App() {
   return (
@@ -54,6 +57,11 @@ export default function App() {
           {/* Landing page for unauthenticated users */}
           <Route path="/landing" element={<Landing />} />
           <Route path="/onboard" element={<Onboarding />} />
+
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
 
           {/* Root path - handles role-based routing */}
           <Route index path="/" element={<RootRoute />} />

@@ -276,9 +276,9 @@ export default function Landing() {
               </span>
             </div>
             <div className="flex gap-8 text-sm font-medium text-gray-500 dark:text-gray-400">
-              <a href="#" className="hover:text-brand-500 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-brand-500 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-brand-500 transition-colors">Cookie Policy</a>
+              <Link to="/privacy" className="hover:text-brand-500 transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-brand-500 transition-colors">Terms of Service</Link>
+              <Link to="/cookies" className="hover:text-brand-500 transition-colors">Cookie Policy</Link>
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-600">
               &copy; {new Date().getFullYear()} Fast SMS. All rights reserved.
