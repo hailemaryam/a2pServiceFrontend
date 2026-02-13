@@ -12,12 +12,8 @@
         <p class="subtitle">${message.summary}</p>
         
         <div class="signup">
-            <a id="backToApplication" href="${(client.baseUrl)!'https://fastsms.dev'}">${msg("backToApplication")}</a>
+            <a id="backToApplication" href="https://fastsms.dev">${msg("backToApplication")}</a>
         </div>
-      </div>
-
-      <div class="signup" style="margin-top: 24px;">
-        <a href="https://fastsms.dev">${msg("backToLogin")}</a>
       </div>
     </div>
   </div>
