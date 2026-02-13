@@ -68,10 +68,10 @@ export default function Landing() {
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex items-center">
-              <Link to="/landing" className="flex items-center gap-3">
+              <Link to="/landing" className="flex items-center gap-2">
                 <img
                   src="/images/logo/favicon.png"
                   alt="Fast SMS Logo"
@@ -81,7 +81,7 @@ export default function Landing() {
                     target.src = "/favicon.png";
                   }}
                 />
-                <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter">
+                <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter hidden sm:inline">
                   FAST<span className="text-brand-500">SMS</span>
                 </span>
               </Link>
@@ -92,17 +92,17 @@ export default function Landing() {
               <a href="#about" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">About</a>
               <a href="#contact-us" className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors uppercase tracking-widest">Contact</a>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <ThemeTogglerTwo />
               <button
                 onClick={handleLogin}
-                className="hidden sm:block text-sm font-bold text-gray-700 dark:text-gray-200 hover:text-brand-500 transition-colors tracking-widest"
+                className="text-sm font-bold text-gray-700 dark:text-gray-200 hover:text-brand-500 transition-colors tracking-widest"
               >
                 LOG IN
               </button>
               <button
                 onClick={handleRegister}
-                className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-brand-500/25 transition-all hover:scale-105 active:scale-95 tracking-widest"
+                className="bg-brand-500 hover:bg-brand-600 text-white px-4 sm:px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-brand-500/25 transition-all hover:scale-105 active:scale-95 tracking-widest"
               >
                 GET STARTED
               </button>
