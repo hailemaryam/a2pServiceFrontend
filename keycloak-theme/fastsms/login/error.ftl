@@ -11,15 +11,13 @@
       <div id="kc-error-message">
         <p class="subtitle">${message.summary}</p>
         
-        <#if client?? && client.baseUrl?has_content>
-            <div class="signup">
-                <a id="backToApplication" href="${client.baseUrl}">${msg("backToApplication")}</a>
-            </div>
-        </#if>
+        <div class="signup">
+            <a id="backToApplication" href="${(client.baseUrl)!'https://fastsms.dev'}">${msg("backToApplication")}</a>
+        </div>
       </div>
 
       <div class="signup" style="margin-top: 24px;">
-        <a href="${url.loginUrl}">${msg("backToLogin")}</a>
+        <a href="https://fastsms.dev">${msg("backToLogin")}</a>
       </div>
     </div>
   </div>
