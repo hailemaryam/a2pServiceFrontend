@@ -71,6 +71,7 @@ export default function Contact() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   // File input ref reset key
   const [fileInputKey, setFileInputKey] = useState(Date.now());
@@ -92,6 +93,7 @@ export default function Contact() {
     setPhoneNumber("");
     setEmail("");
     setEditingId(null);
+    setPhoneError(null);
   };
 
   const handleContactSubmit = async (e: FormEvent) => {
@@ -568,11 +570,25 @@ export default function Contact() {
               id="phoneNumber"
               type="text"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setPhoneNumber(val);
+                if (val && !isValidEthiopianPhoneNumber(val.trim())) {
+                  setPhoneError("Invalid Ethiopian phone number format. Please use 09..., 07..., or +251...");
+                } else {
+                  setPhoneError(null);
+                }
+              }}
               placeholder="0912345678"
               required
-              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              className={`h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:text-white/90 dark:placeholder:text-white/30 ${phoneError
+                  ? "border-red-500 focus:border-red-500 dark:border-red-500"
+                  : "border-gray-300 focus:border-brand-300 dark:border-gray-700 dark:focus:border-brand-800"
+                }`}
             />
+            {phoneError && (
+              <p className="mt-1 text-xs text-red-500">{phoneError}</p>
+            )}
           </div>
           <div>
             <label
@@ -592,7 +608,7 @@ export default function Contact() {
           </div>
           <button
             type="submit"
-            disabled={isCreating || isUpdating}
+            disabled={isCreating || isUpdating || !!phoneError || !phoneNumber.trim()}
             className="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
           >
             {isCreating || isUpdating

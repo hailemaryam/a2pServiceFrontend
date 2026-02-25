@@ -45,6 +45,8 @@ export default function SendSMS() {
   // Key to force re-render of file input
   const [inputKey, setInputKey] = useState(Date.now());
 
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
   // Modal State
   // const [isSenderModalOpen, setIsSenderModalOpen] = useState(false);
   // const [newSenderName, setNewSenderName] = useState("");
@@ -217,6 +219,7 @@ export default function SendSMS() {
           message: "",
           scheduledAt: undefined,
         }));
+        setPhoneError(null);
       } else if (activeTab === "Group") {
         if (!smsData.senderId || !smsData.selectedGroup || !smsData.message) {
           toast.error("Please fill in all required fields (Group)");
@@ -314,6 +317,7 @@ export default function SendSMS() {
                         name="senderId"
                         value={smsData.senderId}
                         onChange={handleChange}
+                        required
                         className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
                       >
                         <option value="">Select Sender ID</option>
@@ -335,10 +339,24 @@ export default function SendSMS() {
                           type="text"
                           name="phoneNumber"
                           value={smsData.phoneNumber}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            handleChange(e);
+                            const val = e.target.value;
+                            if (val && !isValidEthiopianPhoneNumber(val.trim())) {
+                              setPhoneError("Invalid Ethiopian phone number format. Please use 09..., 07..., or +251...");
+                            } else {
+                              setPhoneError(null);
+                            }
+                          }}
                           placeholder="+251..."
-                          className="w-full h-11 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:text-white"
+                          className={`w-full h-11 rounded-lg border bg-transparent px-4 py-2.5 text-sm outline-none focus:ring-3 focus:ring-brand-500/20 ${phoneError
+                            ? "border-red-500 focus:border-red-500 dark:border-red-500"
+                            : "border-gray-300 focus:border-brand-500 dark:border-gray-700"
+                            } dark:text-white`}
                         />
+                        {phoneError && (
+                          <p className="mt-1 text-xs text-red-500">{phoneError}</p>
+                        )}
                       </label>
                     )}
 
@@ -414,6 +432,7 @@ export default function SendSMS() {
                       onChange={handleChange}
                       placeholder="Type your message here..."
                       rows={6}
+                      required
                       className="mt-1 block w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 resize-y"
                     />
                   </label>
@@ -451,7 +470,11 @@ export default function SendSMS() {
                   <button
                     type="submit"
                     disabled={
-                      isSendingSingle || isSendingGroup || isSendingBulk
+                      isSendingSingle || isSendingGroup || isSendingBulk ||
+                      !smsData.senderId || !smsData.message.trim() ||
+                      (activeTab === "Single" && (!!phoneError || !smsData.phoneNumber.trim())) ||
+                      (activeTab === "Group" && !smsData.selectedGroup) ||
+                      (activeTab === "Bulk" && !smsData.uploadedFile)
                     }
                     className="mt-6 px-6 py-3 bg-brand-500 text-white font-semibold rounded-lg shadow-theme-xs hover:bg-brand-600 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-brand-500 dark:hover:bg-brand-600"
                   >
@@ -464,9 +487,9 @@ export default function SendSMS() {
             </form>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Request Sender ID Modal Removed */}
-    </div>
+    </div >
   );
 }
