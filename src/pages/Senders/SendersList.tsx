@@ -1,13 +1,11 @@
 import { useState, FormEvent, useMemo, useEffect } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { PencilIcon, TrashBinIcon, PlusIcon } from "../../icons";
+import { TrashBinIcon, PlusIcon } from "../../icons";
 import {
   useGetSendersQuery,
   useCreateSenderMutation,
-  useUpdateSenderMutation,
   useDeleteSenderMutation,
-  SenderResponse,
 } from "../../api/sendersApi";
 import { toast } from "react-toastify";
 import Modal from "../../components/ui/modal/Modal";
@@ -28,7 +26,6 @@ export default function SendersList() {
     setPage(0);
   }, [debouncedSenderSearch]);
   const [createSender, { isLoading: isCreating }] = useCreateSenderMutation();
-  const [updateSender, { isLoading: isUpdating }] = useUpdateSenderMutation();
   const [deleteSender] = useDeleteSenderMutation();
 
   const senders = sendersData?.items ?? [];
@@ -46,10 +43,6 @@ export default function SendersList() {
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingSender, setEditingSender] = useState<SenderResponse | null>(
-    null
-  );
 
   // Delete Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -57,7 +50,6 @@ export default function SendersList() {
 
   // Form states
   const [senderName, setSenderName] = useState("");
-  const [editSenderName, setEditSenderName] = useState("");
 
   // Handlers
   const handleCreateSubmit = async (e: FormEvent) => {
@@ -74,33 +66,7 @@ export default function SendersList() {
     }
   };
 
-  const handleEditClick = (sender: SenderResponse) => {
-    setEditingSender(sender);
-    setEditSenderName(sender.name);
-    setIsEditModalOpen(true);
-  };
 
-  const handleEditSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!editingSender || !editSenderName.trim()) return;
-    try {
-      await updateSender({
-        id: editingSender.id,
-        payload: { name: editSenderName },
-      }).unwrap();
-      closeEditModal();
-      toast.success("Sender updated successfully!");
-    } catch (error: any) {
-      console.error("Failed to update sender", error);
-      toast.error(error?.data?.message || "Failed to update sender");
-    }
-  };
-
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setEditingSender(null);
-    setEditSenderName("");
-  };
 
   const confirmDelete = (id: string) => {
     setSenderToDelete(id);
@@ -212,7 +178,7 @@ export default function SendersList() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-theme-md dark:border-gray-800 dark:bg-white/[0.03]">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800/50">
                 <tr>
@@ -265,13 +231,6 @@ export default function SendersList() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => handleEditClick(sender)}
-                            className="text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400"
-                            title="Edit"
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </button>
                           <button
                             onClick={() => confirmDelete(sender.id)}
                             className="text-gray-500 hover:text-error-500 dark:text-gray-400 dark:hover:text-error-400"
@@ -341,34 +300,7 @@ export default function SendersList() {
         </form>
       </Modal>
 
-      {/* Edit Modal */}
-      <Modal
-        isOpen={isEditModalOpen}
-        onClose={closeEditModal}
-        title="Edit Sender ID"
-      >
-        <form onSubmit={handleEditSubmit}>
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium dark:text-gray-300">
-              Sender Name
-            </label>
-            <input
-              type="text"
-              required
-              value={editSenderName}
-              onChange={(e) => setEditSenderName(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isUpdating}
-            className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
-          >
-            {isUpdating ? "Saving..." : "Save Changes"}
-          </button>
-        </form>
-      </Modal>
+
 
       {/* Delete Confirmation Modal */}
       <Modal
