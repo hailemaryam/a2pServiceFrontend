@@ -9,6 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { useGetSendersQuery } from "../../api/sendersApi";
 import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
+import { isValidEthiopianPhoneNumber } from "../../utils/validation";
 
 // Type definitions for component state
 interface SmsState {
@@ -197,6 +198,10 @@ export default function SendSMS() {
       if (activeTab === "Single") {
         if (!smsData.senderId || !smsData.phoneNumber || !smsData.message) {
           toast.error("Please fill in all required fields");
+          return;
+        }
+        if (!isValidEthiopianPhoneNumber(smsData.phoneNumber.trim())) {
+          toast.error("Invalid Ethiopian phone number format. Please use 09..., 07..., or +251...");
           return;
         }
         await sendSingleSms({

@@ -17,6 +17,7 @@ import { useGetContactGroupsQuery } from "../../api/contactGroupsApi";
 import Modal from "../../components/ui/modal/Modal";
 import Badge from "../../components/ui/badge/Badge";
 import { useDebounce } from "../../hooks/useDebounce";
+import { isValidEthiopianPhoneNumber } from "../../utils/validation";
 
 
 export default function Contact() {
@@ -98,6 +99,11 @@ export default function Contact() {
     setLocalError(null);
     if (!contactName.trim() || !phoneNumber.trim()) {
       setLocalError("Name and Phone are required.");
+      return;
+    }
+
+    if (!isValidEthiopianPhoneNumber(phoneNumber.trim())) {
+      setLocalError("Invalid Ethiopian phone number format. Please use 09..., 07..., or +251...");
       return;
     }
 
