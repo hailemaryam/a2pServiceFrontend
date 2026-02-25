@@ -8,7 +8,7 @@
 
     <div class="form-wrap">
       <h1 class="title">Sign In</h1>
-      <p class="subtitle">Enter your email and password to sign in!</p>
+      <p class="subtitle">Enter your username or email and password to sign in!</p>
 
       <#if message?has_content && (message.type != 'error' || !(messagesPerField.exists('username') || messagesPerField.exists('password')))>
         <#if message.type == "success"><div class="kc-feedback kc-success">${message.summary?no_esc}</div></#if>
@@ -19,7 +19,7 @@
 
       <form id="kc-form-login" action="${url.loginAction}" method="post">
         <div class="form-group">
-          <label for="username">Email <span class="required">*</span></label>
+          <label for="username">${msg("usernameOrEmail")} <span class="required">*</span></label>
           <input tabindex="1" id="username" name="username" value="${username!}" class="form-control" type="text" autofocus required aria-invalid="<#if messagesPerField.existsError('username')>true</#if>" />
           <#if messagesPerField.existsError('username')>
               <span class="field-error">${messagesPerField.get('username')?no_esc}</span>
