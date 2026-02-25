@@ -384,7 +384,7 @@ export default function SendSMS() {
                             </div>
                           </div>
                           <p className="mt-1 text-xs text-cool-gray-500">
-                            File should contain 'phoneNumber' column.
+                            It only accept CSV file containing phone numbers
                           </p>
                           {fileError && (
                             <p className="mt-2 text-sm text-error-500 font-medium animate-pulse">
