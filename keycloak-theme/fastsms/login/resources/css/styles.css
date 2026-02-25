@@ -108,6 +108,17 @@ body {
   --fs-info-bg: rgba(43, 108, 176, 0.1);
   --fs-info-text: #63b3ed;
   --fs-info-border: rgba(43, 108, 176, 0.2);
+
+  color-scheme: dark;
+}
+
+.dark select {
+  color-scheme: dark;
+}
+
+.dark option {
+  background-color: var(--fs-bg-secondary);
+  color: var(--fs-text-primary);
 }
 
 .fastsms-root {
