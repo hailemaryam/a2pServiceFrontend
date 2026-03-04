@@ -328,6 +328,44 @@ export default function API() {
                 </div>
               </div>
 
+              {/* Bulk SMS Endpoint */}
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-800">
+                <h4 className="mb-4 text-md font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-xs font-bold uppercase tracking-wider rounded bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-400">
+                    Bulk SMS
+                  </span>
+                  Send messages to multiple recipients
+                </h4>
+
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Endpoint URL (POST)
+                    </p>
+                    <code className="text-brand-500 dark:text-brand-400 break-all">
+                      https://fastsms.dev/api/p/sms/send-bulk
+                    </code>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                      Request Body (JSON)
+                    </p>
+                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-100 p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                      {`{
+  "to": ["2519...", "2519..."],          // List of phone numbers
+  "message": "Hello Everyone",
+  "scheduledAt": "2030-03-10T16:15:50Z",      // Optional
+  "webhookUrl": "https://test.com/webhook"    // Optional
+}`}
+                    </pre>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      * The <code>to</code> field accepts an array of strings (phone numbers).
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Webhook */}
               <div>
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
