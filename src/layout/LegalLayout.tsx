@@ -63,9 +63,14 @@ export default function LegalLayout({ children, title }: LegalLayoutProps) {
                                 FAST<span className="text-brand-500">SMS</span>
                             </span>
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-600">
-                            &copy; {new Date().getFullYear()} Fast SMS. All rights reserved.
-                        </p>
+                        <div className="flex flex-col items-center md:items-end gap-2">
+                            <p className="text-sm text-gray-500 dark:text-gray-600">
+                                &copy; {new Date().getFullYear()} Fast SMS. All rights reserved.
+                            </p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">
+                                powered by: <a href="https://akirdigitalsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:text-brand-600 font-semibold transition-colors">Akir Digital Solutions</a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </footer>
