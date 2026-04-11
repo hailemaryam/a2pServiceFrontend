@@ -32,7 +32,7 @@ export default function ContactUs() {
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Call Us</h3>
-                        <p className="text-gray-600 dark:text-gray-400 font-medium">+2519 84 99 93 33</p>
+                        <p className="text-gray-600 dark:text-gray-400 font-medium">+2519 34 99 93 33</p>
                         <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Mon - Fri, 8am - 6pm</p>
                     </div>
 
