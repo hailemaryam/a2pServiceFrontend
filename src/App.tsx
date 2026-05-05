@@ -20,6 +20,7 @@ import SmsJobApprovalsPage from "./pages/SystemAdmin/SmsJobApprovalsPage";
 import SmsPackagesPage from "./pages/SystemAdmin/SmsPackagesPage";
 import SystemAdminTransactions from "./pages/SystemAdmin/SystemAdminTransactions";
 import SystemAdminTenantDetail from "./pages/SystemAdmin/SystemAdminTenantDetail";
+import PlatformSettingsPage from "./pages/SystemAdmin/PlatformSettingsPage";
 import Billings from "./pages/Billings/Billings";
 import TransactionHistory from "./pages/Billings/TransactionHistory";
 import TransactionDetail from "./pages/Billings/TransactionDetail";
@@ -83,6 +84,7 @@ export default function App() {
             <Route path="/admin/senders" element={<SenderApprovalsPage />} />
             <Route path="/admin/sms-jobs" element={<SmsJobApprovalsPage />} />
             <Route path="/admin/sms-packages" element={<SmsPackagesPage />} />
+            <Route path="/admin/settings" element={<PlatformSettingsPage />} />
             {/* Profile */}
             <Route path="/admin/profile" element={<Profile />} />
 

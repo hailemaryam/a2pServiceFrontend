@@ -10,6 +10,7 @@ import {
   TaskIcon,
   BoxIcon,
   DollarLineIcon,
+  PlugInIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
@@ -52,6 +53,11 @@ const navItems: NavItem[] = [
     name: "All Transactions",
     icon: <DollarLineIcon />,
     path: "/admin/transactions",
+  },
+  {
+    name: "Settings",
+    icon: <PlugInIcon />,
+    path: "/admin/settings",
   },
 ];
 

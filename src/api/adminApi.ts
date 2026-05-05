@@ -10,12 +10,19 @@ export type TenantResponse = {
   phone: string;
   status: "ACTIVE" | "INACTIVE";
   smsCredit: number; // int64
+  dailySmsLimit?: number | null;
+  effectiveDailySmsLimit?: number | null;
+  dailySmsLimitSource?: "TENANT" | "PLATFORM" | "UNLIMITED";
   createdAt: string; // Instant
   updatedAt: string; // Instant
 };
 
 export type UpdateTenantStatusPayload = {
   status: "ACTIVE" | "INACTIVE";
+};
+
+export type DailySmsLimitResponse = {
+  dailySmsLimit: number | null;
 };
 
 // --- Senders ---
@@ -151,6 +158,35 @@ export const adminApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: "Tenant", id },
+        { type: "Tenant", id: "LIST" },
+      ],
+    }),
+
+    updateTenantDailySmsLimit: builder.mutation<TenantResponse, { id: string; dailySmsLimit: number | null }>({
+      query: ({ id, dailySmsLimit }) => ({
+        url: `/api/admin/tenants/${id}/daily-sms-limit`,
+        method: "PUT",
+        body: { dailySmsLimit },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Tenant", id },
+        { type: "Tenant", id: "LIST" },
+      ],
+    }),
+
+    getPlatformDailySmsLimit: builder.query<DailySmsLimitResponse, void>({
+      query: () => "/api/admin/platform-settings/daily-sms-limit",
+      providesTags: [{ type: "Tenant", id: "PLATFORM_DAILY_SMS_LIMIT" }],
+    }),
+
+    updatePlatformDailySmsLimit: builder.mutation<DailySmsLimitResponse, { dailySmsLimit: number | null }>({
+      query: ({ dailySmsLimit }) => ({
+        url: "/api/admin/platform-settings/daily-sms-limit",
+        method: "PUT",
+        body: { dailySmsLimit },
+      }),
+      invalidatesTags: [
+        { type: "Tenant", id: "PLATFORM_DAILY_SMS_LIMIT" },
         { type: "Tenant", id: "LIST" },
       ],
     }),
@@ -327,6 +363,9 @@ export const {
   useGetTenantByIdQuery,
   useUpdateTenantStatusMutation,
   useUpdateTenantThresholdMutation,
+  useUpdateTenantDailySmsLimitMutation,
+  useGetPlatformDailySmsLimitQuery,
+  useUpdatePlatformDailySmsLimitMutation,
   useGetPendingSendersQuery,
   useApproveSenderMutation,
   useRejectSenderMutation,

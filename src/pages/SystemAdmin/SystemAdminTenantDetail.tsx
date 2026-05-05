@@ -1,13 +1,25 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { useGetTenantByIdQuery } from "../../api/adminApi";
+import { useGetTenantByIdQuery, useUpdateTenantDailySmsLimitMutation } from "../../api/adminApi";
+import { toast } from "react-toastify";
 
 export default function SystemAdminTenantDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: tenant, isLoading, error } = useGetTenantByIdQuery(id || "", {
     skip: !id,
   });
+  const [updateDailyLimit, { isLoading: isSavingLimit }] = useUpdateTenantDailySmsLimitMutation();
+  const [dailyLimitInput, setDailyLimitInput] = useState("");
+
+  useEffect(() => {
+    if (tenant?.dailySmsLimit != null) {
+      setDailyLimitInput(String(tenant.dailySmsLimit));
+    } else {
+      setDailyLimitInput("");
+    }
+  }, [tenant?.dailySmsLimit]);
 
   if (isLoading) {
     return (
@@ -35,6 +47,47 @@ export default function SystemAdminTenantDetail() {
         Inactive
       </span>
     );
+  };
+
+  const formatLimit = (limit?: number | null) => {
+    return limit == null ? "Unlimited" : limit.toLocaleString();
+  };
+
+  const getLimitSourceLabel = (source?: string) => {
+    if (source === "TENANT") return "Tenant override";
+    if (source === "PLATFORM") return "Platform default";
+    return "Unlimited";
+  };
+
+  const handleSaveDailyLimit = async () => {
+    if (!tenant) return;
+    const trimmed = dailyLimitInput.trim();
+    const nextLimit = trimmed === "" ? null : Number(trimmed);
+
+    if (nextLimit !== null && (!Number.isInteger(nextLimit) || nextLimit <= 0)) {
+      toast.error("Daily SMS limit must be a positive whole number.");
+      return;
+    }
+
+    try {
+      await updateDailyLimit({ id: tenant.id, dailySmsLimit: nextLimit }).unwrap();
+      toast.success(nextLimit == null ? "Tenant now uses the platform daily limit." : "Tenant daily SMS limit updated.");
+    } catch (err) {
+      console.error("Failed to update daily SMS limit", err);
+      toast.error("Failed to update daily SMS limit.");
+    }
+  };
+
+  const handleClearDailyLimit = async () => {
+    if (!tenant) return;
+    try {
+      await updateDailyLimit({ id: tenant.id, dailySmsLimit: null }).unwrap();
+      setDailyLimitInput("");
+      toast.success("Tenant now uses the platform daily limit.");
+    } catch (err) {
+      console.error("Failed to clear daily SMS limit", err);
+      toast.error("Failed to clear daily SMS limit.");
+    }
   };
 
   return (
@@ -91,6 +144,53 @@ export default function SystemAdminTenantDetail() {
                     {tenant.smsCredit?.toLocaleString() ?? 0}
                   </p>
                 </div>
+                <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-gray-800">
+                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Effective Daily Limit</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {formatLimit(tenant.effectiveDailySmsLimit)}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {getLimitSourceLabel(tenant.dailySmsLimitSource)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-white/[0.02]">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Tenant Daily SMS Limit
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Leave empty to use the platform-level limit.
+                </p>
+              </div>
+              <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={dailyLimitInput}
+                  onChange={(event) => setDailyLimitInput(event.target.value)}
+                  placeholder="Platform default"
+                  className="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white lg:w-56"
+                />
+                <button
+                  onClick={handleSaveDailyLimit}
+                  disabled={isSavingLimit}
+                  className="h-11 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSavingLimit ? "Saving..." : "Save Limit"}
+                </button>
+                <button
+                  onClick={handleClearDailyLimit}
+                  disabled={isSavingLimit}
+                  className="h-11 rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-white dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Clear Limit
+                </button>
               </div>
             </div>
           </div>
