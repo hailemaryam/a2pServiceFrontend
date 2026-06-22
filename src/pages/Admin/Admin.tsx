@@ -43,11 +43,6 @@ const DashboardKpiCards: React.FC = () => {
           {totalSmsSent.toLocaleString()}
         </h2>
         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total SMS Sent</p>
-        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 space-x-2">
-          <span>API: {smsSentBySource.API}</span>
-          <span>|</span>
-          <span>Manual: {smsSentBySource.MANUAL}</span>
-        </div>
       </div>
 
       {/* Card 3: Contacts */}
