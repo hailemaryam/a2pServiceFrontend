@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Pagination from "../../components/common/Pagination";
 import Modal from "../../components/ui/modal/Modal";
 import { useGetSmsJobRecipientsQuery } from "../../api/smsApi";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -184,28 +185,14 @@ export default function ViewSmsRecipientsModal({
                     </table>
                 </div>
 
-                {/* Pagination */}
-                <div className="flex items-center justify-between px-2 text-sm text-gray-600 dark:text-gray-400">
-                    <div>
-                        Page {page + 1} of {totalPages} · {total} total
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button
-                            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                            onClick={() => handlePageChange(page - 1)}
-                            disabled={page <= 0 || isLoading}
-                        >
-                            Previous
-                        </button>
-                        <button
-                            className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                            onClick={() => handlePageChange(page + 1)}
-                            disabled={page >= totalPages - 1 || isLoading}
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
+                <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    total={total}
+                    onPageChange={handlePageChange}
+                    disabled={isLoading}
+                    className="px-2"
+                />
             </div>
         </Modal>
     );

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import Pagination from "../../components/common/Pagination";
 import { useGetSmsJobsQuery } from "../../api/smsApi";
 import ViewSmsRecipientsModal from "./ViewSmsRecipientsModal";
 
@@ -178,27 +179,14 @@ export default function SmsJobs() {
                   </tbody>
                 </table>
               </div>
-              <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-200">
-                <div>
-                  Page {page + 1} of {totalPages} · {total} total
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page <= 0}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= totalPages - 1}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                onPageChange={handlePageChange}
+                disabled={isLoading}
+                className="border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900/40"
+              />
             </div>
           )}
         </div>
